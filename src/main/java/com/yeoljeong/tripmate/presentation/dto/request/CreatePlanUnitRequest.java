@@ -16,7 +16,7 @@ public record CreatePlanUnitRequest(
   @NotBlank String description,
   @NotNull LocalTime startTime,
   @NotNull LocalTime endTime,
-  @PositiveOrZero BigDecimal price,
+  @NotNull @PositiveOrZero BigDecimal price,
   @Min(1) int maxCount,
   @NotNull UUID productId
 ) {
