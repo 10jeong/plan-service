@@ -39,9 +39,10 @@ public class PlanProductSnapshot {
 
 
   public PlanProductSnapshot(UUID productId, String name, Country country, String state, String city,
-      BigDecimal price, ParticipantCount participantCount, PlanUnit planUnit) {
+      BigDecimal price, int maxCount, int currentCount, PlanUnit planUnit) {
 
     ConfirmedProductInfo productInfo =  new ConfirmedProductInfo(productId, name, country, state, city, price);
+    ParticipantCount participantCount = new ParticipantCount(maxCount, currentCount);
 
     validatePlanUnit(planUnit);
 

@@ -22,23 +22,33 @@ public class ParticipantCount {
   @Column(name = "current_count", nullable = false)
   private int currentCount = 1; // 참여 현재 인원
 
+  // 일정에서 생성
   public ParticipantCount(int maxCount) {
     validatePositive(maxCount);
-    validateNotExceed(maxCount);
 
     this.maxCount = maxCount;
     this.currentCount = 1;
   }
 
-  private void validateNotExceed(int maxCount) {
+  // 상품 스냅샷에서 생성
+  public ParticipantCount(int maxCount, int currentCount) {
+    validatePositive(maxCount);
+    validatePositive(currentCount);
+    validateNotExceed(maxCount, currentCount);
+
+    this.maxCount = maxCount;
+    this.currentCount = currentCount;
+  }
+
+  private void validateNotExceed(int maxCount, int currentCount) {
     if (currentCount > maxCount) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_EXCEED);
     }
   }
 
-  private void validatePositive(int maxCount) {
-    if (maxCount < 1) {
-      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_MAX_COUNT_INVALID);
+  private void validatePositive(int count) {
+    if (count < 1) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_COUNT_NEGATIVE);
     }
   }
 }
