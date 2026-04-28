@@ -41,6 +41,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PRODUCT_SNAPSHOT_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품명은 필수입니다." ),
   PLAN_PRODUCT_SNAPSHOT_NAME_EXCEED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품명은 100자를 초과할 수 없습니다." ),
   PLAN_PRODUCT_ID_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품 ID는 필수입니다." ),
+  PLAN_PRODUCT_SNAPSHOT_PRICE_SCALE_INVALID(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품 가격은 소수점 둘째 자리까지만 가능합니다." ),
 
   // plan_participant
   PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
