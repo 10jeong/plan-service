@@ -33,13 +33,13 @@ public class PlanService {
     List<CreatePlanUnitCommand> requestPlanUnits = command.getPlanUnit();
     validateRequestPlanUnits(requestPlanUnits);
 
-
     // 동일한 일정 내 [일차, 순서] 존재 x
     validateDuplicateDayAndOrder(command.getPlanUnit());
 
-    // 단위 일정 시간 범위가 겹치지 않는지 검증
+    // 동일한 일정 내 단위 일정 시간 범위가 겹치지 않는지 검증
     validateUnitTimeRangeNotOverlap(command.getPlanUnit());
 
+    /* 일정 생성 */
     Plan plan = Plan.builder()
         .title(command.getTitle())
         .description(command.getDescription())
@@ -49,7 +49,7 @@ public class PlanService {
         .build();
     Plan savedPlan = planRepository.save(plan);
 
-
+    /* 단위 일정 생성 */
     List<PlanUnit> planUnit = command.getPlanUnit().stream()
         .map(unitCommand -> PlanUnit.builder()
             .day(unitCommand.getDay())
@@ -67,6 +67,7 @@ public class PlanService {
 
     planUnitRepository.saveAll(planUnit);
 
+    /* 침여 생성 */
     List<PlanParticipation> planParticipation = planUnit.stream()
         .map(unit -> PlanParticipation.createHost(command.getHostId(),unit))
         .toList();
@@ -80,6 +81,18 @@ public class PlanService {
   private void validateRequestPlanUnits(List<CreatePlanUnitCommand> requestPlanUnits) {
     if (requestPlanUnits == null || requestPlanUnits.isEmpty()) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_REQUIRED);
+    }
+
+    for (CreatePlanUnitCommand unit : requestPlanUnits) {
+      if (unit == null) {
+        throw new BusinessException(PlanErrorCode.PLAN_UNIT_REQUIRED);
+      }
+      if (unit.getStartTime() == null || unit.getEndTime() == null) {
+        throw new BusinessException(PlanErrorCode.PLAN_UNIT_TIME_RANGE_REQUIRED);
+      }
+      if (!unit.getStartTime().isBefore(unit.getEndTime())) {
+        throw new BusinessException(PlanErrorCode.PLAN_UNIT_TIME_RANGE_INVALID);
+      }
     }
   }
 
