@@ -12,6 +12,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.UUID;
@@ -20,7 +21,14 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "p_plan_unit")
+@Table(
+    name = "p_plan_unit",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_plan_unit_plan_day_order",
+            columnNames = {"plan_id", "day", "order_index"}
+        )
+    })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlanUnit {
 

@@ -1,6 +1,8 @@
 package com.yeoljeong.tripmate.domain.plan;
 
-import jakarta.persistence.Column;
+import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
+import com.yeoljeong.tripmate.domain.plan.enums.Country;
+import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,17 +26,8 @@ public class PlanProductSnapshot {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(name = "product_id", nullable = false)
-  private UUID productId; // 상품 ID
-
-  @Column(nullable = false, length = 100)
-  private String name; // 상품명
-
   @Embedded
-  private ProductAddress address; // 주소(국가, 도/주, 시, 상세주소)
-
-  @Column(nullable = false)
-  private BigDecimal price; // 가격
+  private ConfirmedProductInfo productInfo;
 
   // todo : planUnit의 vo를 재사용해도 되는가 고민
   @Embedded
@@ -45,13 +38,23 @@ public class PlanProductSnapshot {
   private PlanUnit planUnit; // 단위일정
 
 
-  public PlanProductSnapshot(UUID productId, String name, ProductAddress address, BigDecimal price,
-      ParticipantCount participantCount, PlanUnit planUnit) {
-    this.productId = productId;
-    this.name = name;
-    this.address = address;
-    this.price = price;
+  public PlanProductSnapshot(UUID productId, String name, Country country, String state, String city,
+      BigDecimal price, ParticipantCount participantCount, PlanUnit planUnit) {
+
+    ConfirmedProductInfo productInfo =  new ConfirmedProductInfo(productId, name, country, state, city, price);
+
+    validatePlanUnit(planUnit);
+
+    this.productInfo = productInfo;
     this.participantCount = participantCount;
     this.planUnit = planUnit;
   }
+
+  private void validatePlanUnit(PlanUnit planUnit) {
+    if (planUnit == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_PLAN_UNIT_REQUIRED);
+    }
+  }
+
+
 }

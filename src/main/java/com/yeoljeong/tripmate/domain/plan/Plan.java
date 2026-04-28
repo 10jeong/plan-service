@@ -55,7 +55,7 @@ public class Plan {
   public Plan(String title, String description, LocalDate startDate, LocalDate endDate, PlanCreationType planType) {
     validateTitle(title);
     validateDescription(description);
-    validateRecruitStatus(recruitStatus);
+    validatePlanType(planType);
 
     TravelPeriod planPeriod = new TravelPeriod(startDate, endDate);
 
@@ -66,9 +66,9 @@ public class Plan {
     this.recruitStatus = RecruitStatus.OPEN;
   }
 
-  private void validateRecruitStatus(RecruitStatus recruitStatus) {
-    if (recruitStatus == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_RECRUIT_STATUS_REQUIRED);
+  private void validatePlanType(PlanCreationType planType) {
+    if (planType == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_TYPE_REQUIRED);
     }
   }
 

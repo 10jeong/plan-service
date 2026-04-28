@@ -71,7 +71,7 @@ public class PlanParticipation {
 
   private void validatePlanUnit(PlanUnit planUnit) {
     if (planUnit == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_UNIT_REQUIRED);
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED);
     }
   }
 

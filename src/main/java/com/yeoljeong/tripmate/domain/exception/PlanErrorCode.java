@@ -1,7 +1,6 @@
 package com.yeoljeong.tripmate.domain.exception;
 
 import com.yeoljeong.tripmate.exception.constants.ErrorCode;
-import org.springframework.boot.autoconfigure.graphql.GraphQlProperties.Http;
 import org.springframework.http.HttpStatus;
 
 public enum PlanErrorCode implements ErrorCode {
@@ -13,6 +12,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_TRAVEL_PERIOD_REQUIRED(HttpStatus.BAD_REQUEST, "여행 기간은 필수입니다."),
   PLAN_TRAVEL_PERIOD_INVALID(HttpStatus.BAD_REQUEST, "여행 기간이 올바르지 않습니다." ),
   PLAN_RECRUIT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 모집 상태는 필수입니다."),
+  PLAN_TYPE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성 방식은 필수입니다."),
 
   // plan_unit
   PLAN_UNIT_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "단위 일정 제목은 필수입니다."),
@@ -35,14 +35,17 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PRODUCT_SNAPSHOT_STATE_EXCEED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 주소(도/주)는 255자를 초과할 수 없습니다." ),
   PLAN_PRODUCT_SNAPSHOT_CITY_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 주소(시)는 필수입니다."),
   PLAN_PRODUCT_SNAPSHOT_CITY_EXCEED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 주소(시)는 255자를 초과할 수 없습니다."),
+  PLAN_PRODUCT_SNAPSHOT_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷에 연결될 단위일정 정보가 필요합니다." ),
+  PLAN_PRODUCT_SNAPSHOT_PRICE_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 가격은 필수입니다." ),
+  PLAN_PRODUCT_SNAPSHOT_PRICE_NEGATIVE(HttpStatus.BAD_REQUEST, "상품 스냅샷의 가격은 음수가 불가능합니다." ),
+  PLAN_PRODUCT_SNAPSHOT_NAME_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품명은 필수입니다." ),
+  PLAN_PRODUCT_SNAPSHOT_NAME_EXCEED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품명은 100자를 초과할 수 없습니다." ),
+  PLAN_PRODUCT_ID_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품 ID는 필수입니다." ),
 
   // plan_participant
-  PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
+  PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
   PLAN_PARTICIPANT_USER_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 사용자 정보는 필수입니다." ),
   PLAN_PARTICIPANT_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 역할 정보는 필수입니다." );
-
-
-
 
 
 
