@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.domain.plan;
+package com.yeoljeong.tripmate.domain.plan.model;
 
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.exception.BusinessException;

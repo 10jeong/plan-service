@@ -1,9 +1,9 @@
-package com.yeoljeong.tripmate.domain.participation;
+package com.yeoljeong.tripmate.domain.participation.model;
 
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.participation.enums.ParticipantRole;
 import com.yeoljeong.tripmate.domain.participation.enums.ParticipantStatus;
-import com.yeoljeong.tripmate.domain.plan.PlanUnit;
+import com.yeoljeong.tripmate.domain.plan.model.PlanUnit;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
