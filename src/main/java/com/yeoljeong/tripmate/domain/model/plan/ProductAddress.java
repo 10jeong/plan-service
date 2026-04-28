@@ -1,7 +1,7 @@
-package com.yeoljeong.tripmate.domain.plan.model;
+package com.yeoljeong.tripmate.domain.model.plan;
 
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
-import com.yeoljeong.tripmate.domain.plan.enums.Country;
+import com.yeoljeong.tripmate.domain.enums.Country;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
