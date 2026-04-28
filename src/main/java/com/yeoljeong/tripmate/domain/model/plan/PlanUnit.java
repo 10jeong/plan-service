@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.domain.model.plan;
 
+import com.yeoljeong.tripmate.domain.BaseAuditEntity;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Column;
@@ -18,6 +19,7 @@ import java.time.LocalTime;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -30,7 +32,8 @@ import lombok.NoArgsConstructor;
         )
     })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PlanUnit {
+@Getter
+public class PlanUnit extends BaseAuditEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)

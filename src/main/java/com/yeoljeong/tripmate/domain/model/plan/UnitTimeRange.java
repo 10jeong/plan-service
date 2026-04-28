@@ -6,6 +6,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.time.LocalTime;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 /*
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 * */
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class UnitTimeRange {
 
   @Column(name = "start_time", nullable = false)

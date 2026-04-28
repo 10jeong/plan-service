@@ -15,11 +15,13 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "p_plan_product_snapshot")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class PlanProductSnapshot {
 
   @Id

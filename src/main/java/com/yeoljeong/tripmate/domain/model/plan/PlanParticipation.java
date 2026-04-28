@@ -1,9 +1,9 @@
-package com.yeoljeong.tripmate.domain.model.participation;
+package com.yeoljeong.tripmate.domain.model.plan;
 
+import com.yeoljeong.tripmate.domain.BaseAuditEntity;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.enums.ParticipantRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipantStatus;
-import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -31,7 +32,8 @@ import lombok.NoArgsConstructor;
         )
     })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PlanParticipation {
+@Getter
+public class PlanParticipation extends BaseAuditEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -52,17 +54,31 @@ public class PlanParticipation {
   @JoinColumn(name = "plan_unit_id", nullable = false)
   private PlanUnit planUnit;
 
-  public PlanParticipation(UUID userId, ParticipantRole participantRole, PlanUnit planUnit) {
+  public static PlanParticipation createHost(UUID userId, PlanUnit planUnit) {
+    return new PlanParticipation(userId, ParticipantRole.HOST, ParticipantStatus.APPROVAL, planUnit);
+  }
+
+  public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
+    return new PlanParticipation(userId, ParticipantRole.GUEST, ParticipantStatus.PENDING, planUnit);
+  }
+
+  public PlanParticipation(UUID userId, ParticipantRole participantRole, ParticipantStatus participantStatus, PlanUnit planUnit) {
     validateUserId(userId);
     validateParticipantRole(participantRole);
+    validateParticipantStatus(participantStatus);
     validatePlanUnit(planUnit);
 
     this.userId = userId;
     this.participantRole = participantRole;
-    this.participantStatus = ParticipantStatus.PENDING;
+    this.participantStatus = participantStatus;
     this.planUnit = planUnit;
   }
 
+  private void validateParticipantStatus(ParticipantStatus participantStatus) {
+    if (participantStatus == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_REQUIRED);
+    }
+  }
 
 
   private void validateUserId(UUID userId) {
