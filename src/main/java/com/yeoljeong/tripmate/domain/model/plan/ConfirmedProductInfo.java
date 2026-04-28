@@ -36,7 +36,7 @@ public class ConfirmedProductInfo {
     ProductAddress address = new ProductAddress(country, state, city);
 
     this.productId = productId;
-    this.productName = name;
+    this.productName = name.trim();
     this.productAddress = address;
     this.productPrice = price;
   }

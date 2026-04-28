@@ -16,12 +16,20 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "p_plan_participation")
+@Table(
+    name = "p_plan_participation",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "uk_plan_particiation_user_plan_unit",
+            columnNames = {"user_id", "plan_unit_id"}
+        )
+    })
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class PlanParticipation {
 
@@ -29,7 +37,7 @@ public class PlanParticipation {
   @GeneratedValue(strategy = GenerationType.UUID)
   private UUID id;
 
-  @Column(nullable = false)
+  @Column(name = "user_id", nullable = false)
   private UUID userId; // 사용자 id
 
   @Enumerated(EnumType.STRING)
