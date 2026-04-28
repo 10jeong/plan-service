@@ -13,6 +13,8 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_TRAVEL_PERIOD_INVALID(HttpStatus.BAD_REQUEST, "여행 기간이 올바르지 않습니다." ),
   PLAN_RECRUIT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 모집 상태는 필수입니다."),
   PLAN_TYPE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성 방식은 필수입니다."),
+  PLAN_CREATION_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 일정 생성방식 타입입니다." ),
+
 
   // plan_unit
   PLAN_UNIT_TITLE_REQUIRED(HttpStatus.BAD_REQUEST, "단위 일정 제목은 필수입니다."),
@@ -29,6 +31,11 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_DAY_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 일차는 1 이상이어야 합니다." ),
   PLAN_UNIT_ORDER_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 순서는 1 이상이어야 합니다." ),
   PLAN_UNIT_PRICE_SCALE_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 가격은 소수점 둘째 자리까지 가능합니다."),
+  PLAN_UNIT_DUPLICATED_ORDER(HttpStatus.BAD_REQUEST, "같은 일정에서 일차와 순서가 중복될 수 없습니다." ),
+  PLAN_UNIT_TIME_RANGE_OVERLAP(HttpStatus.BAD_REQUEST, "같은 일차의 단위 일정 시간은 겹칠 수 없습니다." ),
+  PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성에 연결될 단위 일정이 필요합니다." ),
+
+
   // plan_product_snapshot
   PLAN_PRODUCT_SNAPSHOT_COUNTRY_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 국가는 필수입니다."),
   PLAN_PRODUCT_SNAPSHOT_STATE_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 주소(도/주)는 필수입니다." ),
@@ -46,8 +53,8 @@ public enum PlanErrorCode implements ErrorCode {
   // plan_participant
   PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
   PLAN_PARTICIPANT_USER_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 사용자 정보는 필수입니다." ),
-  PLAN_PARTICIPANT_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 역할 정보는 필수입니다." );
-
+  PLAN_PARTICIPANT_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 역할 정보는 필수입니다." ),
+  PLAN_PARTICIPANT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 상태 정보는 필수입니다." );
 
 
   private final HttpStatus status;

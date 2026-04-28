@@ -1,4 +1,5 @@
 package com.yeoljeong.tripmate.domain.model.plan;
+import com.yeoljeong.tripmate.domain.BaseAuditEntity;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.enums.PlanCreationType;
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
@@ -16,12 +17,14 @@ import java.time.LocalDate;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "p_plan")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Plan {
+@Getter
+public class Plan extends BaseAuditEntity {
 
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
@@ -50,24 +53,19 @@ public class Plan {
   *  - 255자를 초과할 수 없다.
   * */
   @Builder
-  public Plan(String title, String description, LocalDate startDate, LocalDate endDate, PlanCreationType planType) {
+  public Plan(String title, String description, LocalDate startDate, LocalDate endDate, String planType) {
     validateTitle(title);
     validateDescription(description);
-    validatePlanType(planType);
-
-    TravelPeriod planPeriod = new TravelPeriod(startDate, endDate);
 
     this.title = title.trim();
     this.description = description.trim();
-    this.travelPeriod = planPeriod;
-    this.planType = planType;
+    this.travelPeriod = new TravelPeriod(startDate, endDate);
+    this.planType = validatePlanType(planType);
     this.recruitStatus = RecruitStatus.OPEN;
   }
 
-  private void validatePlanType(PlanCreationType planType) {
-    if (planType == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_TYPE_REQUIRED);
-    }
+  private PlanCreationType validatePlanType(String planType) {
+    return PlanCreationType.from(planType);
   }
 
   private void validateDescription(String description) {

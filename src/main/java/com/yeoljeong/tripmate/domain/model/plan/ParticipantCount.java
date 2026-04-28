@@ -5,6 +5,7 @@ import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
@@ -14,6 +15,7 @@ import lombok.NoArgsConstructor;
 * */
 @Embeddable
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 public class ParticipantCount {
 
   @Column(name = "max_count", nullable = false)
