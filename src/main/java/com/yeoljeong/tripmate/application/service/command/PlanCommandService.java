@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.application;
+package com.yeoljeong.tripmate.application.service.command;
 
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanUnitCommand;
@@ -22,7 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class PlanService {
+public class PlanCommandService {
 
   private final PlanRepository planRepository;
   private final PlanUnitRepository planUnitRepository;

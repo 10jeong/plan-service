@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.presentation;
 
-import com.yeoljeong.tripmate.application.PlanService;
+import com.yeoljeong.tripmate.application.service.command.PlanCommandService;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.CreatePlanResponse;
@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class PlanController {
 
-  private final PlanService planService;
+  private final PlanCommandService planCommandService;
   @PostMapping
   public ApiResponse<CreatePlanResponse> createPlans(
       @RequestHeader("X-USER_ID") UUID userId,
       @RequestBody @Valid CreatePlanRequest createPlanRequest) {
 
-    CreatePlanResult result = planService.createPlans(createPlanRequest.toCommand(userId));
+    CreatePlanResult result = planCommandService.createPlans(createPlanRequest.toCommand(userId));
     CreatePlanResponse response = CreatePlanResponse.from(result);
     return ApiResponse.success(CommonSuccessCode.CREATE, "일정 등록이 되었습니다.", response);
 
