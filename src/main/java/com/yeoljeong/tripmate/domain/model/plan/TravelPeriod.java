@@ -28,7 +28,7 @@ public class TravelPeriod {
       throw new BusinessException(PlanErrorCode.PLAN_TRAVEL_PERIOD_REQUIRED);
     }
 
-    if (startDate.isBefore(LocalDate.now()) || startDate.isAfter(endDate)) {
+    if (startDate.isBefore(LocalDate.now()) || !startDate.isAfter(endDate)) {
       throw new BusinessException(PlanErrorCode.PLAN_TRAVEL_PERIOD_INVALID);
     }
 
