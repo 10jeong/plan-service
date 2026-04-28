@@ -144,6 +144,10 @@ public class PlanUnit {
     if (price.compareTo(BigDecimal.ZERO) < 0) { // price가 음수인 경우
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_PRICE_INVALID);
     }
+
+    if (price.scale() > 2) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PRICE_SCALE_INVALID);
+    }
   }
 
   private void validateDescription(String description) {

@@ -28,7 +28,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_PRODUCT_REQUIRED(HttpStatus.BAD_REQUEST, "단위 일정의 상품 정보는 필수입니다." ),
   PLAN_UNIT_DAY_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 일차는 1 이상이어야 합니다." ),
   PLAN_UNIT_ORDER_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 순서는 1 이상이어야 합니다." ),
-
+  PLAN_UNIT_PRICE_SCALE_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 가격은 소수점 둘째 자리까지 가능합니다."),
   // plan_product_snapshot
   PLAN_PRODUCT_SNAPSHOT_COUNTRY_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 국가는 필수입니다."),
   PLAN_PRODUCT_SNAPSHOT_STATE_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 주소(도/주)는 필수입니다." ),
