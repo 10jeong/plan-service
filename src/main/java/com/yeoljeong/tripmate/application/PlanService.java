@@ -40,7 +40,7 @@ public class PlanService {
     Plan savedPlan = planRepository.save(plan);
 
 
-    // 동일한 [단위 일정ID, 일차, 순서] 존재 x
+    // 동일한 일정 내 [일차, 순서] 존재 x
     validateDuplicateDayAndOrder(command.getPlanUnit());
 
     // 단위 일정 시간 범위가 겹치지 않는지 검증
