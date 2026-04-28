@@ -23,7 +23,7 @@ public class ConfirmedProductInfo {
   @Embedded
   private ProductAddress productAddress; // 주소(국가, 도/주, 시, 상세주소)
 
-  @Column(name = "product_price", nullable = false)
+  @Column(name = "product_price", nullable = false, precision = 10, scale = 2)
   private BigDecimal productPrice; // 가격
 
 
@@ -55,7 +55,8 @@ public class ConfirmedProductInfo {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_NAME_REQUIRED);
     }
 
-    if (name.length() > 100) {
+    String TrimmedName = name.trim();
+    if (TrimmedName.length() > 100) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_NAME_EXCEED);
     }
   }

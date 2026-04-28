@@ -51,7 +51,7 @@ public class PlanUnit {
   @Embedded
   private UnitTimeRange unitTimeRange; // 예상소요시간
 
-  @Column(nullable = false)
+  @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal price; // 가격
 
   @Embedded
@@ -156,7 +156,9 @@ public class PlanUnit {
     if (title == null || title.isBlank()) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_TITLE_REQUIRED);
     }
-    if (title.length() > 255) {
+
+    String trimmedTitle = title.trim();
+    if (trimmedTitle.length() > 255) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_TITLE_EXCEED);
     }
   }

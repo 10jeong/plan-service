@@ -42,7 +42,9 @@ public class ProductAddress {
     if (city == null || city.isBlank()) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_CITY_REQUIRED);
     }
-    if (city.length() > 255) {
+
+    String trimmedCity = city.trim();
+    if (trimmedCity.length() > 255) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_CITY_EXCEED);
     }
   }
@@ -51,7 +53,9 @@ public class ProductAddress {
     if (state == null || state.isBlank()) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_STATE_REQUIRED);
     }
-    if (state.length() > 255) {
+
+    String trimmedState = state.trim();
+    if (trimmedState.length() > 255) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_STATE_EXCEED);
     }
   }

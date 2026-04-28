@@ -82,7 +82,10 @@ public class Plan {
     if (title == null || title.isBlank()) {
       throw new BusinessException(PlanErrorCode.PLAN_TITLE_REQUIRED);
     }
-    if (title.length() > 255) {
+
+    String trimmedTitle = title.trim();
+
+    if (trimmedTitle.length() > 255) {
       throw new BusinessException(PlanErrorCode.PLAN_TITLE_EXCEED);
     }
   }
