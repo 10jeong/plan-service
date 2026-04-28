@@ -74,11 +74,11 @@ public class PlanService {
   }
 
   private void validateUnitTimeRangeNotOverlap(List<CreatePlanUnitCommand> planUnit) {
-    // 일차의 순서대로 정렬
+    // 일차, 예상시작시간의 순서대로 정렬
     List<CreatePlanUnitCommand> sortedPlanUnits = planUnit.stream()
         .sorted(
             Comparator.comparingInt(CreatePlanUnitCommand::getDay)
-                .thenComparingInt(CreatePlanUnitCommand::getOrderIndex)
+                .thenComparing(CreatePlanUnitCommand::getStartTime)
         )
         .toList();
 
