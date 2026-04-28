@@ -56,7 +56,7 @@ public class PlanService {
             .endTime(unitCommand.getEndTime())
             .price(unitCommand.getPrice())
             .maxCount(unitCommand.getMaxCount())
-            .plan(plan)
+            .plan(savedPlan)
             .productId(unitCommand.getProductId())
             .build())
         .toList();
