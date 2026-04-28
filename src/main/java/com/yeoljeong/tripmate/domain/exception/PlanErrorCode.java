@@ -33,6 +33,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_PRICE_SCALE_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 가격은 소수점 둘째 자리까지 가능합니다."),
   PLAN_UNIT_DUPLICATED_ORDER(HttpStatus.BAD_REQUEST, "같은 일정에서 일차와 순서가 중복될 수 없습니다." ),
   PLAN_UNIT_TIME_RANGE_OVERLAP(HttpStatus.BAD_REQUEST, "같은 일차의 단위 일정 시간은 겹칠 수 없습니다." ),
+  PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성에 연결될 단위 일정이 필요합니다." ),
 
 
   // plan_product_snapshot
