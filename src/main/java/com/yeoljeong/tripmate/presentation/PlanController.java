@@ -11,6 +11,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,10 +22,10 @@ public class PlanController {
 
   private final PlanService planService;
   @PostMapping
-  public ApiResponse<CreatePlanResponse> createPlans(@RequestBody @Valid CreatePlanRequest createPlanRequest) {
+  public ApiResponse<CreatePlanResponse> createPlans(
+      @RequestHeader("X-USER_ID") UUID userId,
+      @RequestBody @Valid CreatePlanRequest createPlanRequest) {
 
-    // todo : 헤더로 userId 받아오기
-    UUID userId = UUID.randomUUID();
     CreatePlanResult result = planService.createPlans(createPlanRequest.toCommand(userId));
     CreatePlanResponse response = CreatePlanResponse.from(result);
     return ApiResponse.success(CommonSuccessCode.CREATE, "일정 등록이 되었습니다.", response);
