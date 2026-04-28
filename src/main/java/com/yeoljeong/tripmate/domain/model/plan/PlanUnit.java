@@ -145,7 +145,7 @@ public class PlanUnit {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_PRICE_INVALID);
     }
 
-    if (price.scale() > 2) {
+    if (price.stripTrailingZeros().scale() > 2) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_PRICE_SCALE_INVALID);
     }
   }

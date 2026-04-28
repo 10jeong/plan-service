@@ -49,7 +49,7 @@ public class ConfirmedProductInfo {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_PRICE_NEGATIVE);
     }
 
-    if (price.scale() > 2) {
+    if (price.stripTrailingZeros().scale() > 2) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_PRICE_SCALE_INVALID);
     }
   }
