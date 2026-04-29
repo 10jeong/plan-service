@@ -14,6 +14,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_RECRUIT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 모집 상태는 필수입니다."),
   PLAN_TYPE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성 방식은 필수입니다."),
   PLAN_CREATION_TYPE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 일정 생성방식 타입입니다." ),
+  PLAN_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 일정입니다." ),
 
 
   // plan_unit
@@ -34,6 +35,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_DUPLICATED_ORDER(HttpStatus.BAD_REQUEST, "같은 일정에서 일차와 순서가 중복될 수 없습니다." ),
   PLAN_UNIT_TIME_RANGE_OVERLAP(HttpStatus.BAD_REQUEST, "같은 일차의 단위 일정 시간은 겹칠 수 없습니다." ),
   PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성에 연결될 단위 일정이 필요합니다." ),
+  PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 단위 일정입니다."),
 
 
   // plan_product_snapshot
@@ -54,7 +56,8 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
   PLAN_PARTICIPANT_USER_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 사용자 정보는 필수입니다." ),
   PLAN_PARTICIPANT_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 역할 정보는 필수입니다." ),
-  PLAN_PARTICIPANT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 상태 정보는 필수입니다." );
+  PLAN_PARTICIPANT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 상태 정보는 필수입니다." ),
+  PLAN_PARTICIPANT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 해당 일정에 참여 신청한 사용자입니다." );
 
 
   private final HttpStatus status;

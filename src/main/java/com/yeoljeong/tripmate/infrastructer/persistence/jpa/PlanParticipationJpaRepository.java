@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PlanParticipationJpaRepository extends JpaRepository<PlanParticipation, UUID> {
 
+  boolean existsByPlanUnitIdAndUserId(UUID planUnitId, UUID guestId);
 }
