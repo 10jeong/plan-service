@@ -2,8 +2,8 @@ package com.yeoljeong.tripmate.domain.model.plan;
 
 import com.yeoljeong.tripmate.domain.BaseAuditEntity;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
-import com.yeoljeong.tripmate.domain.enums.ParticipantRole;
-import com.yeoljeong.tripmate.domain.enums.ParticipantStatus;
+import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
+import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -43,87 +43,87 @@ public class PlanParticipation extends BaseAuditEntity {
   private UUID userId; // 사용자 id
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "participant_role", nullable = false)
-  private ParticipantRole participantRole; // 역할(HOST, GUEST)
+  @Column(name = "participation_role", nullable = false)
+  private ParticipationRole participationRole; // 역할(HOST, GUEST)
 
   @Enumerated(EnumType.STRING)
-  @Column(name = "participant_status", nullable = false)
-  private ParticipantStatus participantStatus = ParticipantStatus.PENDING; // 상태(PENDING, APPROVAL, REJECTED)
+  @Column(name = "participation_status", nullable = false)
+  private ParticipationStatus participationStatus = ParticipationStatus.PENDING; // 상태(PENDING, APPROVAL, REJECTED)
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "plan_unit_id", nullable = false)
   private PlanUnit planUnit;
 
   public static PlanParticipation createHost(UUID userId, PlanUnit planUnit) {
-    return new PlanParticipation(userId, ParticipantRole.HOST, ParticipantStatus.APPROVAL, planUnit);
+    return new PlanParticipation(userId, ParticipationRole.HOST, ParticipationStatus.APPROVAL, planUnit);
   }
 
   public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
-    return new PlanParticipation(userId, ParticipantRole.GUEST, ParticipantStatus.PENDING, planUnit);
+    return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.PENDING, planUnit);
   }
 
-  public PlanParticipation(UUID userId, ParticipantRole participantRole, ParticipantStatus participantStatus, PlanUnit planUnit) {
+  public PlanParticipation(UUID userId, ParticipationRole participationRole, ParticipationStatus participationStatus, PlanUnit planUnit) {
     validateUserId(userId);
-    validateParticipantRole(participantRole);
-    validateParticipantStatus(participantStatus);
+    validateParticipationRole(participationRole);
+    validateParticipationStatus(participationStatus);
     validatePlanUnit(planUnit);
 
     this.userId = userId;
-    this.participantRole = participantRole;
-    this.participantStatus = participantStatus;
+    this.participationRole = participationRole;
+    this.participationStatus = participationStatus;
     this.planUnit = planUnit;
   }
 
   /*
   * 일정 참여상태 변경
   * */
-  public void updatePlanParticipantStatus(ParticipantStatus status) {
+  public void updatePlanParticipationStatus(ParticipationStatus status) {
     if (status == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_REQUIRED);
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_REQUIRED);
     }
-    if (this.participantStatus != ParticipantStatus.PENDING) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_INVALID);
+    if (this.participationStatus != ParticipationStatus.PENDING) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_INVALID);
     }
-    if (status != ParticipantStatus.APPROVAL && status != ParticipantStatus.REJECTED) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_INVALID);
+    if (status != ParticipationStatus.APPROVAL && status != ParticipationStatus.REJECTED) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_INVALID);
     }
-    this.participantStatus = status;
+    this.participationStatus = status;
   }
 
   public void validateHostOf(PlanUnit planUnit) {
 
     if (!this.planUnit.equals(planUnit)) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_PLAN_UNIT_MISMATCH);
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_PLAN_UNIT_MISMATCH);
     }
 
     // host 검증
-    if (!this.participantRole.equals(ParticipantRole.HOST)) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_NOT_HOST);
+    if (!this.participationRole.equals(ParticipationRole.HOST)) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_HOST);
     }
   }
 
-  private void validateParticipantStatus(ParticipantStatus participantStatus) {
-    if (participantStatus == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_REQUIRED);
+  private void validateParticipationStatus(ParticipationStatus participationStatus) {
+    if (participationStatus == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_REQUIRED);
     }
   }
 
 
   private void validateUserId(UUID userId) {
     if (userId == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_USER_REQUIRED);
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_USER_REQUIRED);
     }
   }
 
-  private void validateParticipantRole(ParticipantRole participantRole) {
-    if (participantRole == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_ROLE_REQUIRED);
+  private void validateParticipationRole(ParticipationRole participationRole) {
+    if (participationRole == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_ROLE_REQUIRED);
     }
   }
 
   private void validatePlanUnit(PlanUnit planUnit) {
     if (planUnit == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED);
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_PLAN_UNIT_REQUIRED);
     }
   }
 

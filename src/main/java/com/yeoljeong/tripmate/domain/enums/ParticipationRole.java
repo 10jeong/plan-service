@@ -1,5 +1,5 @@
 package com.yeoljeong.tripmate.domain.enums;
 
-public enum ParticipantRole {
+public enum ParticipationRole {
   HOST, GUEST
 }

@@ -1,5 +1,5 @@
 package com.yeoljeong.tripmate.domain.enums;
 
-public enum ParticipantStatus {
+public enum ParticipationStatus {
   PENDING, APPROVAL, REJECTED
 }

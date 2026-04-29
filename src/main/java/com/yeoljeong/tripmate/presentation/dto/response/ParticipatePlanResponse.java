@@ -5,14 +5,14 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record ParticipatePlanResponse(
-    UUID planParticipantId,
+    UUID planParticipationId,
     LocalDateTime updatedAt,
     UUID updatedBy
 ) {
 
   public static ParticipatePlanResponse from(ParticipatePlanResult result) {
     return new ParticipatePlanResponse(
-        result.planParticipantId(),
+        result.planParticipationId(),
         result.updatedAt(),
         result.updatedBy());
   }

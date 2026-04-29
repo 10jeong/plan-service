@@ -52,16 +52,16 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PRODUCT_ID_REQUIRED(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품 ID는 필수입니다." ),
   PLAN_PRODUCT_SNAPSHOT_PRICE_SCALE_INVALID(HttpStatus.BAD_REQUEST, "상품 스냅샷의 상품 가격은 소수점 둘째 자리까지만 가능합니다." ),
 
-  // plan_participant
-  PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
-  PLAN_PARTICIPANT_USER_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 사용자 정보는 필수입니다." ),
-  PLAN_PARTICIPANT_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 역할 정보는 필수입니다." ),
-  PLAN_PARTICIPANT_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 상태 정보는 필수입니다." ),
-  PLAN_PARTICIPANT_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 해당 일정에 참여 신청한 사용자입니다." ),
-  PLAN_PARTICIPANT_NOT_HOST(HttpStatus.FORBIDDEN, "해당 일정의 참여 상태 변경은 호스트만 가능합니다." ),
-  PLAN_PARTICIPANT_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 일정 참여 정보가 존재하지 않습니다." ),
-  PLAN_PARTICIPANT_PLAN_UNIT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단위 일정 정보는 요청한 단위 일정과 일치하지 않습니다."),
-  PLAN_PARTICIPANT_STATUS_INVALID(HttpStatus.BAD_REQUEST, "참여 상태는 PENDING에서 APPROVAL 또는 REJECTED로만 변경할 수 있습니다.");
+  // plan_participation
+  PLAN_PARTICIPATION_PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참가에 연결될 단위 일정 정보가 필요합니다."),
+  PLAN_PARTICIPATION_USER_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 사용자 정보는 필수입니다." ),
+  PLAN_PARTICIPATION_ROLE_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 역할 정보는 필수입니다." ),
+  PLAN_PARTICIPATION_STATUS_REQUIRED(HttpStatus.BAD_REQUEST, "일정 참여자의 상태 정보는 필수입니다." ),
+  PLAN_PARTICIPATION_ALREADY_EXISTS(HttpStatus.BAD_REQUEST, "이미 해당 일정에 참여 신청한 사용자입니다." ),
+  PLAN_PARTICIPATION_NOT_HOST(HttpStatus.FORBIDDEN, "해당 일정의 참여 상태 변경은 호스트만 가능합니다." ),
+  PLAN_PARTICIPATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 일정 참여 정보가 존재하지 않습니다." ),
+  PLAN_PARTICIPATION_PLAN_UNIT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단위 일정 정보는 요청한 단위 일정과 일치하지 않습니다."),
+  PLAN_PARTICIPATION_STATUS_INVALID(HttpStatus.BAD_REQUEST, "참여 상태는 PENDING에서 APPROVAL 또는 REJECTED로만 변경할 수 있습니다.");
 
 
   private final HttpStatus status;
