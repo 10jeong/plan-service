@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -93,15 +94,19 @@ public class PlanCommandService {
 
     // 중복 참여 검증
     validateDuplicateParticipation(command.planUnitId(),command.guestId());
+    try {
+      PlanParticipation participation = PlanParticipation.createGuest(command.guestId(), planUnit);
+      PlanParticipation savedParticipation = planParticipationRepository.save(participation);
 
-    PlanParticipation participation = PlanParticipation.createGuest(command.guestId(), planUnit);
-    PlanParticipation savedParticipation = planParticipationRepository.save(participation);
+      return ParticipatePlanResult.from(
+          savedParticipation.getId(),
+          savedParticipation.getPlanUnit().getTitle(),
+          savedParticipation.getUpdatedAt(),
+          savedParticipation.getUpdatedBy());
+    } catch (DataIntegrityViolationException e) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_ALREADY_EXISTS);
+    }
 
-    return ParticipatePlanResult.from(
-        savedParticipation.getId(),
-        savedParticipation.getPlanUnit().getTitle(),
-        savedParticipation.getUpdatedAt(),
-        savedParticipation.getUpdatedBy());
 
   }
 
