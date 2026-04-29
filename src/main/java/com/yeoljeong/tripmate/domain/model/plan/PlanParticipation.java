@@ -81,6 +81,12 @@ public class PlanParticipation extends BaseAuditEntity {
     if (status == null) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_REQUIRED);
     }
+    if (this.participantStatus != ParticipantStatus.PENDING) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_INVALID);
+    }
+    if (status != ParticipantStatus.APPROVAL && status != ParticipantStatus.REJECTED) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_INVALID);
+    }
     this.participantStatus = status;
   }
 
