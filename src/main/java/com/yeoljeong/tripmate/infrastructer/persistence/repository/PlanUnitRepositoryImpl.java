@@ -4,6 +4,8 @@ import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanUnitJpaRepository;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -16,5 +18,10 @@ public class PlanUnitRepositoryImpl implements PlanUnitRepository {
   @Override
   public void saveAll(List<PlanUnit> planUnit) {
     jpaRepository.saveAll(planUnit);
+  }
+
+  @Override
+  public Optional<PlanUnit> findByIdAndPlanId(UUID planUnitId, UUID planId) {
+    return jpaRepository.findByIdAndPlanId(planUnitId, planId);
   }
 }

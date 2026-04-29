@@ -2,7 +2,9 @@ package com.yeoljeong.tripmate.application.service.command;
 
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanUnitCommand;
+import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
+import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
@@ -15,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +31,9 @@ public class PlanCommandService {
   private final PlanUnitRepository planUnitRepository;
   private final PlanParticipationRepository planParticipationRepository;
 
+  /*
+  * 일정 생성(일정, 단위일정, 참여)
+  * */
   public CreatePlanResult createPlans(CreatePlanCommand command) {
 
     List<CreatePlanUnitCommand> requestPlanUnits = command.getPlanUnit();
@@ -76,6 +82,41 @@ public class PlanCommandService {
 
     return CreatePlanResult.from(savedPlan);
 
+  }
+
+  /*
+  * 참여 신청
+  * */
+  public ParticipatePlanResult participatePlanUnit(ParticipatePlanCommand command) {
+
+    PlanUnit planUnit = getPlanUnitInPlan(command.planId(), command.planUnitId());
+
+    // 중복 참여 검증
+    validateDuplicateParticipation(command.planUnitId(),command.guestId());
+
+    PlanParticipation participation = PlanParticipation.createGuest(command.guestId(), planUnit);
+    PlanParticipation savedParticipation = planParticipationRepository.save(participation);
+
+    return ParticipatePlanResult.from(
+        savedParticipation.getId(),
+        savedParticipation.getPlanUnit().getTitle(),
+        savedParticipation.getUpdatedAt(),
+        savedParticipation.getUpdatedBy());
+
+  }
+
+  private void validateDuplicateParticipation(UUID planUnitId, UUID guestId) {
+    if (planParticipationRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId)) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_ALREADY_EXISTS);
+    }
+  }
+
+  private PlanUnit getPlanUnitInPlan(UUID planId, UUID planUnitId) {
+    if (!planRepository.existsById(planId)) {
+      throw new BusinessException(PlanErrorCode.PLAN_NOT_FOUND);
+    }
+    return planUnitRepository.findByIdAndPlanId(planUnitId, planId)
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
   }
 
   private void validateRequestPlanUnits(List<CreatePlanUnitCommand> requestPlanUnits) {
@@ -130,8 +171,9 @@ public class PlanCommandService {
       if (!keys.add(key)) {
         throw new BusinessException(PlanErrorCode.PLAN_UNIT_DUPLICATED_ORDER);
       }
-
-
     }
   }
+
+
+
 }
