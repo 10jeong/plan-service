@@ -3,8 +3,10 @@ package com.yeoljeong.tripmate.application.service.command;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanUnitCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
+import com.yeoljeong.tripmate.application.dto.command.UpdateParticipantStatusCommand;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
+import com.yeoljeong.tripmate.application.dto.result.UpdateParticipantStatusResult;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
@@ -106,9 +108,34 @@ public class PlanCommandService {
     } catch (DataIntegrityViolationException e) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_ALREADY_EXISTS);
     }
-
-
   }
+
+  /*
+  * 참여 신청 상태 변경
+  * */
+  public UpdateParticipantStatusResult updateParticipantStatus(UpdateParticipantStatusCommand command) {
+    
+    PlanUnit planUnit = getPlanUnitInPlan(command.planId(), command.planUnitId());
+
+    // 요청자가 해당 단위 일정의 역할이 'HOST'인지 검증하기 위한 객체
+    PlanParticipation hostPlanParticipation = planParticipationRepository.findByPlanUnitAndUserId(
+            planUnit, command.userId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_NOT_FOUND));
+
+    hostPlanParticipation.validateHostOf(planUnit);
+
+
+    // 상태를 변경을 위한 객체
+    PlanParticipation targetPlanParticipation = planParticipationRepository.findByIdAndPlanUnit(
+            command.participationId(),planUnit)
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_NOT_FOUND));
+
+    targetPlanParticipation.updatePlanParticipantStatus(command.status());
+
+
+    return UpdateParticipantStatusResult.from(targetPlanParticipation);
+  }
+
 
   private void validateDuplicateParticipation(UUID planUnitId, UUID guestId) {
     if (planParticipationRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId)) {
@@ -178,7 +205,6 @@ public class PlanCommandService {
       }
     }
   }
-
 
 
 }
