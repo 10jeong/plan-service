@@ -1,9 +1,11 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
+import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanParticipationJpaRepository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -27,5 +29,15 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   @Override
   public boolean existsByPlanUnitIdAndUserId(UUID planUnitId, UUID guestId) {
     return jpaRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId);
+  }
+
+  @Override
+  public Optional<PlanParticipation> findByPlanUnitAndUserId(PlanUnit planUnit, UUID userId) {
+    return jpaRepository.findByPlanUnitAndUserId(planUnit, userId);
+  }
+
+  @Override
+  public Optional<PlanParticipation> findByIdAndPlanUnit(UUID participationId, PlanUnit planUnit) {
+    return jpaRepository.findByIdAndPlanUnit(participationId, planUnit);
   }
 }

@@ -74,6 +74,28 @@ public class PlanParticipation extends BaseAuditEntity {
     this.planUnit = planUnit;
   }
 
+  /*
+  * 일정 참여상태 변경
+  * */
+  public void updatePlanParticipantStatus(ParticipantStatus status) {
+    if (status == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_REQUIRED);
+    }
+    this.participantStatus = status;
+  }
+
+  public void validateHostOf(PlanUnit planUnit) {
+
+    if (!this.planUnit.equals(planUnit)) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_PLAN_UNIT_MISMATCH);
+    }
+
+    // host 검증
+    if (!this.participantRole.equals(ParticipantRole.HOST)) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_NOT_HOST);
+    }
+  }
+
   private void validateParticipantStatus(ParticipantStatus participantStatus) {
     if (participantStatus == null) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_STATUS_REQUIRED);
@@ -98,5 +120,6 @@ public class PlanParticipation extends BaseAuditEntity {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPANT_PLAN_UNIT_REQUIRED);
     }
   }
+
 
 }

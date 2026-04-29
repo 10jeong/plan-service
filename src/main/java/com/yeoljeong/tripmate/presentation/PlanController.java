@@ -2,16 +2,20 @@ package com.yeoljeong.tripmate.presentation;
 
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
+import com.yeoljeong.tripmate.application.dto.result.UpdateParticipantStatusResult;
 import com.yeoljeong.tripmate.application.service.command.PlanCommandService;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
+import com.yeoljeong.tripmate.presentation.dto.request.UpdateParticipantStatusRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.CreatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.ParticipatePlanResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.UpdateParticipantStatusResponse;
 import com.yeoljeong.tripmate.response.ApiResponse;
 import com.yeoljeong.tripmate.response.constants.CommonSuccessCode;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -49,6 +53,24 @@ public class PlanController {
 
     return ApiResponse.success(CommonSuccessCode.CREATE, "일정 참여 신청이 완료되었습니다.",
         response);
+  }
+
+  @PatchMapping("/{planId}/unit-plans/{unitPlanId}/participations/{participationId}/status")
+  public ApiResponse<UpdateParticipantStatusResponse> updateParticipantStatus(
+      @RequestHeader("X-USER-ID") UUID userId,
+      @PathVariable("planId") UUID planId,
+      @PathVariable("unitPlanId") UUID planUnitId,
+      @PathVariable("participationId") UUID participationId,
+      @RequestBody @Valid UpdateParticipantStatusRequest request) {
+
+    UpdateParticipantStatusResult result =
+        planCommandService.updateParticipantStatus(
+            request.toCommand(userId, planId, planUnitId, participationId));
+
+    UpdateParticipantStatusResponse response = UpdateParticipantStatusResponse.from(result);
+
+    return ApiResponse.success(CommonSuccessCode.OK, "일정 참여 상태가 변경되었습니다.", response);
+
   }
 
 
