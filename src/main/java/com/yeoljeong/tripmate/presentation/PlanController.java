@@ -37,7 +37,7 @@ public class PlanController {
   }
 
 
-  @PostMapping("/plans/{planId}/unit-plans/{unitPlanId}/participations")
+  @PostMapping("/{planId}/unit-plans/{unitPlanId}/participations")
   public ApiResponse<ParticipatePlanResponse> participatePlan(
       @RequestHeader("X-USER-ID") UUID userId,
       @PathVariable("planId") UUID planId,
