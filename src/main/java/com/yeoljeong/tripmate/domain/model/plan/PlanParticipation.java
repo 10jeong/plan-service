@@ -48,7 +48,7 @@ public class PlanParticipation extends BaseAuditEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "participation_status", nullable = false)
-  private ParticipationStatus participationStatus = ParticipationStatus.PENDING; // 상태(PENDING, APPROVAL, REJECTED)
+  private ParticipationStatus participationStatus = ParticipationStatus.PENDING; // 상태(PENDING, APPROVAL, REJECTED, JOINED, WITHDRAWN)
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "plan_unit_id", nullable = false)
