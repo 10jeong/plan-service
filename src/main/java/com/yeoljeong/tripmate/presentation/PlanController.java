@@ -32,7 +32,7 @@ public class PlanController {
 
   @PostMapping
   public ApiResponse<CreatePlanResponse> createPlans(
-      @RequestHeader("X-USER-ID") UUID userId,
+      @RequestHeader("X-User-Id") UUID userId,
       @RequestBody @Valid CreatePlanRequest createPlanRequest) {
 
     CreatePlanResult result = planCommandService.createPlans(createPlanRequest.toCommand(userId));
@@ -43,7 +43,7 @@ public class PlanController {
 
   @PostMapping("/{planId}/unit-plans/{unitPlanId}/participations")
   public ApiResponse<ParticipatePlanResponse> participatePlan(
-      @RequestHeader("X-USER-ID") UUID userId,
+      @RequestHeader("X-User-Id") UUID userId,
       @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId) {
 
@@ -57,7 +57,7 @@ public class PlanController {
 
   @PatchMapping("/{planId}/unit-plans/{unitPlanId}/participations/{participationId}/status")
   public ApiResponse<UpdateParticipationStatusResponse> updateParticipationStatus(
-      @RequestHeader("X-USER-ID") UUID userId,
+      @RequestHeader("X-User-Id") UUID userId,
       @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId,
       @PathVariable("participationId") UUID participationId,

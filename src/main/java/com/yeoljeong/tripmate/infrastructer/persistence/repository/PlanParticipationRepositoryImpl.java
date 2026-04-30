@@ -40,4 +40,9 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   public Optional<PlanParticipation> findByIdAndPlanUnit(UUID participationId, PlanUnit planUnit) {
     return jpaRepository.findByIdAndPlanUnit(participationId, planUnit);
   }
+
+  @Override
+  public PlanParticipation findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId) {
+    return jpaRepository.findByPlanUnit_IdAndUserId(planUnitId, userId);
+  }
 }
