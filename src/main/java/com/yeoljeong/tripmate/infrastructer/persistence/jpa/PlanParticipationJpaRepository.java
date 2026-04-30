@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.jpa;
 
+import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import java.util.Optional;
@@ -14,5 +15,7 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
 
   Optional<PlanParticipation> findByIdAndPlanUnit(UUID participationId, PlanUnit planUnit);
 
-  PlanParticipation findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId);
+  Optional<PlanParticipation> findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId);
+
+  boolean existsByPlanUnitAndUserIdAndParticipationRole(PlanUnit planUnit, UUID userId, ParticipationRole participationRole);
 }

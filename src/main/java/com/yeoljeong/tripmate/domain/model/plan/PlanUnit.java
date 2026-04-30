@@ -114,6 +114,14 @@ public class PlanUnit extends BaseAuditEntity {
     this.productId = productId;
   }
 
+  /* 일정 확정*/
+  public void confirmPlanUnit() {
+    if (this.isConfirmed) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_ALREADY_CONFIRMED);
+    }
+    this.isConfirmed = true;
+  }
+
   private void validateOrderIndex(int orderIndex) {
     if (orderIndex < 1) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_ORDER_INVALID);
@@ -169,5 +177,6 @@ public class PlanUnit extends BaseAuditEntity {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_TITLE_EXCEED);
     }
   }
+
 
 }

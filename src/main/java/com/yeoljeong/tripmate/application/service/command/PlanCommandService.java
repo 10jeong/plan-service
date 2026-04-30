@@ -4,9 +4,11 @@ import com.yeoljeong.tripmate.application.dto.command.CreatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanUnitCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.UpdateParticipationStatusCommand;
+import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
+import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
@@ -137,6 +139,35 @@ public class PlanCommandService {
     return UpdateParticipationStatusResult.from(targetPlanParticipation);
   }
 
+  /*
+  * 일정 확정
+  * */
+  public ConfirmPlanUnitResult confirmPlanUnit(UUID planId, UUID planUnitId, UUID userId) {
+
+    PlanUnit planUnit = getPlanUnitInPlan(planId, planUnitId);
+
+    validatePlanUnitHost(planUnit, userId);
+
+    // todo: 상품의 최소모집인원에 도달하지 못한다면 확정 불가
+
+    planUnit.confirmPlanUnit();
+
+    // todo : 이벤트 발송
+
+    return ConfirmPlanUnitResult.from(planUnitId, planUnit.getTitle(), planUnit.isConfirmed(),
+        planUnit.getUpdatedAt(), planUnit.getUpdatedBy());
+
+  }
+
+  private void validatePlanUnitHost(PlanUnit planUnit, UUID userId) {
+    boolean isHost = planParticipationRepository.existsByPlanUnitAndUserIdAndParticipationRole(planUnit, userId,
+        ParticipationRole.HOST);
+
+    if (!isHost) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_HOST);
+    }
+  }
+
 
   private void validateDuplicateParticipation(UUID planUnitId, UUID guestId) {
     if (planParticipationRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId)) {
@@ -206,6 +237,4 @@ public class PlanCommandService {
       }
     }
   }
-
-
 }

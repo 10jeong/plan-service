@@ -36,6 +36,8 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_TIME_RANGE_OVERLAP(HttpStatus.BAD_REQUEST, "같은 일차의 단위 일정 시간은 겹칠 수 없습니다." ),
   PLAN_UNIT_REQUIRED(HttpStatus.BAD_REQUEST, "일정 생성에 연결될 단위 일정이 필요합니다." ),
   PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 단위 일정입니다."),
+  PLAN_UNIT_NOT_HOST(HttpStatus.FORBIDDEN, "해당 단위 일정의 호스트만 접근가능합니다."),
+  PLAN_UNIT_ALREADY_CONFIRMED(HttpStatus.BAD_REQUEST, "이미 확정된 일정입니다."),
 
 
   // plan_product_snapshot
