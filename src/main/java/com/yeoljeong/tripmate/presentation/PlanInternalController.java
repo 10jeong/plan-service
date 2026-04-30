@@ -25,8 +25,7 @@ public class PlanInternalController {
       @PathVariable("planUnitId") UUID planUnitId,
       @PathVariable("userId") UUID userId
   ) {
-    FindParticipationStatusResult result = planInternalCommandService.findParticipationStatusByPlanUnitIdAndUserId(
-        new FindParticipantStatusCommand(planUnitId, userId));
+    FindParticipationStatusResult result = planInternalCommandService.findParticipationStatusByPlanUnitIdAndUserId(planUnitId, userId);
 
     FindParticipationStatusResponse response = FindParticipationStatusResponse.from(result);
 
