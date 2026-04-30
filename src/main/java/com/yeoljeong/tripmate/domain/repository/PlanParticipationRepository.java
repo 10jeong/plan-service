@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.domain.repository;
 
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -17,4 +18,6 @@ public interface PlanParticipationRepository {
   Optional<PlanParticipation> findByPlanUnitAndUserId(PlanUnit planUnit, UUID uuid);
 
   Optional<PlanParticipation> findByIdAndPlanUnit(UUID uuid, PlanUnit planUnit);
+
+  PlanParticipation findByPlanUnit_IdAndUserId(@NotNull UUID uuid, @NotNull UUID uuid1);
 }

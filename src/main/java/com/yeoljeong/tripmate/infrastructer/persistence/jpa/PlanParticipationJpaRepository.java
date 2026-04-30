@@ -13,4 +13,6 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   Optional<PlanParticipation> findByPlanUnitAndUserId(PlanUnit planUnit, UUID userId);
 
   Optional<PlanParticipation> findByIdAndPlanUnit(UUID participationId, PlanUnit planUnit);
+
+  PlanParticipation findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId);
 }
