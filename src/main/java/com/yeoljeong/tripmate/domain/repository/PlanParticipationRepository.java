@@ -19,5 +19,5 @@ public interface PlanParticipationRepository {
 
   Optional<PlanParticipation> findByIdAndPlanUnit(UUID uuid, PlanUnit planUnit);
 
-  PlanParticipation findByPlanUnit_IdAndUserId(@NotNull UUID uuid, @NotNull UUID uuid1);
+  Optional<PlanParticipation> findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId);
 }
