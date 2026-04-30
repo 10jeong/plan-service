@@ -15,6 +15,7 @@ import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.util.UUID;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -39,7 +40,7 @@ public class PlanProductSnapshot {
   @JoinColumn(name = "plan_unit_id", nullable = false, unique = true)
   private PlanUnit planUnit; // 단위일정
 
-
+  @Builder
   public PlanProductSnapshot(UUID productId, String name, Country country, String state, String city,
       BigDecimal price, int maxCount, int currentCount, PlanUnit planUnit) {
 

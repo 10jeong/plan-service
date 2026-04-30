@@ -10,7 +10,11 @@ import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
+import com.yeoljeong.tripmate.domain.model.plan.PlanProductSnapshot;
+import com.yeoljeong.tripmate.domain.provider.ProductData;
+import com.yeoljeong.tripmate.domain.provider.ProductProvider;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
+import com.yeoljeong.tripmate.domain.repository.PlanProductSnapshotRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
 import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
@@ -35,6 +39,8 @@ public class PlanCommandService {
   private final PlanRepository planRepository;
   private final PlanUnitRepository planUnitRepository;
   private final PlanParticipationRepository planParticipationRepository;
+  private final PlanProductSnapshotRepository planProductSnapshotRepository;
+  private final ProductProvider productProvider;
 
   /*
   * 일정 생성(일정, 단위일정, 참여)
@@ -148,11 +154,26 @@ public class PlanCommandService {
 
     validatePlanUnitHost(planUnit, userId);
 
-    // todo: 상품의 최소모집인원에 도달하지 못한다면 확정 불가
-
     planUnit.confirmPlanUnit();
 
-    // todo : 이벤트 발송
+    // 스냅샷 저장 (상품 정보 API + 최대인원, 현재인원)
+    ProductData productData = productProvider.get(planUnit.getProductId());
+    
+    PlanProductSnapshot planProductSnapshot = PlanProductSnapshot.builder()
+        .productId(productData.productId())
+        .name(productData.productName())
+        .country(productData.country())
+        .state(productData.state())
+        .city(productData.city())
+        .price(productData.price())
+        .maxCount(planUnit.getParticipantCount().getMaxCount())
+        .currentCount(planUnit.getParticipantCount().getCurrentCount())
+        .planUnit(planUnit)
+        .build();
+
+    planProductSnapshotRepository.save(planProductSnapshot);
+
+    // todo : 알림 이벤트 발행
 
     return ConfirmPlanUnitResult.from(planUnitId, planUnit.getTitle(), planUnit.isConfirmed(),
         planUnit.getUpdatedAt(), planUnit.getUpdatedBy());
