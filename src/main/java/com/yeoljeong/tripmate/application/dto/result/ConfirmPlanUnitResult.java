@@ -6,7 +6,7 @@ import java.util.UUID;
 public record ConfirmPlanUnitResult(
     UUID planUnitId,
     String title,
-    Boolean isConfirmed,
+    boolean isConfirmed,
     LocalDateTime updatedAt,
     UUID updatedBy
 ) {
