@@ -1,7 +1,7 @@
-package com.yeoljeong.tripmate.infrastructer.external.events;
+package com.yeoljeong.tripmate.infrastructer.external.events.publisher;
 
 import com.yeoljeong.tripmate.domain.events.PlanEvents;
-import com.yeoljeong.tripmate.domain.events.PlanUnitConfirmed;
+import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
 import com.yeoljeong.tripmate.event.enums.PlanTopic;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +19,7 @@ public class PlanEventsImpl implements PlanEvents {
   public void planUnitConfirmed(String eventHash, UUID planUnitId, String planTitle,
       List<UUID> receivers) {
 
-    PlanUnitConfirmed payload = new PlanUnitConfirmed(eventHash, planUnitId, planTitle, receivers);
+    PlanUnitConfirmedEvent payload = new PlanUnitConfirmedEvent(eventHash, planUnitId, planTitle, receivers);
 
     kafkaTemplate.send(PlanTopic.PLAN_UNIT_CONFIRMED_TOPIC, payload);
   }
