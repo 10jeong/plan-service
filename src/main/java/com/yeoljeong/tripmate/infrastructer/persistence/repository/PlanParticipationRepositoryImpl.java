@@ -1,5 +1,7 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
+import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
+import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
@@ -42,7 +44,20 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   }
 
   @Override
-  public PlanParticipation findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId) {
+  public Optional<PlanParticipation> findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId) {
     return jpaRepository.findByPlanUnit_IdAndUserId(planUnitId, userId);
+  }
+
+  @Override
+  public boolean existsByPlanUnitAndUserIdAndParticipationRole(PlanUnit planUnit, UUID userId,
+      ParticipationRole participationRole) {
+    return jpaRepository.existsByPlanUnitAndUserIdAndParticipationRole(planUnit, userId,
+        participationRole);
+  }
+
+  @Override
+  public List<PlanParticipation> findAllByPlanUnitAndParticipationStatus(PlanUnit planUnit,
+      ParticipationStatus participationStatus) {
+    return jpaRepository.findAllByPlanUnitAndParticipationStatus(planUnit, participationStatus);
   }
 }

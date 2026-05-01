@@ -4,17 +4,27 @@ import com.yeoljeong.tripmate.application.dto.command.CreatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanUnitCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.UpdateParticipationStatusCommand;
+import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
+import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
+import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import com.yeoljeong.tripmate.domain.events.PlanEvents;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
+import com.yeoljeong.tripmate.domain.model.plan.PlanProductSnapshot;
+import com.yeoljeong.tripmate.domain.provider.ProductData;
+import com.yeoljeong.tripmate.domain.provider.ProductProvider;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
+import com.yeoljeong.tripmate.domain.repository.PlanProductSnapshotRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
 import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
+import com.yeoljeong.tripmate.event.EventUtils;
 import com.yeoljeong.tripmate.exception.BusinessException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -33,6 +43,9 @@ public class PlanCommandService {
   private final PlanRepository planRepository;
   private final PlanUnitRepository planUnitRepository;
   private final PlanParticipationRepository planParticipationRepository;
+  private final PlanProductSnapshotRepository planProductSnapshotRepository;
+  private final ProductProvider productProvider;
+  private final PlanEvents events;
 
   /*
   * 일정 생성(일정, 단위일정, 참여)
@@ -137,6 +150,62 @@ public class PlanCommandService {
     return UpdateParticipationStatusResult.from(targetPlanParticipation);
   }
 
+  /*
+  * 일정 확정
+  * */
+  public ConfirmPlanUnitResult confirmPlanUnit(UUID planId, UUID planUnitId, UUID userId)
+      throws NoSuchAlgorithmException {
+
+    PlanUnit planUnit = getPlanUnitInPlan(planId, planUnitId);
+
+    validatePlanUnitHost(planUnit, userId);
+
+    planUnit.confirmPlanUnit();
+
+    // 스냅샷 저장 (상품 정보 API + 최대인원, 현재인원)
+    ProductData productData = productProvider.get(planUnit.getProductId());
+    
+    PlanProductSnapshot planProductSnapshot = PlanProductSnapshot.builder()
+        .productId(productData.productId())
+        .name(productData.productName())
+        .country(productData.country())
+        .state(productData.state())
+        .city(productData.city())
+        .price(productData.price())
+        .maxCount(planUnit.getParticipantCount().getMaxCount())
+        .currentCount(planUnit.getParticipantCount().getCurrentCount())
+        .planUnit(planUnit)
+        .build();
+
+    planProductSnapshotRepository.save(planProductSnapshot);
+
+    // 알림 수신자
+    List<UUID> receivers = planParticipationRepository.findAllByPlanUnitAndParticipationStatus(
+        planUnit, ParticipationStatus.APPROVAL)
+        .stream()
+        .map(PlanParticipation::getUserId)
+        .toList();
+
+    events.planUnitConfirmed(
+        EventUtils.getEventHash("planUnit", String.valueOf(planUnitId), planUnit.getUpdatedAt()),
+        planUnitId,
+        planUnit.getTitle(),
+        receivers);
+
+    return ConfirmPlanUnitResult.from(planUnitId, planUnit.getTitle(), planUnit.isConfirmed(),
+        planUnit.getUpdatedAt(), planUnit.getUpdatedBy());
+
+  }
+
+  private void validatePlanUnitHost(PlanUnit planUnit, UUID userId) {
+    boolean isHost = planParticipationRepository.existsByPlanUnitAndUserIdAndParticipationRole(planUnit, userId,
+        ParticipationRole.HOST);
+
+    if (!isHost) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_HOST);
+    }
+  }
+
 
   private void validateDuplicateParticipation(UUID planUnitId, UUID guestId) {
     if (planParticipationRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId)) {
@@ -206,6 +275,4 @@ public class PlanCommandService {
       }
     }
   }
-
-
 }
