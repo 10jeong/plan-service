@@ -15,6 +15,7 @@ import com.yeoljeong.tripmate.presentation.dto.response.UpdateParticipationStatu
 import com.yeoljeong.tripmate.response.ApiResponse;
 import com.yeoljeong.tripmate.response.constants.CommonSuccessCode;
 import jakarta.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -81,7 +82,7 @@ public class PlanController {
       @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId,
       @RequestHeader("X-User-Id") UUID userId
-  ) {
+  ) throws NoSuchAlgorithmException {
     ConfirmPlanUnitResult result = planCommandService.confirmPlanUnit(planId, planUnitId, userId);
     ConfirmPlanUnitResponse response = ConfirmPlanUnitResponse.from(result);
 

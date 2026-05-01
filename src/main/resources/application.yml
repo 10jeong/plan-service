@@ -1,5 +1,5 @@
 server:
-  port: 0
+  port: 18080
 spring:
   application:
     name: plan-service
@@ -15,12 +15,22 @@ spring:
       hibernate:
         show_sql: ${JPA_SHOW_SQL:false}
         format_sql: true
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: true // json 헤더에 클래스 타입 정보 추가로 수신서비스에서 자동 역직렬화 가능
+
 
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: ${defaultZone:http://localhost:8761/eureka}
+    register-with-eureka: true
+    fetch-registry: true
   instance:
     instance-id:
       ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}

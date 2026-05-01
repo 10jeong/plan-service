@@ -9,6 +9,8 @@ import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
+import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import com.yeoljeong.tripmate.domain.events.PlanEvents;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.plan.PlanProductSnapshot;
 import com.yeoljeong.tripmate.domain.provider.ProductData;
@@ -20,7 +22,9 @@ import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
+import com.yeoljeong.tripmate.event.EventUtils;
 import com.yeoljeong.tripmate.exception.BusinessException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -41,6 +45,7 @@ public class PlanCommandService {
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanProductSnapshotRepository planProductSnapshotRepository;
   private final ProductProvider productProvider;
+  private final PlanEvents events;
 
   /*
   * 일정 생성(일정, 단위일정, 참여)
@@ -148,7 +153,8 @@ public class PlanCommandService {
   /*
   * 일정 확정
   * */
-  public ConfirmPlanUnitResult confirmPlanUnit(UUID planId, UUID planUnitId, UUID userId) {
+  public ConfirmPlanUnitResult confirmPlanUnit(UUID planId, UUID planUnitId, UUID userId)
+      throws NoSuchAlgorithmException {
 
     PlanUnit planUnit = getPlanUnitInPlan(planId, planUnitId);
 
@@ -173,7 +179,18 @@ public class PlanCommandService {
 
     planProductSnapshotRepository.save(planProductSnapshot);
 
-    // todo : 알림 이벤트 발행
+    // 알림 수신자
+    List<UUID> receivers = planParticipationRepository.findAllByPlanUnitAndParticipationStatus(
+        planUnit, ParticipationStatus.APPROVAL)
+        .stream()
+        .map(PlanParticipation::getUserId)
+        .toList();
+
+    events.planUnitConfirmed(
+        EventUtils.getEventHash("planUnit", String.valueOf(planUnitId), planUnit.getUpdatedAt()),
+        planUnitId,
+        planUnit.getTitle(),
+        receivers);
 
     return ConfirmPlanUnitResult.from(planUnitId, planUnit.getTitle(), planUnit.isConfirmed(),
         planUnit.getUpdatedAt(), planUnit.getUpdatedBy());

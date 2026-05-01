@@ -1,6 +1,7 @@
 package com.yeoljeong.tripmate.domain.repository;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
+import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import java.util.List;
@@ -22,4 +23,6 @@ public interface PlanParticipationRepository {
   Optional<PlanParticipation> findByPlanUnit_IdAndUserId(UUID planUnitId, UUID userId);
 
   boolean existsByPlanUnitAndUserIdAndParticipationRole(PlanUnit planUnit, UUID userId, ParticipationRole participationRole);
+
+  List<PlanParticipation> findAllByPlanUnitAndParticipationStatus(PlanUnit planUnit, ParticipationStatus participationStatus);
 }
