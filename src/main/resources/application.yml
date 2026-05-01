@@ -21,7 +21,7 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
-        spring.json.add.type.headers: true // json 헤더에 클래스 타입 정보 추가로 수신서비스에서 자동 역직렬화 가능
+        spring.json.add.type.headers: true # json 헤더에 클래스 타입 정보 추가로 수신서비스에서 자동 역직렬화 가능
 
 
 
