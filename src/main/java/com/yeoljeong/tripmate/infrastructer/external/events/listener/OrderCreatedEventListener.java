@@ -16,8 +16,10 @@ public class OrderCreatedEventListener {
   private final PlanInternalCommandService planInternalCommandService;
 
   @KafkaListener (topics = OrderTopic.ORDER_CREATED_TOPIC, groupId = "plan-group")
-  public void orderCreated(OrderCreatedEvent event) { // ack 고려
+  public void orderCreated(OrderCreatedEvent event) { // todo: ack 고려
     try {
+
+      // todo: 이미 처리된 이벤트인지 확인(멱등성 추후 처리)
 
       if (event == null) {
         log.warn("[plan-service] 주문 생성 이벤트가 null입니다.");
