@@ -31,9 +31,9 @@ public class PlanEventsImpl implements PlanEvents {
   }
 
   @Override
-  public void planUnitAddParticipant(UUID productId, UUID scheduleId, int quantity) {
+  public void planUnitAddParticipant(UUID eventId, UUID productId, UUID scheduleId, int quantity) {
     PlanUnitParticipantAddedEvent payload = new PlanUnitParticipantAddedEvent(
-        UUID.randomUUID(),
+        eventId,
         productId,
         scheduleId,
         quantity

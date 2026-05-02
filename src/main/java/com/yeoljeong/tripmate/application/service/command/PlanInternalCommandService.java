@@ -41,6 +41,6 @@ public class PlanInternalCommandService {
 
     planUnit.addPlanUnitParticipant(event.quantity());
 
-    events.planUnitAddParticipant(event.productId(), event.scheduleId(), event.quantity());
+    events.planUnitAddParticipant(event.eventId(), event.productId(), event.scheduleId(), event.quantity());
   }
 }
