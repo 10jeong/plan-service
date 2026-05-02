@@ -24,4 +24,9 @@ public class PlanUnitRepositoryImpl implements PlanUnitRepository {
   public Optional<PlanUnit> findByIdAndPlanId(UUID planUnitId, UUID planId) {
     return jpaRepository.findByIdAndPlanId(planUnitId, planId);
   }
+
+  @Override
+  public Optional<PlanUnit> findById(UUID planUnitId) {
+    return jpaRepository.findById(planUnitId);
+  }
 }
