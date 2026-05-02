@@ -14,7 +14,7 @@ public class ProductProviderImpl implements ProductProvider {
   private final ProductFeignClient productFeignClient;
 
   @Override
-  public ProductData get(UUID productId) {
-    return productFeignClient.get(productId);
+  public ProductData getProduct(UUID productId) {
+    return productFeignClient.getProduct(productId);
   }
 }

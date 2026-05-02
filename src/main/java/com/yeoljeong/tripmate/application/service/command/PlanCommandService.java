@@ -8,6 +8,7 @@ import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
+import com.yeoljeong.tripmate.domain.enums.Country;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
 import com.yeoljeong.tripmate.domain.events.PlanEvents;
@@ -163,12 +164,15 @@ public class PlanCommandService {
     planUnit.confirmPlanUnit();
 
     // 스냅샷 저장 (상품 정보 API + 최대인원, 현재인원)
-    ProductData productData = productProvider.get(planUnit.getProductId());
+    ProductData productData = productProvider.getProduct(planUnit.getProductId());
+    if (productData == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
+    }
     
     PlanProductSnapshot planProductSnapshot = PlanProductSnapshot.builder()
         .productId(productData.productId())
         .name(productData.productName())
-        .country(productData.country())
+        .country(Country.valueOf(productData.country()))
         .state(productData.state())
         .city(productData.city())
         .price(productData.price())
