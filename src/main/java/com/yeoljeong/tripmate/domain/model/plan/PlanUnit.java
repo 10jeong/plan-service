@@ -124,7 +124,14 @@ public class PlanUnit extends BaseAuditEntity {
 
   /* 일정 현재 인원 증가*/
   public void addPlanUnitParticipant(int quantity) {
+    validatePositive(quantity);
     this.participantCount = participantCount.add(quantity);
+  }
+
+  private void validatePositive(int quantity) {
+    if (quantity < 1) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_UPDATE_QUANTITY_INVALID);
+    }
   }
 
   private void validateOrderIndex(int orderIndex) {

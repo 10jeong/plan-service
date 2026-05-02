@@ -63,7 +63,8 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PARTICIPATION_NOT_HOST(HttpStatus.FORBIDDEN, "해당 일정의 참여 상태 변경은 호스트만 가능합니다." ),
   PLAN_PARTICIPATION_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 일정 참여 정보가 존재하지 않습니다." ),
   PLAN_PARTICIPATION_PLAN_UNIT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단위 일정 정보는 요청한 단위 일정과 일치하지 않습니다."),
-  PLAN_PARTICIPATION_STATUS_INVALID(HttpStatus.BAD_REQUEST, "참여 상태는 PENDING에서 APPROVAL 또는 REJECTED로만 변경할 수 있습니다.");
+  PLAN_PARTICIPATION_STATUS_INVALID(HttpStatus.BAD_REQUEST, "참여 상태는 PENDING에서 APPROVAL 또는 REJECTED로만 변경할 수 있습니다."),
+  PLAN_UNIT_PARTICIPANT_UPDATE_QUANTITY_INVALID(HttpStatus.BAD_REQUEST, "변경할 참여 인원 수가 올바르지 않습니다.");
 
 
   private final HttpStatus status;
