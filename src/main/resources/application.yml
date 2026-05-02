@@ -22,8 +22,11 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: true # json 헤더에 클래스 타입 정보 추가로 수신서비스에서 자동 역직렬화 가능
-
-
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "com.yeoljeong.tripmate.event" # 어느 패키지 클래스까지 변환 허용
 
 eureka:
   client:
