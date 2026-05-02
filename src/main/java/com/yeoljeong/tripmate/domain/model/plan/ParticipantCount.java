@@ -19,17 +19,17 @@ import lombok.NoArgsConstructor;
 public class ParticipantCount {
 
   @Column(name = "max_count", nullable = false)
-  private int maxCount = 1; // 참여 최대 인원
+  private int maxCount = 0; // 참여 최대 인원
 
   @Column(name = "current_count", nullable = false)
-  private int currentCount = 1; // 참여 현재 인원
+  private int currentCount = 0; // 참여 현재 인원
 
   // 일정에서 생성
   public ParticipantCount(int maxCount) {
     validatePositive(maxCount);
 
     this.maxCount = maxCount;
-    this.currentCount = 1;
+    this.currentCount = 0;
   }
 
   // 상품 스냅샷에서 생성
@@ -59,7 +59,7 @@ public class ParticipantCount {
   }
 
   private void validatePositive(int count) {
-    if (count < 1) {
+    if (count < 0) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_COUNT_NEGATIVE);
     }
   }
