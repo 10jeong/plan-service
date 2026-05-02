@@ -32,6 +32,8 @@ public class PlanInternalCommandService {
 
   public void addPlanUnitParticipant(OrderCreatedEvent event) {
 
+    // todo: 동시에 read 한다면 업데이트 유실이 발생할 수 있음.
+    //  -> 낙관적 락(+재시도) or 비관적 락 or 원자 update 쿼리 보호 필요
     PlanUnit planUnit = planUnitRepository.findById(event.planUnitId())
             .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
 
