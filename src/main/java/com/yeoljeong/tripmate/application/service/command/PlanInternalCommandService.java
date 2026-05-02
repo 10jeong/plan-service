@@ -1,6 +1,7 @@
 package com.yeoljeong.tripmate.application.service.command;
 
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
+import com.yeoljeong.tripmate.domain.events.PlanEvents;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
@@ -20,6 +21,7 @@ public class PlanInternalCommandService {
 
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanUnitRepository planUnitRepository;
+  private final PlanEvents events;
 
   public FindParticipationStatusResult findParticipationStatusByPlanUnitIdAndUserId(UUID planUnitId, UUID userId) {
 
@@ -38,5 +40,7 @@ public class PlanInternalCommandService {
             .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
 
     planUnit.addPlanUnitParticipant(event.quantity());
+
+    events.planUnitAddParticipant(event.productId(), event.scheduleId(), event.quantity());
   }
 }
