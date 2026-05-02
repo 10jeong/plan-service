@@ -8,9 +8,11 @@ import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.event.OrderCreatedEvent;
+import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +23,7 @@ public class PlanInternalCommandService {
 
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanUnitRepository planUnitRepository;
-  private final PlanEvents events;
+  private final ApplicationEventPublisher publisher;
 
   public FindParticipationStatusResult findParticipationStatusByPlanUnitIdAndUserId(UUID planUnitId, UUID userId) {
 
@@ -41,6 +43,6 @@ public class PlanInternalCommandService {
 
     planUnit.addPlanUnitParticipant(event.quantity());
 
-    events.planUnitAddParticipant(event.eventId(), event.productId(), event.scheduleId(), event.quantity());
+    publisher.publishEvent(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
   }
 }
