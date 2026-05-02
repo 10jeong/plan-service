@@ -165,6 +165,9 @@ public class PlanCommandService {
 
     // 스냅샷 저장 (상품 정보 API + 최대인원, 현재인원)
     ProductData productData = productProvider.getProduct(planUnit.getProductId());
+    if (productData == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
+    }
     
     PlanProductSnapshot planProductSnapshot = PlanProductSnapshot.builder()
         .productId(productData.productId())
