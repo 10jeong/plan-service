@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
+import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanUnitJpaRepository;
@@ -28,5 +29,10 @@ public class PlanUnitRepositoryImpl implements PlanUnitRepository {
   @Override
   public Optional<PlanUnit> findById(UUID planUnitId) {
     return jpaRepository.findById(planUnitId);
+  }
+
+  @Override
+  public List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan) {
+    return jpaRepository.findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(plan);
   }
 }

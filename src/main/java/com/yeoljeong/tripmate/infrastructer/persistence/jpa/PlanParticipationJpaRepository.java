@@ -22,4 +22,6 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   boolean existsByPlanUnitAndUserIdAndParticipationRole(PlanUnit planUnit, UUID userId, ParticipationRole participationRole);
 
   List<PlanParticipation> findAllByPlanUnitAndParticipationStatus(PlanUnit planUnit, ParticipationStatus participationStatus);
+
+  List<PlanParticipation> findAllByPlanUnitIn(List<PlanUnit> planUnit);
 }

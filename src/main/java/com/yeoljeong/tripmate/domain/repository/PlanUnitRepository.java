@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.domain.repository;
 
+import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
 import java.util.List;
 import java.util.Optional;
@@ -12,4 +13,6 @@ public interface PlanUnitRepository {
   Optional<PlanUnit> findByIdAndPlanId(UUID planUnitId, UUID planId);
 
   Optional<PlanUnit> findById(UUID uuid);
+
+  List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan);
 }

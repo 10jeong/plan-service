@@ -23,7 +23,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_DESCRIPTION_REQUIRED(HttpStatus.BAD_REQUEST, "단위 일정 설명은 필수입니다." ),
   PLAN_UNIT_PRICE_REQUIRED(HttpStatus.BAD_REQUEST, "단위 일정의 가격은 필수입니다." ),
   PLAN_UNIT_PRICE_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 가격은 음수가 불가능합니다." ),
-  PLAN_UNIT_PARTICIPANT_COUNT_NEGATIVE(HttpStatus.BAD_REQUEST, "단위 일정의 참여 최대 인원은 1명 이상입니다." ),
+  PLAN_UNIT_PARTICIPANT_COUNT_NEGATIVE(HttpStatus.BAD_REQUEST, "단위 일정의 참여 최대 인원은 0명 이상입니다." ),
   PLAN_UNIT_PARTICIPANT_EXCEED(HttpStatus.BAD_REQUEST, "단위 일정의 현재 인원은 최대 인원을 초과할 수 없습니다." ),
   PLAN_UNIT_TIME_RANGE_REQUIRED(HttpStatus.BAD_REQUEST, "단위 일정의 예상 시간은 필수입니다." ),
   PLAN_UNIT_TIME_RANGE_INVALID(HttpStatus.BAD_REQUEST, "단위 일정의 예상 시작 시간은 예상 종료 시간보다 이전이어야 합니다."),
