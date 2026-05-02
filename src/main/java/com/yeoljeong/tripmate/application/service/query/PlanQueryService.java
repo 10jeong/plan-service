@@ -54,7 +54,7 @@ public class PlanQueryService {
   public Slice<GetPlanResponse> getPlan(GetPlanCommand command) {
     String title = command.title() == null || command.title().isBlank()
         ? null
-        : "&" + command.title().trim() + "%";
+        : "%" + command.title().trim() + "%";
 
     RecruitStatus recruitStatus = command.recruitStatus() == null
         ? RecruitStatus.OPEN
