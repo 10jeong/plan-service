@@ -2,14 +2,17 @@ package com.yeoljeong.tripmate.presentation;
 
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
+import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
 import com.yeoljeong.tripmate.application.service.command.PlanCommandService;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
+import com.yeoljeong.tripmate.application.service.query.PlanQueryService;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
 import com.yeoljeong.tripmate.presentation.dto.request.UpdateParticipationStatusRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.ConfirmPlanUnitResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.CreatePlanResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.GetPlanDetailResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.ParticipatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.UpdateParticipationStatusResponse;
 import com.yeoljeong.tripmate.response.ApiResponse;
@@ -18,6 +21,7 @@ import jakarta.validation.Valid;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,6 +36,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PlanController {
 
   private final PlanCommandService planCommandService;
+  private final PlanQueryService planQueryService;
 
   @PostMapping
   public ApiResponse<CreatePlanResponse> createPlans(
@@ -87,6 +92,18 @@ public class PlanController {
     ConfirmPlanUnitResponse response = ConfirmPlanUnitResponse.from(result);
 
     return ApiResponse.success(CommonSuccessCode.OK, "일정이 확정되었습니다.", response);
+  }
+
+  // 일정 상세 조회 (모든 사용자)
+  @GetMapping("/{planId}")
+  public ApiResponse<GetPlanDetailResponse> getPlanDetail(@PathVariable UUID planId) {
+
+
+    GetPlanDetailResult result = planQueryService.getPlanDetail(planId);
+    GetPlanDetailResponse response = GetPlanDetailResponse.from(result);
+
+    return ApiResponse.success(CommonSuccessCode.OK, "일정 상세 조회가 완료되었습니다.", response);
+
   }
 
 
