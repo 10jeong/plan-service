@@ -42,6 +42,16 @@ public class ParticipantCount {
     this.currentCount = currentCount;
   }
 
+  // 일정 참여 인원 증가
+  public ParticipantCount add(int quantity) {
+    int newCurrentCount = this.currentCount + quantity;
+
+    if (newCurrentCount > this.maxCount) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_EXCEED);
+    }
+    return new ParticipantCount(this.maxCount, newCurrentCount);
+  }
+
   private void validateNotExceed(int maxCount, int currentCount) {
     if (currentCount > maxCount) {
       throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_EXCEED);

@@ -10,4 +10,6 @@ public interface PlanUnitRepository {
   void saveAll(List<PlanUnit> planUnit);
 
   Optional<PlanUnit> findByIdAndPlanId(UUID planUnitId, UUID planId);
+
+  Optional<PlanUnit> findById(UUID uuid);
 }
