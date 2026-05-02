@@ -11,5 +11,5 @@ public interface PlanUnitJpaRepository extends JpaRepository<PlanUnit, UUID> {
 
   Optional<PlanUnit> findByIdAndPlanId(UUID planUnitId, UUID planId);
 
-  List<PlanUnit> findAllByPlan(Plan plan);
+  List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan);
 }

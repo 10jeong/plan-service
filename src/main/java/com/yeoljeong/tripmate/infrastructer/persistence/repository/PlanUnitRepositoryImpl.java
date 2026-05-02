@@ -32,7 +32,7 @@ public class PlanUnitRepositoryImpl implements PlanUnitRepository {
   }
 
   @Override
-  public List<PlanUnit> findAllByPlan(Plan plan) {
-    return jpaRepository.findAllByPlan(plan);
+  public List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan) {
+    return jpaRepository.findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(plan);
   }
 }

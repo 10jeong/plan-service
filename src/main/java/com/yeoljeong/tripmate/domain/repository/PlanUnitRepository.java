@@ -14,5 +14,5 @@ public interface PlanUnitRepository {
 
   Optional<PlanUnit> findById(UUID uuid);
 
-  List<PlanUnit> findAllByPlan(Plan plan);
+  List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan);
 }

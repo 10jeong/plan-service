@@ -31,7 +31,7 @@ public class PlanQueryService {
     Plan plan = planRepository.findById(planId)
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_NOT_FOUND));
 
-    List<PlanUnit> planUnit = planUnitRepository.findAllByPlan(plan);
+    List<PlanUnit> planUnit = planUnitRepository.findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(plan);
     List<PlanParticipation> planParticipation = participationRepository.findAllByPlanUnitIn(planUnit);
 
     // 참여자 그룹핑
