@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.jpa;
 
-import com.yeoljeong.tripmate.domain.model.plan.PlanProductSnapshot;
+import com.yeoljeong.tripmate.domain.model.PlanProductSnapshot;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 

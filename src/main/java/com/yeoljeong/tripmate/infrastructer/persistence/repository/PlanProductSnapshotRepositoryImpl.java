@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
-import com.yeoljeong.tripmate.domain.model.plan.PlanProductSnapshot;
+import com.yeoljeong.tripmate.domain.model.PlanProductSnapshot;
 import com.yeoljeong.tripmate.domain.repository.PlanProductSnapshotRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanProductSnapshotJpaRepository;
 import lombok.RequiredArgsConstructor;

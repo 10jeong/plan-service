@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.application.dto.result;
 
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lombok.AccessLevel;

@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.domain.repository;
 
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import java.util.Optional;
 import java.util.UUID;
 

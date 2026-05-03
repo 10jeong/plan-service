@@ -1,7 +1,7 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
-import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
+import com.yeoljeong.tripmate.domain.model.Plan;
+import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanUnitJpaRepository;
 import java.util.List;

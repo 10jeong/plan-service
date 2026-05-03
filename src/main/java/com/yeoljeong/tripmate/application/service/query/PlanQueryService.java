@@ -2,9 +2,9 @@ package com.yeoljeong.tripmate.application.service.query;
 
 import com.yeoljeong.tripmate.application.dto.result.PlanUnitDetailResult;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
-import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
-import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
+import com.yeoljeong.tripmate.domain.model.Plan;
+import com.yeoljeong.tripmate.domain.model.PlanParticipation;
+import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;

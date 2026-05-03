@@ -2,7 +2,6 @@ package com.yeoljeong.tripmate.presentation.dto.response;
 
 import com.yeoljeong.tripmate.application.dto.result.PlanUnitDetailResult;
 
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;

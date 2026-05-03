@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.domain.model.plan;
+package com.yeoljeong.tripmate.domain.model;
 
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.enums.Country;
