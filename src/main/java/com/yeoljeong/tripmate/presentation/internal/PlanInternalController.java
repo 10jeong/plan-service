@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.presentation;
+package com.yeoljeong.tripmate.presentation.internal;
 
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
 import com.yeoljeong.tripmate.application.service.command.PlanInternalCommandService;
