@@ -1,8 +1,7 @@
-package com.yeoljeong.tripmate.infrastructer.external.provider;
+package com.yeoljeong.tripmate.infrastructer.external.client;
 
 import com.yeoljeong.tripmate.domain.provider.ProductData;
 import com.yeoljeong.tripmate.domain.provider.ProductProvider;
-import com.yeoljeong.tripmate.infrastructer.external.client.ProductFeignClient;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
