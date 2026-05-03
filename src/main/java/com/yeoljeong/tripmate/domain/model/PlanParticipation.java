@@ -90,6 +90,20 @@ public class PlanParticipation extends BaseAuditEntity {
     this.participationStatus = status;
   }
 
+  /*
+  * 주문 생성시, 참여 상태(APPROVAL -> JOINED)
+  * */
+  public void confirmParticipation() {
+    validateApprovalStatus();
+    this.participationStatus = ParticipationStatus.JOINED;
+  }
+
+  private void validateApprovalStatus() {
+    if (this.participationStatus != ParticipationStatus.APPROVAL) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_NOT_APPROVAL);
+    }
+  }
+
   public void validateHostOf(PlanUnit planUnit) {
 
     if (!this.planUnit.equals(planUnit)) {
@@ -126,6 +140,5 @@ public class PlanParticipation extends BaseAuditEntity {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_PLAN_UNIT_REQUIRED);
     }
   }
-
 
 }

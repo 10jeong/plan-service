@@ -40,6 +40,11 @@ public class PlanInternalCommandService {
     PlanUnit planUnit = planUnitRepository.findById(event.planUnitId())
             .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
 
+    PlanParticipation planParticipation = planParticipationRepository.findByPlanUnitAndUserId(
+            planUnit, event.userId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
+
+    planParticipation.confirmParticipation();
     planUnit.addPlanUnitParticipant(event.quantity());
 
     publisher.publishEvent(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
