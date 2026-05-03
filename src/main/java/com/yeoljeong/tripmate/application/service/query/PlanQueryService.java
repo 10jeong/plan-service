@@ -1,6 +1,8 @@
 package com.yeoljeong.tripmate.application.service.query;
 
+import com.yeoljeong.tripmate.application.dto.command.GetPlanCommand;
 import com.yeoljeong.tripmate.application.dto.result.PlanUnitDetailResult;
+import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.Plan;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
@@ -10,11 +12,13 @@ import com.yeoljeong.tripmate.domain.repository.PlanRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
+import com.yeoljeong.tripmate.presentation.dto.response.GetPlanResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,5 +49,25 @@ public class PlanQueryService {
               )).toList();
     return GetPlanDetailResult.from(plan, planUnitResult);
 
+  }
+
+  public Slice<GetPlanResponse> getPlan(GetPlanCommand command) {
+    String title = command.title() == null || command.title().isBlank()
+        ? null
+        : "%" + command.title().trim() + "%";
+
+    RecruitStatus recruitStatus = command.recruitStatus() == null
+        ? RecruitStatus.OPEN
+        : command.recruitStatus();
+
+    Slice<Plan> plans = planRepository.findByCondition(
+        title,
+        command.startDate(),
+        command.endDate(),
+        recruitStatus,
+        command.pageable()
+    );
+
+    return plans.map(GetPlanResponse::from);
   }
 }
