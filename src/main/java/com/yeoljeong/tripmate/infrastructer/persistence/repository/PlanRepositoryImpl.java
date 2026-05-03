@@ -1,7 +1,7 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanJpaRepository;
 import java.time.LocalDate;

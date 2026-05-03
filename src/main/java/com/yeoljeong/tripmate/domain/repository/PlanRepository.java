@@ -1,8 +1,8 @@
 package com.yeoljeong.tripmate.domain.repository;
 
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
 import java.time.LocalDate;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.domain.Pageable;

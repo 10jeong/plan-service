@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.infrastructer.external.events.publisher;
+package com.yeoljeong.tripmate.infrastructer.messaging.producer;
 
 import com.yeoljeong.tripmate.domain.events.PlanEvents;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;

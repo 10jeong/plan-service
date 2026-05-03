@@ -2,8 +2,8 @@ package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
-import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
-import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
+import com.yeoljeong.tripmate.domain.model.PlanParticipation;
+import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.infrastructer.persistence.jpa.PlanParticipationJpaRepository;
 import java.util.List;

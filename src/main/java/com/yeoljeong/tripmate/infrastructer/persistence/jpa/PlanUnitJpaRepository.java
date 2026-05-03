@@ -1,7 +1,7 @@
 package com.yeoljeong.tripmate.infrastructer.persistence.jpa;
 
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
-import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
+import com.yeoljeong.tripmate.domain.model.Plan;
+import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;

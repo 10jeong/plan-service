@@ -1,10 +1,9 @@
 package com.yeoljeong.tripmate.application.service.command;
 
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
-import com.yeoljeong.tripmate.domain.events.PlanEvents;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
-import com.yeoljeong.tripmate.domain.model.plan.PlanParticipation;
-import com.yeoljeong.tripmate.domain.model.plan.PlanUnit;
+import com.yeoljeong.tripmate.domain.model.PlanParticipation;
+import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.event.OrderCreatedEvent;

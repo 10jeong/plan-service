@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.presentation;
+package com.yeoljeong.tripmate.presentation.external;
 
 import com.yeoljeong.tripmate.application.dto.command.GetPlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;

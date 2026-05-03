@@ -2,7 +2,7 @@ package com.yeoljeong.tripmate.application.dto.result;
 
 import com.yeoljeong.tripmate.domain.enums.PlanCreationType;
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
