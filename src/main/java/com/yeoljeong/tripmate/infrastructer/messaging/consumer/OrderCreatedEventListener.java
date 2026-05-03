@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.infrastructer.external.events.listener;
+package com.yeoljeong.tripmate.infrastructer.messaging.consumer;
 
 import com.yeoljeong.tripmate.application.service.command.PlanInternalCommandService;
 import com.yeoljeong.tripmate.event.OrderCreatedEvent;
