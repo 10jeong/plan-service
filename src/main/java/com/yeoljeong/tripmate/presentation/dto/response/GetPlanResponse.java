@@ -1,7 +1,7 @@
 package com.yeoljeong.tripmate.presentation.dto.response;
 
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
-import com.yeoljeong.tripmate.domain.model.plan.Plan;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import java.time.LocalDate;
 import java.util.UUID;
 
