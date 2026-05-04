@@ -41,10 +41,10 @@ public class PlanProductSnapshot {
   private PlanUnit planUnit; // 단위일정
 
   @Builder
-  public PlanProductSnapshot(UUID productId, String name, Country country, String state, String city,
+  public PlanProductSnapshot(UUID productScheduleId, String name, Country country, String state, String city,
       BigDecimal price, int maxCount, int currentCount, PlanUnit planUnit) {
 
-    ConfirmedProductInfo productInfo =  new ConfirmedProductInfo(productId, name, country, state, city, price);
+    ConfirmedProductInfo productInfo =  new ConfirmedProductInfo(productScheduleId, name, country, state, city, price);
     ParticipantCount participantCount = new ParticipantCount(maxCount, currentCount);
 
     validatePlanUnit(planUnit);

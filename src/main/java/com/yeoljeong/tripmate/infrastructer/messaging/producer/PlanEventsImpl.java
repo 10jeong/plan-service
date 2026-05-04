@@ -31,11 +31,11 @@ public class PlanEventsImpl implements PlanEvents {
   }
 
   @Override
-  public void planUnitAddParticipant(UUID eventId, UUID productId, UUID scheduleId, int quantity) {
+  public void planUnitAddParticipant(UUID eventId, UUID productId, UUID productScheduleId, int quantity) {
     PlanUnitParticipantAddedEvent payload = new PlanUnitParticipantAddedEvent(
         eventId,
         productId,
-        scheduleId,
+        productScheduleId,
         quantity
     );
 
