@@ -11,6 +11,6 @@ public record FindParticipationStatusResponse(
 
   public static FindParticipationStatusResponse from(FindParticipationStatusResult result) {
     return new FindParticipationStatusResponse(result.planUnitId(), result.userId(),
-        result.status().toString());
+        result.status().name());
   }
 }
