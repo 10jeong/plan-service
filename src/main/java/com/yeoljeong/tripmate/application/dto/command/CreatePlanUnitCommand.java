@@ -18,6 +18,6 @@ public class CreatePlanUnitCommand {
   private LocalTime endTime;
   private BigDecimal price;
   private int maxCount;
-  private UUID productId;
+  private UUID productScheduleId;
 
 }

@@ -84,7 +84,7 @@ public class PlanCommandService {
             .price(unitCommand.getPrice())
             .maxCount(unitCommand.getMaxCount())
             .plan(savedPlan)
-            .productId(unitCommand.getProductId())
+            .productScheduleId(unitCommand.getProductScheduleId())
             .build())
         .toList();
 
@@ -164,13 +164,13 @@ public class PlanCommandService {
     planUnit.confirmPlanUnit();
 
     // 스냅샷 저장 (상품 정보 API + 최대인원, 현재인원)
-    ProductData productData = productProvider.getProduct(planUnit.getProductId());
+    ProductData productData = productProvider.getProduct(planUnit.getProductScheduleId());
     if (productData == null) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
     }
     
     PlanProductSnapshot planProductSnapshot = PlanProductSnapshot.builder()
-        .productId(productData.productId())
+        .productScheduleId(productData.productScheduleId())
         .name(productData.productName())
         .country(Country.valueOf(productData.country()))
         .state(productData.state())

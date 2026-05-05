@@ -18,7 +18,7 @@ public record CreatePlanUnitRequest(
   @NotNull LocalTime endTime,
   @NotNull @PositiveOrZero BigDecimal price,
   @Min(1) int maxCount,
-  @NotNull UUID productId
+  @NotNull UUID productScheduleId
 ) {
 
   public CreatePlanUnitCommand toCommand() {
@@ -31,7 +31,7 @@ public record CreatePlanUnitRequest(
         .endTime(endTime)
         .price(price)
         .maxCount(maxCount)
-        .productId(productId)
+        .productScheduleId(productScheduleId)
         .build();
   }
 }

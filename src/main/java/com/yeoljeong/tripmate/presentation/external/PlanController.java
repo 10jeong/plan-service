@@ -53,7 +53,7 @@ public class PlanController {
 
     CreatePlanResult result = planCommandService.createPlans(createPlanRequest.toCommand(userId));
     CreatePlanResponse response = CreatePlanResponse.from(result);
-    return ApiResponse.success(CommonSuccessCode.CREATE, "일정 등록이 되었습니다.", response);
+    return ApiResponse.success(CommonSuccessCode.OK, "일정 등록이 되었습니다.", response);
   }
 
 
@@ -67,7 +67,7 @@ public class PlanController {
         planCommandService.participatePlanUnit(new ParticipatePlanCommand(userId, planId, planUnitId));
     ParticipatePlanResponse response = ParticipatePlanResponse.from(result);
 
-    return ApiResponse.success(CommonSuccessCode.CREATE, "일정 참여 신청이 완료되었습니다.",
+    return ApiResponse.success(CommonSuccessCode.OK, "일정 참여 신청이 완료되었습니다.",
         response);
   }
 

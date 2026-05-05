@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class ConfirmedProductInfo {
-  @Column(name = "product_id", nullable = false)
-  private UUID productId; // 상품 ID
+  @Column(name = "product_schedule_id", nullable = false)
+  private UUID productScheduleId; // 상품 스제줄 ID
 
   @Column(name = "product_name", nullable = false, length = 100)
   private String productName; // 상품명
@@ -29,15 +29,15 @@ public class ConfirmedProductInfo {
   private BigDecimal productPrice; // 가격
 
 
-  public ConfirmedProductInfo(UUID productId, String name, Country country, String state, String city
+  public ConfirmedProductInfo(UUID productScheduleId, String name, Country country, String state, String city
       , BigDecimal price) {
-    validateProductId(productId);
+    validateProductId(productScheduleId);
     validateName(name);
     validatePrice(price);
 
     ProductAddress address = new ProductAddress(country, state, city);
 
-    this.productId = productId;
+    this.productScheduleId = productScheduleId;
     this.productName = name.trim();
     this.productAddress = address;
     this.productPrice = price;

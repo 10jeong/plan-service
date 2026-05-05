@@ -63,8 +63,8 @@ public class PlanUnit extends BaseAuditEntity {
   @Column(name = "is_confirmed", nullable = false)
   private boolean isConfirmed = false; // 확정여부
 
-  @Column(name = "product_id", nullable = false)
-  private UUID productId; // 상품 ID
+  @Column(name = "product_schedule_id", nullable = false)
+  private UUID productScheduleId; // 상품 스케줄 ID
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "plan_id", nullable = false)
@@ -90,14 +90,14 @@ public class PlanUnit extends BaseAuditEntity {
   @Builder
   public PlanUnit(int day, int orderIndex, String title, String description,
       LocalTime startTime, LocalTime endTime, BigDecimal price, int maxCount,
-      Plan plan, UUID productId) {
+      Plan plan, UUID productScheduleId) {
     validateDay(day);
     validateOrderIndex(orderIndex);
     validateTitle(title);
     validateDescription(description);
     validatePrice(price);
     validatePlan(plan);
-    validateProductId(productId);
+    validateProductId(productScheduleId);
 
     UnitTimeRange unitTime = new UnitTimeRange(startTime, endTime);
     ParticipantCount participant = new ParticipantCount(maxCount);
@@ -111,7 +111,7 @@ public class PlanUnit extends BaseAuditEntity {
     this.participantCount = participant;
     this.isConfirmed = false;
     this.plan = plan;
-    this.productId = productId;
+    this.productScheduleId = productScheduleId;
   }
 
   /* 일정 확정*/
