@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "company-service", url = "https://resupply-botch-styling.ngrok-free.dev")
+@FeignClient(name = "company-service")
 public interface ProductFeignClient {
 
   @GetMapping("/internal/products/schedules/{scheduleId}")
