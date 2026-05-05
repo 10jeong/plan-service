@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "company-service", url = "https://resupply-botch-styling.ngrok-free.dev")
 public interface ProductFeignClient {
 
-//  @GetMapping("/internal/products/{productId}")
   @GetMapping("/internal/products/schedules/{scheduleId}")
   ProductData getProduct(@PathVariable("scheduleId") UUID scheduleId);
 }
