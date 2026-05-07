@@ -15,4 +15,6 @@ public interface PlanUnitRepository {
   Optional<PlanUnit> findById(UUID uuid);
 
   List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan);
+
+  int addParticipantCount(UUID planUnitId, int quantity);
 }
