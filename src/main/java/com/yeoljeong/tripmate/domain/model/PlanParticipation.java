@@ -103,6 +103,7 @@ public class PlanParticipation extends BaseAuditEntity {
   * 주문 생성시, 참여 상태(APPROVED -> RESERVED)
   * */
   public void confirmParticipation() {
+    validateApprovalStatus();
     this.participationStatus = ParticipationStatus.RESERVED;
   }
 
