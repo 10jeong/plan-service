@@ -188,7 +188,7 @@ public class PlanCommandService {
 
     // 알림 수신자
     List<UUID> receivers = planParticipationRepository.findAllByPlanUnitAndParticipationStatus(
-        planUnit, ParticipationStatus.APPROVED)
+        planUnit, ParticipationStatus.CONFIRMED)
         .stream()
         .map(PlanParticipation::getUserId)
         .toList();
