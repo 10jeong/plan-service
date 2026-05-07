@@ -48,18 +48,18 @@ public class PlanParticipation extends BaseAuditEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(name = "participation_status", nullable = false)
-  private ParticipationStatus participationStatus = ParticipationStatus.PENDING; // 상태(REQUESTED, APPROVED, REJECTED, RESERVED, PARTICIPATION_CONFIRMED, RESERVED_CANCELLED, PAYMENT_CANCELLED)
+  private ParticipationStatus participationStatus = ParticipationStatus.REQUESTED; // 상태(REQUESTED, APPROVED, REJECTED, RESERVED, PARTICIPATION_CONFIRMED, RESERVED_CANCELLED, PAYMENT_CANCELLED)
 
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "plan_unit_id", nullable = false)
   private PlanUnit planUnit;
 
   public static PlanParticipation createHost(UUID userId, PlanUnit planUnit) {
-    return new PlanParticipation(userId, ParticipationRole.HOST, ParticipationStatus.APPROVAL, planUnit);
+    return new PlanParticipation(userId, ParticipationRole.HOST, ParticipationStatus.APPROVED, planUnit);
   }
 
   public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
-    return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.PENDING, planUnit);
+    return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.REQUESTED, planUnit);
   }
 
   public PlanParticipation(UUID userId, ParticipationRole participationRole, ParticipationStatus participationStatus, PlanUnit planUnit) {
@@ -81,27 +81,31 @@ public class PlanParticipation extends BaseAuditEntity {
     if (status == null) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_REQUIRED);
     }
-    if (this.participationStatus != ParticipationStatus.PENDING) {
+    if (this.participationStatus != ParticipationStatus.REQUESTED) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_INVALID);
     }
-    if (status != ParticipationStatus.APPROVAL && status != ParticipationStatus.REJECTED) {
+    if (status != ParticipationStatus.APPROVED && status != ParticipationStatus.REJECTED) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_INVALID);
     }
     this.participationStatus = status;
   }
 
   /*
-  * 주문 생성시, 참여 상태(APPROVAL -> JOINED)
-  * */
-  public void confirmParticipation() {
-    this.participationStatus = ParticipationStatus.JOINED;
-  }
-
+   * 주문 생성시, 참여 상태 검증
+   * */
   public void validateApprovalStatus() {
-    if (this.participationStatus != ParticipationStatus.APPROVAL) {
+    if (this.participationStatus != ParticipationStatus.APPROVED) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_NOT_APPROVAL);
     }
   }
+
+  /*
+  * 주문 생성시, 참여 상태(APPROVED -> RESERVED)
+  * */
+  public void confirmParticipation() {
+    this.participationStatus = ParticipationStatus.RESERVED;
+  }
+
 
   public void validateHostOf(PlanUnit planUnit) {
 
