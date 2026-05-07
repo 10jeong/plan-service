@@ -35,4 +35,9 @@ public class PlanUnitRepositoryImpl implements PlanUnitRepository {
   public List<PlanUnit> findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(Plan plan) {
     return jpaRepository.findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(plan);
   }
+
+  @Override
+  public int addParticipantCount(UUID planUnitId, int quantity) {
+    return jpaRepository.addParticipantCount(planUnitId, quantity);
+  }
 }

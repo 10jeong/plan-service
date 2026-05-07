@@ -35,8 +35,7 @@ public class PlanInternalCommandService {
 
   public void addPlanUnitParticipant(OrderCreatedEvent event) {
 
-    // todo: 동시에 read 한다면 업데이트 유실이 발생할 수 있음.
-    //  -> 낙관적 락(+재시도) or 비관적 락 or 원자 update 쿼리 보호 필요
+    // todo: 멱등성 처리
     PlanUnit planUnit = planUnitRepository.findById(event.planUnitId())
             .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
 
@@ -44,8 +43,21 @@ public class PlanInternalCommandService {
             planUnit, event.userId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
+    // 침야 싱테 검증
+    planParticipation.validateApprovalStatus();
+
+    // 참여 인원 검증
+    planUnit.validatePositive(event.quantity());
+
+    // 참여 인원 증가 (atomic update)
+    int updated = planUnitRepository.addParticipantCount(planUnit.getId(), event.quantity());
+
+    if (updated == 0) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_EXCEED);
+    }
+
+    // 참여 상태 변경
     planParticipation.confirmParticipation();
-    planUnit.addPlanUnitParticipant(event.quantity());
 
     publisher.publishEvent(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
   }
