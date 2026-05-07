@@ -65,4 +65,10 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   public List<PlanParticipation> findAllByPlanUnitIn(List<PlanUnit> planUnit) {
     return jpaRepository.findAllByPlanUnitIn(planUnit);
   }
+
+  @Override
+  public int updateStatus(UUID planUnitId, ParticipationStatus currentStatus,
+      ParticipationStatus nextStatus) {
+    return jpaRepository.updateStatus(planUnitId, currentStatus, nextStatus);
+  }
 }

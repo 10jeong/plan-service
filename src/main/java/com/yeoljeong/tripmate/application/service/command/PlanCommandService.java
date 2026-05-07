@@ -126,7 +126,7 @@ public class PlanCommandService {
   }
 
   /*
-  * 참여 신청 상태 변경
+  * 참여 신청 상태 호스트 변경(REQUESTED -> APPROVED/REJECTED)
   * */
   public UpdateParticipationStatusResult updateParticipationStatus(
       UpdateParticipationStatusCommand command) {
@@ -146,8 +146,10 @@ public class PlanCommandService {
             command.participationId(),planUnit)
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
-    targetPlanParticipation.updatePlanParticipationStatus(command.status());
-
+    // 상태 변경 검증
+    targetPlanParticipation.validatePlanParticipationStatus(command.status());
+    // 상태 변경
+    targetPlanParticipation.changeStatus(command.status());
 
     return UpdateParticipationStatusResult.from(targetPlanParticipation);
   }
@@ -186,7 +188,7 @@ public class PlanCommandService {
 
     // 알림 수신자
     List<UUID> receivers = planParticipationRepository.findAllByPlanUnitAndParticipationStatus(
-        planUnit, ParticipationStatus.APPROVAL)
+        planUnit, ParticipationStatus.APPROVED)
         .stream()
         .map(PlanParticipation::getUserId)
         .toList();
