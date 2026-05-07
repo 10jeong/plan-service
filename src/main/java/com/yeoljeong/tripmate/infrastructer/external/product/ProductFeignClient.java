@@ -1,6 +1,6 @@
-package com.yeoljeong.tripmate.infrastructer.external.client;
+package com.yeoljeong.tripmate.infrastructer.external.product;
 
-import com.yeoljeong.tripmate.domain.provider.ProductData;
+import com.yeoljeong.tripmate.application.dto.external.ProductData;
 import java.util.UUID;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

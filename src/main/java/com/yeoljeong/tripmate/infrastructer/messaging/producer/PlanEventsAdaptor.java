@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.messaging.producer;
 
-import com.yeoljeong.tripmate.domain.events.PlanEvents;
+import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import com.yeoljeong.tripmate.event.enums.PlanTopic;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class PlanEventsImpl implements PlanEvents {
+public class PlanEventsAdaptor implements PlanEvents {
 
   private final KafkaTemplate<String, Object> kafkaTemplate;
 
@@ -30,13 +30,14 @@ public class PlanEventsImpl implements PlanEvents {
     kafkaTemplate.send(PlanTopic.PLAN_UNIT_CONFIRMED_TOPIC, payload);
   }
 
+
   @Override
-  public void planUnitAddParticipant(UUID eventId, UUID productId, UUID productScheduleId, int quantity) {
-    PlanUnitParticipantAddedEvent payload = new PlanUnitParticipantAddedEvent(
-        eventId,
-        productId,
-        productScheduleId,
-        quantity
+  public void planUnitAddParticipant(PlanUnitParticipantAddedEvent event) {
+        PlanUnitParticipantAddedEvent payload = new PlanUnitParticipantAddedEvent(
+        event.eventId(),
+        event.productId(),
+        event.scheduleId(),
+            event.quantity()
     );
 
     kafkaTemplate.send(PlanTopic.PLAN_UNIT_PARTICIPANT_ADDED_TOPIC, payload);

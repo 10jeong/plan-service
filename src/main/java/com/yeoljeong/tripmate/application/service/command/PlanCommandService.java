@@ -8,14 +8,14 @@ import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
+import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.domain.enums.Country;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
-import com.yeoljeong.tripmate.domain.events.PlanEvents;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.PlanProductSnapshot;
-import com.yeoljeong.tripmate.domain.provider.ProductData;
-import com.yeoljeong.tripmate.domain.provider.ProductProvider;
+import com.yeoljeong.tripmate.application.dto.external.ProductData;
+import com.yeoljeong.tripmate.application.port.ProductReader;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanProductSnapshotRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanRepository;
@@ -45,7 +45,7 @@ public class PlanCommandService {
   private final PlanUnitRepository planUnitRepository;
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanProductSnapshotRepository planProductSnapshotRepository;
-  private final ProductProvider productProvider;
+  private final ProductReader productProvider;
   private final PlanEvents events;
 
   /*

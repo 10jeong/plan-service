@@ -1,4 +1,4 @@
-package com.yeoljeong.tripmate.domain.provider;
+package com.yeoljeong.tripmate.application.dto.external;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;

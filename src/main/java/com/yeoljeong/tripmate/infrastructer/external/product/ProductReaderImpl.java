@@ -1,14 +1,14 @@
-package com.yeoljeong.tripmate.infrastructer.external.client;
+package com.yeoljeong.tripmate.infrastructer.external.product;
 
-import com.yeoljeong.tripmate.domain.provider.ProductData;
-import com.yeoljeong.tripmate.domain.provider.ProductProvider;
+import com.yeoljeong.tripmate.application.dto.external.ProductData;
+import com.yeoljeong.tripmate.application.port.ProductReader;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ProductProviderImpl implements ProductProvider {
+public class ProductReaderImpl implements ProductReader {
 
   private final ProductFeignClient productFeignClient;
 

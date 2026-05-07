@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.application.service.listener;
 
-import com.yeoljeong.tripmate.domain.events.PlanEvents;
+import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -15,7 +15,7 @@ public class PlanEventListener {
 
   @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
   public void handle(PlanUnitParticipantAddedEvent event) {
-    events.planUnitAddParticipant(event.eventId(), event.productId(), event.scheduleId(), event.quantity());
+    events.planUnitAddParticipant(event);
   }
 
 }
