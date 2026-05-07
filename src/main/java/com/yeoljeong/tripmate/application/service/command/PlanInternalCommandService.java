@@ -1,6 +1,7 @@
 package com.yeoljeong.tripmate.application.service.command;
 
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
+import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
@@ -22,7 +23,7 @@ public class PlanInternalCommandService {
 
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanUnitRepository planUnitRepository;
-  private final ApplicationEventPublisher publisher;
+  private final PlanEvents events;
 
   public FindParticipationStatusResult findParticipationStatusByPlanUnitIdAndUserId(UUID planUnitId, UUID userId) {
 
@@ -59,6 +60,8 @@ public class PlanInternalCommandService {
     // 참여 상태 변경
     planParticipation.confirmParticipation();
 
-    publisher.publishEvent(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
+    // 이벤트 발행
+    events.planUnitAddParticipant(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
+
   }
 }

@@ -24,6 +24,7 @@ import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.event.EventUtils;
+import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
@@ -45,7 +46,7 @@ public class PlanCommandService {
   private final PlanUnitRepository planUnitRepository;
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanProductSnapshotRepository planProductSnapshotRepository;
-  private final ProductReader productProvider;
+  private final ProductReader productReader;
   private final PlanEvents events;
 
   /*
@@ -164,7 +165,7 @@ public class PlanCommandService {
     planUnit.confirmPlanUnit();
 
     // 스냅샷 저장 (상품 정보 API + 최대인원, 현재인원)
-    ProductData productData = productProvider.getProduct(planUnit.getProductScheduleId());
+    ProductData productData = productReader.getProduct(planUnit.getProductScheduleId());
     if (productData == null) {
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
     }
@@ -190,11 +191,11 @@ public class PlanCommandService {
         .map(PlanParticipation::getUserId)
         .toList();
 
-    events.planUnitConfirmed(
+    events.planUnitConfirmed(new PlanUnitConfirmedEvent(
         EventUtils.getEventHash("planUnit", String.valueOf(planUnitId), planUnit.getUpdatedAt()),
         planUnitId,
         planUnit.getTitle(),
-        receivers);
+        receivers));
 
     return ConfirmPlanUnitResult.from(planUnitId, planUnit.getTitle(), planUnit.isConfirmed(),
         planUnit.getUpdatedAt(), planUnit.getUpdatedBy());
