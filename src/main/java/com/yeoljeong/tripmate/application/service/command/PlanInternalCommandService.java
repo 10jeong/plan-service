@@ -82,7 +82,8 @@ public class PlanInternalCommandService {
     UUID planUnitId = UUID.randomUUID();
     PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(planUnitId, event.userId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
-    participation.validatePlanParticipationStatus(participation.getParticipationStatus());
+
+    participation.validatePlanParticipationStatus(ParticipationStatus.CONFIRMED);
 
     // 상태 변경 (RESERVED -> CONFIRMED)
     int updated = planParticipationRepository.updateStatus(
