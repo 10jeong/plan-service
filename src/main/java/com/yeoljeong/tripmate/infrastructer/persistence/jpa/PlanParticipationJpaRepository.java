@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface PlanParticipationJpaRepository extends JpaRepository<PlanParticipation, UUID> {
 
@@ -24,4 +27,16 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   List<PlanParticipation> findAllByPlanUnitAndParticipationStatus(PlanUnit planUnit, ParticipationStatus participationStatus);
 
   List<PlanParticipation> findAllByPlanUnitIn(List<PlanUnit> planUnit);
+
+  @Modifying
+  @Query("""
+    update PlanParticipation p
+      set p.participationStatus = :nextStatus
+        where p.planUnit.id = :planUnitId
+            and p.participationStatus = :currentStatus
+  """)
+  int updateStatus(
+      @Param("planUnitId") UUID planUnitId,
+      @Param("currentStatus") ParticipationStatus currentStatus,
+      @Param("nextStatus") ParticipationStatus nextStatus);
 }

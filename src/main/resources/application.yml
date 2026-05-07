@@ -28,12 +28,28 @@ spring:
       properties:
         spring.json.trusted.packages: "com.yeoljeong.tripmate.event" # 어느 패키지 클래스까지 변환 허용
 
+## 로컬 설정
 eureka:
   client:
     service-url:
-      defaultZone: ${defaultZone:http://localhost:8761/eureka}
+            defaultZone: ${defaultZone:http://localhost:8761/eureka}
     register-with-eureka: true
     fetch-registry: true
   instance:
-    instance-id:
-      ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+        instance-id:
+          ${spring.cloud.client.hostname}:${spring.application.instance_id:${random.value}}
+
+## Ngrok 설정
+#eureka:
+#  client:
+#    service-url:
+    #      defaultZone: ${defaultZone:https://dolphin-device-evident.ngrok-free.dev/eureka/}
+#    register-with-eureka: true
+#    fetch-registry: true
+#  instance:
+#    hostname: "3b06-2406-5900-1073-1b8-90e9-4e2e-b463-19bc.ngrok-free.app"
+#    non-secure-port: 80
+#    secure-port: 443
+#    prefer-ip-address: false
+#    secure-port-enabled: true
+#    non-secure-port-enabled: false

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
-public class OrderCreatedEventListener {
+public class OrderEventListener {
 
   private final PlanInternalCommandService planInternalCommandService;
 
@@ -34,4 +34,5 @@ public class OrderCreatedEventListener {
       throw e;
     }
   }
+
 }
