@@ -9,6 +9,8 @@ import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusRe
 import com.yeoljeong.tripmate.application.service.command.PlanCommandService;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.service.query.PlanQueryService;
+import com.yeoljeong.tripmate.auth.annotation.LoginUser;
+import com.yeoljeong.tripmate.auth.context.UserContext;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
 import com.yeoljeong.tripmate.presentation.dto.request.PlanSearchCondition;
 import com.yeoljeong.tripmate.presentation.dto.request.UpdateParticipationStatusRequest;
@@ -34,7 +36,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,10 +49,10 @@ public class PlanController {
 
   @PostMapping
   public ApiResponse<CreatePlanResponse> createPlans(
-      @RequestHeader("X-User-Id") UUID userId,
+      @LoginUser UserContext user,
       @RequestBody @Valid CreatePlanRequest createPlanRequest) {
 
-    CreatePlanResult result = planCommandService.createPlans(createPlanRequest.toCommand(userId));
+    CreatePlanResult result = planCommandService.createPlans(createPlanRequest.toCommand(user.userId()));
     CreatePlanResponse response = CreatePlanResponse.from(result);
     return ApiResponse.success(CommonSuccessCode.OK, "일정 등록이 되었습니다.", response);
   }
@@ -59,12 +60,12 @@ public class PlanController {
 
   @PostMapping("/{planId}/unit-plans/{unitPlanId}/participations")
   public ApiResponse<ParticipatePlanResponse> participatePlan(
-      @RequestHeader("X-User-Id") UUID userId,
+      @LoginUser UserContext user,
       @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId) {
 
     ParticipatePlanResult result =
-        planCommandService.participatePlanUnit(new ParticipatePlanCommand(userId, planId, planUnitId));
+        planCommandService.participatePlanUnit(new ParticipatePlanCommand(user.userId(), planId, planUnitId));
     ParticipatePlanResponse response = ParticipatePlanResponse.from(result);
 
     return ApiResponse.success(CommonSuccessCode.OK, "일정 참여 신청이 완료되었습니다.",
@@ -73,7 +74,7 @@ public class PlanController {
 
   @PatchMapping("/{planId}/unit-plans/{unitPlanId}/participations/{participationId}/status")
   public ApiResponse<UpdateParticipationStatusResponse> updateParticipationStatus(
-      @RequestHeader("X-User-Id") UUID userId,
+      @LoginUser UserContext user,
       @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId,
       @PathVariable("participationId") UUID participationId,
@@ -81,7 +82,7 @@ public class PlanController {
 
     UpdateParticipationStatusResult result =
         planCommandService.updateParticipationStatus(
-            request.toCommand(userId, planId, planUnitId, participationId));
+            request.toCommand(user.userId(), planId, planUnitId, participationId));
 
     UpdateParticipationStatusResponse response = UpdateParticipationStatusResponse.from(result);
 
@@ -94,9 +95,9 @@ public class PlanController {
   public ApiResponse<ConfirmPlanUnitResponse> confirmPlanUnit(
       @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId,
-      @RequestHeader("X-User-Id") UUID userId
-  ) throws NoSuchAlgorithmException {
-    ConfirmPlanUnitResult result = planCommandService.confirmPlanUnit(planId, planUnitId, userId);
+      @LoginUser UserContext user
+      ) throws NoSuchAlgorithmException {
+    ConfirmPlanUnitResult result = planCommandService.confirmPlanUnit(planId, planUnitId, user.userId());
     ConfirmPlanUnitResponse response = ConfirmPlanUnitResponse.from(result);
 
     return ApiResponse.success(CommonSuccessCode.OK, "일정이 확정되었습니다.", response);
