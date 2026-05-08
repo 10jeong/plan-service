@@ -70,8 +70,9 @@ public class PlanInternalCommandService {
     }
 
     // 이벤트 발행
-    events.planUnitAddParticipant(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
-
+    events.planUnitAddParticipant(
+        new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(),
+            event.planUnitId(), event.userId(), event.quantity()));
   }
 
   /*
