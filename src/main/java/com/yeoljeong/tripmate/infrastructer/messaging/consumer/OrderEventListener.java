@@ -18,12 +18,12 @@ public class OrderEventListener {
   private final KafkaPayloadDeserializer kafkaPayloadDeserializer;
 
   @KafkaListener (topics = OrderTopic.ORDER_CREATED_TOPIC, groupId = "plan-group")
-  public void orderCreated(String s) { // todo: ack 고려
+  public void orderCreated(String message) { // todo: ack 고려
     try {
 
       // todo: 이미 처리된 이벤트인지 확인(멱등성 추후 처리)
 
-      OrderCreatedEvent event = kafkaPayloadDeserializer.deserialize(s, OrderCreatedEvent.class);
+      OrderCreatedEvent event = kafkaPayloadDeserializer.deserialize(message, OrderCreatedEvent.class);
 
       if (event == null) {
         log.warn("[plan-service] 주문 생성 이벤트가 null입니다.");

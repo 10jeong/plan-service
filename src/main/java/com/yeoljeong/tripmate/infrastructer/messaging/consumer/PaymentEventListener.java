@@ -3,6 +3,7 @@ package com.yeoljeong.tripmate.infrastructer.messaging.consumer;
 import com.yeoljeong.tripmate.application.service.command.PlanInternalCommandService;
 import com.yeoljeong.tripmate.event.PaymentCompletedEvent;
 import com.yeoljeong.tripmate.event.enums.PaymentTopic;
+import com.yeoljeong.tripmate.infrastructer.messaging.KafkaPayloadDeserializer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -13,10 +14,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class PaymentEventListener {
   private final PlanInternalCommandService planInternalCommandService;
+  private final KafkaPayloadDeserializer kafkaPayloadDeserializer;
 
   @KafkaListener(topics = PaymentTopic.PAYMENT_COMPLETED_TOPIC, groupId = "plan-group")
-  public void paymentCompleted(PaymentCompletedEvent event) {
+  public void paymentCompleted(String message) {
     try {
+
+      PaymentCompletedEvent event = kafkaPayloadDeserializer.deserialize(message,
+          PaymentCompletedEvent.class);
+
       if (event == null) {
         log.warn("[plan-service] 결제 완료 이벤트가 null입니다.");
         return;
