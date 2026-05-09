@@ -3,6 +3,7 @@ package com.yeoljeong.tripmate.infrastructer.messaging.producer;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yeoljeong.tripmate.application.port.PlanEvents;
+import com.yeoljeong.tripmate.event.PlanUnitAddParticipantFailedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitDeductParticipantEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
@@ -66,6 +67,28 @@ public class PlanEventsAdaptor implements PlanEvents {
           "[plan-service] 참여 인원 감소 이벤트 직렬화 실패: eventId={}, topic={}",
           eventId,
           PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_TOPIC,
+          e
+      );
+      throw new RuntimeException("이벤트 직렬화 실패", e);
+    }
+  }
+
+  /* 참여 현재 인원 증가 실패 이벤트*/
+  @Override
+  public void addPlanUnitParticipantFailed(UUID eventId, UUID orderId) {
+    try {
+      PlanUnitAddParticipantFailedEvent payload = new PlanUnitAddParticipantFailedEvent(eventId,
+          orderId);
+      String json = objectMapper.writeValueAsString(payload);
+
+      outBoxRepository.save(
+          PlanOutbox.create(PlanTopic.PLAN_UNIT_PARTICIPANT_ADD_FAILED_TOPIC, json)
+      );
+    } catch (JsonProcessingException e) {
+      log.error(
+          "[plan-service] 참여 인원 증가 실패 이벤트 직렬화 실패: eventId={}, topic={}",
+          eventId,
+          PlanTopic.PLAN_UNIT_PARTICIPANT_ADD_FAILED_TOPIC,
           e
       );
       throw new RuntimeException("이벤트 직렬화 실패", e);
