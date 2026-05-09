@@ -32,11 +32,11 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   @Query("""
     update PlanParticipation p
       set p.participationStatus = :nextStatus
-        where p.planUnit.id = :planUnitId
+        where p.id = :participationId
             and p.participationStatus = :currentStatus
   """)
   int updateStatus(
-      @Param("planUnitId") UUID planUnitId,
+      @Param("participationId") UUID participationId,
       @Param("currentStatus") ParticipationStatus currentStatus,
       @Param("nextStatus") ParticipationStatus nextStatus);
 }

@@ -24,4 +24,14 @@ public interface PlanUnitJpaRepository extends JpaRepository<PlanUnit, UUID> {
          and u.participantCount.currentCount + :quantity <= u.participantCount.maxCount
   """)
   int addParticipantCount(@Param("planUnitId") UUID planUnitId, @Param("quantity") int quantity);
+
+  @Modifying
+  @Query("""
+   update PlanUnit u
+     set u.participantCount.currentCount = u.participantCount.currentCount - :quantity
+       where u.id = :planUnitId
+         and u.participantCount.currentCount - :quantity <= u.participantCount.maxCount
+         and u.participantCount.currentCount - :quantity >= 0
+  """)
+  int deductParticipantCount(@Param("planUnitId") UUID planUnitId,@Param("quantity") int quantity);
 }
