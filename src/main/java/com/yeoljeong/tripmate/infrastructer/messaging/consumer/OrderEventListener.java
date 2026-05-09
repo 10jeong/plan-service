@@ -23,18 +23,16 @@ public class OrderEventListener {
 
       // todo: 이미 처리된 이벤트인지 확인(멱등성 추후 처리)
 
-      OrderCreatedEvent event = kafkaPayloadDeserializer.deserialize(message, OrderCreatedEvent.class);
-
-      if (event == null) {
-        log.warn("[plan-service] 주문 생성 이벤트가 null입니다.");
-        return;
-      }
+      OrderCreatedEvent event = kafkaPayloadDeserializer.deserialize(message,
+          OrderCreatedEvent.class);
 
       planInternalCommandService.addPlanUnitParticipant(event);
-      log.info("[plan-service] 메시지 업데이트 처리 완료 : eventId={} ", event.eventId());
+      log.info("[plan-service] 메시지 업데이트 처리 완료 : eventId={}, topic={}", event.eventId(),
+          OrderTopic.ORDER_CREATED_TOPIC);
 
     } catch (Exception e) {
-      log.error("[plan-service] 메시지 업데이트 처리 실패 : {} ", e.getMessage(), e);
+      log.error("[plan-service] 메시지 업데이트 처리 실패 : topic={}, error={}",
+          OrderTopic.ORDER_CREATED_TOPIC, e.getMessage(), e);
       throw e;
     }
   }

@@ -23,22 +23,19 @@ public class ProductEventListener {
   public void productStockDeductFailed(String message) throws NoSuchAlgorithmException {
 
     try {
+
       ProductStockDeductFailedEvent event = kafkaPayloadDeserializer.deserialize(message,
           ProductStockDeductFailedEvent.class);
 
-      if (event == null) {
-        log.warn("[plan-service] 상품 재고 차감 실패 이벤트가 null입니다.");
-      }
       planInternalCommandService.deductPlanUnitParticipant(DeductPlanUnitParticipantCommand.from(event));
-      log.info("[plan-service] 메시지 업데이트 처리 완료: eventId={}", event.eventId());
+      log.info("[plan-service] 메시지 업데이트 처리 완료: eventId={}, topic={}", event.eventId(),
+          ProductTopic.STOCK_DEDUCT_FAILED_TOPIC);
 
     } catch (Exception e) {
-      log.error("[plan-service] 메시지 업데이트 처리 실패: {}", e.getMessage(), e);
+      log.error("[plan-service] 메시지 업데이트 처리 실패: topic={}, error={}",
+          ProductTopic.STOCK_DEDUCT_FAILED_TOPIC, e.getMessage(), e);
       throw e;
     }
-
-
-
   }
 
 }

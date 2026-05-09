@@ -23,15 +23,14 @@ public class PaymentEventListener {
       PaymentCompletedEvent event = kafkaPayloadDeserializer.deserialize(message,
           PaymentCompletedEvent.class);
 
-      if (event == null) {
-        log.warn("[plan-service] 결제 완료 이벤트가 null입니다.");
-        return;
-      }
       planInternalCommandService.updateParticipantStatus(event);
-      log.info("[plan-service] 메시지 업데이트 처리 완료 : eventId={} ", event.eventHash());
+      log.info("[plan-service] 메시지 업데이트 처리 완료 : eventId={}, topic={}", event.eventHash(),
+          PaymentTopic.PAYMENT_COMPLETED_TOPIC);
 
     } catch (Exception e) {
-      log.error("[plan-service] 메시지 업데이트 처리 실패 : {} ", e.getMessage(), e);
+      log.error("[plan-service] 메시지 업데이트 처리 실패 : topic={}, error={} ",
+          PaymentTopic.PAYMENT_COMPLETED_TOPIC,
+          e.getMessage(), e);
       throw e;
     }
   }
