@@ -121,8 +121,8 @@ public class PlanParticipation extends BaseAuditEntity {
   * */
   public void withdraw(UUID userId) {
     validateOwner(userId);
-    validatePlanParticipationStatus(ParticipationStatus.PAYMENT_CANCELLED);
     validateDeleted();
+    validatePlanParticipationStatus(ParticipationStatus.PAYMENT_CANCELLED);
 
     this.participationStatus = ParticipationStatus.PAYMENT_CANCELLED;
     this.softDelete();
