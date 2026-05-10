@@ -213,14 +213,17 @@ public class PlanCommandService {
   * */
   public WithdrawPlanUnitParticipationResponse withdrawPlanUnitParticipant(
       WithdrawPlanUnitParticipationCommand command) {
-    PlanParticipation participation = planParticipationRepository.findById(
-            command.participationId())
+    PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
+
+    PlanParticipation participation = planParticipationRepository.findByIdAndPlanUnit(
+            command.participationId(), planUnit)
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
     participation.withdraw(command.userId());
 
     // 이벤트 발행
-    events.planUnitParticipationQuit(UUID.randomUUID(), command.userId(), command.planUnitId(), command.reason());
+    events.planUnitParticipationQuit(UUID.randomUUID(), command.userId(), planUnit.getId(), command.reason());
 
     return WithdrawPlanUnitParticipationResponse.from(participation);
   }

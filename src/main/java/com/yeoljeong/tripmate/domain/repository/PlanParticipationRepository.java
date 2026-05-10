@@ -30,5 +30,4 @@ public interface PlanParticipationRepository {
 
   int updateStatus(UUID participationId, ParticipationStatus currentStatus, ParticipationStatus nextStatus);
 
-  Optional<PlanParticipation> findById(UUID participationId);
 }
