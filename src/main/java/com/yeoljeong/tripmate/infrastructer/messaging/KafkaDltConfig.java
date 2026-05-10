@@ -14,11 +14,12 @@ import org.springframework.util.backoff.FixedBackOff;
 @Configuration
 public class KafkaDltConfig {
 
-  @Value("${spring.retry.interval}")
+  @Value("${spring.retry.interval:1000}")
   private long interval;
 
-  @Value("${spring.retry.max-attempts}")
+  @Value("${spring.retry.max-attempts:3}")
   private long maxAttempts;
+
 
   @Bean
   public DefaultErrorHandler defaultErrorHandler(KafkaTemplate<String, String> kafkaTemplate) {
