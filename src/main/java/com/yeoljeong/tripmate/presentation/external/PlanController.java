@@ -111,13 +111,14 @@ public class PlanController {
   @DeleteMapping("/{planId}/unit-plans/{unitPlanId}/participations/{participationId}")
   public ApiResponse<WithdrawPlanUnitParticipationResponse> withdrawPlanUnitParticipant(
       @LoginUser UserContext user,
+      @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId,
       @PathVariable("participationId") UUID participationId,
       @Valid @RequestBody withdrawPlanUnitParticipationRequest request
   ) {
 
     WithdrawPlanUnitParticipationResponse response = planCommandService.withdrawPlanUnitParticipant(
-        WithdrawPlanUnitParticipationCommand.from(request,planUnitId, participationId, user.userId()));
+        WithdrawPlanUnitParticipationCommand.from(request,planId,planUnitId, participationId, user.userId()));
 
     return ApiResponse.success(CommonSuccessCode.DELETE,"일정 참여 탈퇴 완료되었습니다.", response);
   }
