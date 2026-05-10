@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.yeoljeong:common-module:1.0.1-SNAPSHOT'
+    implementation 'com.yeoljeong:common-module:1.0.2-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'

@@ -1,5 +1,5 @@
 server:
-  port: 18080
+  port: 8080
 spring:
   application:
     name: plan-service
@@ -13,20 +13,10 @@ spring:
       ddl-auto: ${DB_DDL_AUTO}
     properties:
       hibernate:
-        show_sql: ${JPA_SHOW_SQL:false}
-        format_sql: true
-  kafka:
-    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
-    producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-      properties:
-        spring.json.add.type.headers: true # json 헤더에 클래스 타입 정보 추가로 수신서비스에서 자동 역직렬화 가능
-    consumer:
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      properties:
-        spring.json.trusted.packages: "com.yeoljeong.tripmate.event" # 어느 패키지 클래스까지 변환 허용
+#        show_sql: ${JPA_SHOW_SQL:false}
+#        format_sql: false
+jwt:
+  internal-secret: ${JWT_INTERNAL_SECRET}
 
 ## 로컬 설정
 eureka:
@@ -43,11 +33,11 @@ eureka:
 #eureka:
 #  client:
 #    service-url:
-    #      defaultZone: ${defaultZone:https://dolphin-device-evident.ngrok-free.dev/eureka/}
+#          defaultZone: ${defaultZone:https://dolphin-device-evident.ngrok-free.dev/eureka/}
 #    register-with-eureka: true
 #    fetch-registry: true
 #  instance:
-#    hostname: "3b06-2406-5900-1073-1b8-90e9-4e2e-b463-19bc.ngrok-free.app"
+#    hostname: "fe22-2406-5900-1073-1b8-20da-5627-db0e-e14a.ngrok-free.app"
 #    non-secure-port: 80
 #    secure-port: 443
 #    prefer-ip-address: false

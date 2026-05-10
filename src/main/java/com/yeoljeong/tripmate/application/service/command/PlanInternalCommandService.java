@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.application.service.command;
 
+import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantCommand;
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
 import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
@@ -36,7 +37,7 @@ public class PlanInternalCommandService {
   }
 
   /*
-   * 주문 생성시, 참여인원 증가 및 상태 변경(APPROVED -> RESERVED)
+   * 주문 생성시, 참여인원 증가 및 상태 변경(APPROVED -> RESERVED) + 이벤트 발행
    * */
   public void addPlanUnitParticipant(OrderCreatedEvent event) {
 
@@ -44,11 +45,11 @@ public class PlanInternalCommandService {
     PlanUnit planUnit = planUnitRepository.findById(event.planUnitId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
 
-    PlanParticipation planParticipation = planParticipationRepository.findByPlanUnitAndUserId(
-            planUnit, event.userId())
+    PlanParticipation planParticipation = planParticipationRepository.findByPlanUnit_IdAndUserId(
+            planUnit.getId(), event.userId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
-    // 침야 싱테 검증
+    // 참여 싱테 검증
     planParticipation.validatePlanParticipationStatus(ParticipationStatus.RESERVED);
 
     // 참여 인원 검증
@@ -62,7 +63,7 @@ public class PlanInternalCommandService {
     }
 
     // 참여 상태 변경
-    int updatedStatus = planParticipationRepository.updateStatus(planUnit.getId(),
+    int updatedStatus = planParticipationRepository.updateStatus(planParticipation.getId(),
         planParticipation.getParticipationStatus(), ParticipationStatus.RESERVED);
 
     if (updatedStatus == 0) {
@@ -70,7 +71,17 @@ public class PlanInternalCommandService {
     }
 
     // 이벤트 발행
-    events.planUnitAddParticipant(new PlanUnitParticipantAddedEvent(event.eventId(), event.productId(), event.scheduleId(), event.quantity()));
+    events.planUnitAddParticipant(
+        new PlanUnitParticipantAddedEvent(
+            UUID.randomUUID(),
+            event.orderId(),
+            event.productId(),
+            event.scheduleId(),
+            event.planUnitId(),
+            event.userId(),
+            event.quantity()
+        )
+    );
 
   }
 
@@ -96,4 +107,35 @@ public class PlanInternalCommandService {
     }
   }
 
+  /*
+   * 상품 재고 차감 실패시, 참여인원 감소 및 참여 상태 변경(RESERVED -> APPROVED) + 이벤트 발행
+   * */
+  public void deductPlanUnitParticipant(DeductPlanUnitParticipantCommand command) {
+    // todo: 멱등성 처리
+    PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
+
+    PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(
+            command.planUnitId(), command.userId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
+
+    // 참여 상태 변경 (RESERVED -> APPROVED)
+    int updatedStatus = planParticipationRepository.updateStatus(participation.getId(),
+        ParticipationStatus.RESERVED, ParticipationStatus.APPROVED);
+
+    if (updatedStatus == 0) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
+    }
+
+    // 참여 현재인원 감소
+    planUnit.validatePositive(command.quantity());
+    int updatedCount = planUnitRepository.deductParticipantCount(command.planUnitId(), command.quantity());
+
+    if (updatedCount == 0) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_UPDATE_QUANTITY_INVALID);
+    }
+
+    // 이벤트 발행
+    events.deductPlanUnitParticipant(UUID.randomUUID(), command.orderId());
+  }
 }

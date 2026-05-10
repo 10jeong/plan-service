@@ -40,4 +40,9 @@ public class PlanUnitRepositoryImpl implements PlanUnitRepository {
   public int addParticipantCount(UUID planUnitId, int quantity) {
     return jpaRepository.addParticipantCount(planUnitId, quantity);
   }
+
+  @Override
+  public int deductParticipantCount(UUID planUnitId, int quantity) {
+    return jpaRepository.deductParticipantCount(planUnitId, quantity);
+  }
 }
