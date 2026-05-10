@@ -39,4 +39,18 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
       @Param("participationId") UUID participationId,
       @Param("currentStatus") ParticipationStatus currentStatus,
       @Param("nextStatus") ParticipationStatus nextStatus);
+
+  @Query("""
+    select count(pa) > 0
+      from PlanParticipation pa
+        join pa.planUnit u 
+        join u.plan p
+          where pa.userId = :userId
+            and pa.participationStatus in (
+              com.yeoljeong.tripmate.domain.enums.ParticipationStatus.RESERVED,
+              com.yeoljeong.tripmate.domain.enums.ParticipationStatus.CONFIRMED
+              )
+            and p.recruitStatus = com.yeoljeong.tripmate.domain.enums.RecruitStatus.OPEN
+  """)
+  boolean existsOpenPlan(@Param("userId") UUID userId);
 }
