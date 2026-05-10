@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.presentation.external;
 
 import com.yeoljeong.tripmate.application.dto.command.GetPlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
+import com.yeoljeong.tripmate.application.dto.command.WithdrawPlanUnitParticipationCommand;
 import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
@@ -14,12 +15,14 @@ import com.yeoljeong.tripmate.auth.context.UserContext;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
 import com.yeoljeong.tripmate.presentation.dto.request.PlanSearchCondition;
 import com.yeoljeong.tripmate.presentation.dto.request.UpdateParticipationStatusRequest;
+import com.yeoljeong.tripmate.presentation.dto.request.withdrawPlanUnitParticipationRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.ConfirmPlanUnitResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.CreatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanDetailResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.ParticipatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.UpdateParticipationStatusResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.WithdrawPlanUnitParticipationResponse;
 import com.yeoljeong.tripmate.response.ApiResponse;
 import com.yeoljeong.tripmate.response.constants.CommonSuccessCode;
 import jakarta.validation.Valid;
@@ -30,6 +33,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -103,6 +107,21 @@ public class PlanController {
     return ApiResponse.success(CommonSuccessCode.OK, "일정이 확정되었습니다.", response);
   }
 
+  // 일정 참여 탈퇴
+  @DeleteMapping("/{planId}/unit-plans/{unitPlanId}/participations/{participationId}")
+  public ApiResponse<WithdrawPlanUnitParticipationResponse> withdrawPlanUnitParticipant(
+      @LoginUser UserContext user,
+      @PathVariable("planId") UUID planId,
+      @PathVariable("unitPlanId") UUID planUnitId,
+      @PathVariable("participationId") UUID participationId,
+      @Valid @RequestBody withdrawPlanUnitParticipationRequest request
+  ) {
+
+    WithdrawPlanUnitParticipationResponse response = planCommandService.withdrawPlanUnitParticipant(
+        WithdrawPlanUnitParticipationCommand.from(request,planId,planUnitId, participationId, user.userId()));
+
+    return ApiResponse.success(CommonSuccessCode.DELETE,"일정 참여 탈퇴 완료되었습니다.", response);
+  }
   // 일정 상세 조회 (모든 사용자)
   @GetMapping("/{planId}")
   public ApiResponse<GetPlanDetailResponse> getPlanDetail(@PathVariable UUID planId) {

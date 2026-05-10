@@ -71,4 +71,5 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
       ParticipationStatus nextStatus) {
     return jpaRepository.updateStatus(planUnitId, currentStatus, nextStatus);
   }
+
 }

@@ -16,4 +16,6 @@ public interface PlanEvents {
   void addPlanUnitParticipantFailed(UUID eventId, UUID orderId);
 
   void deductPlanUnitParticipantFailed(UUID eventId, UUID orderId);
+
+  void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId, String reason);
 }
