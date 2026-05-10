@@ -82,7 +82,7 @@ public class PlanParticipation extends BaseAuditEntity {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_REQUIRED);
     }
     if (!this.participationStatus.canChangeTo(next)) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID); // -> 에러코드 메시지 바꾸기
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
     }
   }
 
@@ -114,6 +114,30 @@ public class PlanParticipation extends BaseAuditEntity {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID); // -> 에러코드 메시지 바꾸기
     }
     this.participationStatus = next;
+  }
+
+  /*
+  * 참여 합류된 일정 탈퇴
+  * */
+  public void withdraw(UUID userId) {
+    validateOwner(userId);
+    validatePlanParticipationStatus(ParticipationStatus.PAYMENT_CANCELLED);
+    validateDeleted();
+
+    this.participationStatus = ParticipationStatus.PAYMENT_CANCELLED;
+    this.softDelete();
+  }
+
+  private void validateDeleted() {
+    if (this.isDeleted) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_ALREADY_DELETED);
+    }
+  }
+
+  private void validateOwner(UUID userId) {
+    if (!this.userId.equals(userId)) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_FORBIDDEN);
+    }
   }
 
 

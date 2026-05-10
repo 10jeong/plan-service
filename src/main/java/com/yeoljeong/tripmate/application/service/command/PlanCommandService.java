@@ -25,7 +25,9 @@ import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.event.EventUtils;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
+import com.yeoljeong.tripmate.event.PlanUnitParticipantQuitEvent;
 import com.yeoljeong.tripmate.exception.BusinessException;
+import com.yeoljeong.tripmate.presentation.dto.response.WithdrawPlanUnitParticipationResponse;
 import java.security.NoSuchAlgorithmException;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -204,6 +206,28 @@ public class PlanCommandService {
 
   }
 
+  /*
+  * 참여 일정 탈퇴
+  * : 참여 상태가 CONFIRMED인 사용자만 가능
+  * */
+  public WithdrawPlanUnitParticipationResponse withdrawPlanUnitParticipant(UUID planId, UUID planUnitId, UUID participationId, UUID userId) {
+
+    PlanParticipation participation = planParticipationRepository.findById(
+            participationId)
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
+
+    participation.withdraw(userId);
+
+    // 이벤트 발행
+    events.planUnitParticipationQuit(new PlanUnitParticipantQuitEvent(
+        UUID.randomUUID(),
+        userId,
+        planUnitId
+    ));
+
+    return WithdrawPlanUnitParticipationResponse.from(participation);
+  }
+
   private void validatePlanUnitHost(PlanUnit planUnit, UUID userId) {
     boolean isHost = planParticipationRepository.existsByPlanUnitAndUserIdAndParticipationRole(planUnit, userId,
         ParticipationRole.HOST);
@@ -282,4 +306,6 @@ public class PlanCommandService {
       }
     }
   }
+
+
 }

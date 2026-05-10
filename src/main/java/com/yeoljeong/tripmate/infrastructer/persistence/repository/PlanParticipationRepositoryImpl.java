@@ -71,4 +71,9 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
       ParticipationStatus nextStatus) {
     return jpaRepository.updateStatus(planUnitId, currentStatus, nextStatus);
   }
+
+  @Override
+  public Optional<PlanParticipation> findById(UUID participationId) {
+    return jpaRepository.findById(participationId);
+  }
 }

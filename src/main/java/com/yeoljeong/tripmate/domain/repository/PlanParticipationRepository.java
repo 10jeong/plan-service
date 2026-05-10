@@ -29,4 +29,6 @@ public interface PlanParticipationRepository {
   List<PlanParticipation> findAllByPlanUnitIn(List<PlanUnit> planUnit);
 
   int updateStatus(UUID participationId, ParticipationStatus currentStatus, ParticipationStatus nextStatus);
+
+  Optional<PlanParticipation> findById(UUID participationId);
 }
