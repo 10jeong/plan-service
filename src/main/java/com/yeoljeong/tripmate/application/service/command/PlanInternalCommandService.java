@@ -1,7 +1,9 @@
 package com.yeoljeong.tripmate.application.service.command;
 
 import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantCommand;
+import com.yeoljeong.tripmate.application.dto.external.OrderPlanUnitData;
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
+import com.yeoljeong.tripmate.application.port.OrderReader;
 import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
@@ -26,6 +28,7 @@ public class PlanInternalCommandService {
   private final PlanParticipationRepository planParticipationRepository;
   private final PlanUnitRepository planUnitRepository;
   private final PlanEvents events;
+  private final OrderReader orderReader;
 
   public FindParticipationStatusResult findParticipationStatusByPlanUnitIdAndUserId(UUID planUnitId, UUID userId) {
 
@@ -89,9 +92,13 @@ public class PlanInternalCommandService {
   * 결제 완료시, 참여 상태 변경 (RESERVED -> CONFIRMED)
   * */
   public void updateParticipantStatus(PaymentCompletedEvent event) {
-    // todo: event에 planUnitId가 들어올때 수정
-    UUID planUnitId = UUID.randomUUID();
-    PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(planUnitId, event.userId())
+
+    OrderPlanUnitData orderPlanUnitData = orderReader.getPlanUnitId(event.orderId());
+    if (orderPlanUnitData == null) {
+      throw new BusinessException(PlanErrorCode.ORDER_PLAN_UNIT_NOT_FOUND);
+    }
+
+    PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(orderPlanUnitData.planUnitId(), event.userId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
     participation.validatePlanParticipationStatus(ParticipationStatus.CONFIRMED);
