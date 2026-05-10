@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.presentation.external;
 
 import com.yeoljeong.tripmate.application.dto.command.GetPlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
+import com.yeoljeong.tripmate.application.dto.command.WithdrawPlanUnitParticipationCommand;
 import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
@@ -14,6 +15,7 @@ import com.yeoljeong.tripmate.auth.context.UserContext;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
 import com.yeoljeong.tripmate.presentation.dto.request.PlanSearchCondition;
 import com.yeoljeong.tripmate.presentation.dto.request.UpdateParticipationStatusRequest;
+import com.yeoljeong.tripmate.presentation.dto.request.withdrawPlanUnitParticipationRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.ConfirmPlanUnitResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.CreatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanDetailResponse;
@@ -109,13 +111,13 @@ public class PlanController {
   @DeleteMapping("/{planId}/unit-plans/{unitPlanId}/participations/{participationId}")
   public ApiResponse<WithdrawPlanUnitParticipationResponse> withdrawPlanUnitParticipant(
       @LoginUser UserContext user,
-      @PathVariable("planId") UUID planId,
       @PathVariable("unitPlanId") UUID planUnitId,
-      @PathVariable("participationId") UUID participationId
+      @PathVariable("participationId") UUID participationId,
+      @Valid @RequestBody withdrawPlanUnitParticipationRequest request
   ) {
 
     WithdrawPlanUnitParticipationResponse response = planCommandService.withdrawPlanUnitParticipant(
-        planId, planUnitId, participationId, user.userId());
+        WithdrawPlanUnitParticipationCommand.from(request,planUnitId, participationId, user.userId()));
 
     return ApiResponse.success(CommonSuccessCode.DELETE,"일정 참여 탈퇴 완료되었습니다.", response);
   }

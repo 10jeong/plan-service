@@ -4,6 +4,7 @@ import com.yeoljeong.tripmate.application.dto.command.CreatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.CreatePlanUnitCommand;
 import com.yeoljeong.tripmate.application.dto.command.ParticipatePlanCommand;
 import com.yeoljeong.tripmate.application.dto.command.UpdateParticipationStatusCommand;
+import com.yeoljeong.tripmate.application.dto.command.WithdrawPlanUnitParticipationCommand;
 import com.yeoljeong.tripmate.application.dto.result.ConfirmPlanUnitResult;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
@@ -210,16 +211,16 @@ public class PlanCommandService {
   * 참여 일정 탈퇴
   * : 참여 상태가 CONFIRMED인 사용자만 가능
   * */
-  public WithdrawPlanUnitParticipationResponse withdrawPlanUnitParticipant(UUID planId, UUID planUnitId, UUID participationId, UUID userId) {
-
+  public WithdrawPlanUnitParticipationResponse withdrawPlanUnitParticipant(
+      WithdrawPlanUnitParticipationCommand command) {
     PlanParticipation participation = planParticipationRepository.findById(
-            participationId)
+            command.participationId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
-    participation.withdraw(userId);
+    participation.withdraw(command.userId());
 
     // 이벤트 발행
-    events.planUnitParticipationQuit(UUID.randomUUID(), userId, planUnitId);
+    events.planUnitParticipationQuit(UUID.randomUUID(), command.userId(), command.planUnitId(), command.reason());
 
     return WithdrawPlanUnitParticipationResponse.from(participation);
   }

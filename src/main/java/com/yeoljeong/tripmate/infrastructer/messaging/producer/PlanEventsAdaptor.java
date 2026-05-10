@@ -122,10 +122,10 @@ public class PlanEventsAdaptor implements PlanEvents {
 
   /* 참여 합류된 사용자 탈퇴 이벤트*/
   @Override
-  public void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId) {
+  public void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId, String reason) {
     try {
       PlanUnitParticipantQuitEvent payload = new PlanUnitParticipantQuitEvent(eventId,
-          userId, planUnitId);
+          userId, planUnitId, reason);
       String json = objectMapper.writeValueAsString(payload);
 
       outBoxRepository.save(

@@ -2,7 +2,6 @@ package com.yeoljeong.tripmate.application.port;
 
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
-import com.yeoljeong.tripmate.event.PlanUnitParticipantQuitEvent;
 import java.util.UUID;
 
 
@@ -18,5 +17,5 @@ public interface PlanEvents {
 
   void deductPlanUnitParticipantFailed(UUID eventId, UUID orderId);
 
-  void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId);
+  void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId, String reason);
 }
