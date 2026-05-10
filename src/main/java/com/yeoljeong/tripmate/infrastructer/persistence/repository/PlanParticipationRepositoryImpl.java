@@ -72,4 +72,8 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
     return jpaRepository.updateStatus(planUnitId, currentStatus, nextStatus);
   }
 
+  @Override
+  public boolean existsOpenPlan(UUID userId) {
+    return jpaRepository.existsOpenPlan(userId);
+  }
 }

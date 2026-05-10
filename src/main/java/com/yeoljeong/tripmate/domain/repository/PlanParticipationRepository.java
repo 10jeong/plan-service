@@ -30,4 +30,5 @@ public interface PlanParticipationRepository {
 
   int updateStatus(UUID participationId, ParticipationStatus currentStatus, ParticipationStatus nextStatus);
 
+  boolean existsOpenPlan(UUID userId);
 }
