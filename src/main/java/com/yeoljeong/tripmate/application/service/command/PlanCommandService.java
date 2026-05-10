@@ -219,11 +219,7 @@ public class PlanCommandService {
     participation.withdraw(userId);
 
     // 이벤트 발행
-    events.planUnitParticipationQuit(new PlanUnitParticipantQuitEvent(
-        UUID.randomUUID(),
-        userId,
-        planUnitId
-    ));
+    events.planUnitParticipationQuit(UUID.randomUUID(), userId, planUnitId);
 
     return WithdrawPlanUnitParticipationResponse.from(participation);
   }
