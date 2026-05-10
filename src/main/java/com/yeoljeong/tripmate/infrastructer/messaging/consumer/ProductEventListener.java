@@ -5,7 +5,6 @@ import com.yeoljeong.tripmate.application.service.command.PlanInternalCommandSer
 import com.yeoljeong.tripmate.event.ProductStockDeductFailedEvent;
 import com.yeoljeong.tripmate.event.enums.ProductTopic;
 import com.yeoljeong.tripmate.infrastructer.messaging.KafkaPayloadDeserializer;
-import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -20,7 +19,7 @@ public class ProductEventListener {
   private final KafkaPayloadDeserializer kafkaPayloadDeserializer;
 
   @KafkaListener(topics = ProductTopic.STOCK_DEDUCT_FAILED_TOPIC, groupId = "plan-group")
-  public void productStockDeductFailed(String message) throws NoSuchAlgorithmException {
+  public void productStockDeductFailed(String message) {
 
     try {
 

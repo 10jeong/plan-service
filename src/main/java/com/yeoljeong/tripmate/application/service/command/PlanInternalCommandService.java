@@ -13,7 +13,6 @@ import com.yeoljeong.tripmate.event.OrderCreatedEvent;
 import com.yeoljeong.tripmate.event.PaymentCompletedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import com.yeoljeong.tripmate.exception.BusinessException;
-import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -111,8 +110,7 @@ public class PlanInternalCommandService {
   /*
    * 상품 재고 차감 실패시, 참여인원 감소 및 참여 상태 변경(RESERVED -> APPROVED) + 이벤트 발행
    * */
-  public void deductPlanUnitParticipant(DeductPlanUnitParticipantCommand command)
-      throws NoSuchAlgorithmException {
+  public void deductPlanUnitParticipant(DeductPlanUnitParticipantCommand command) {
     // todo: 멱등성 처리
     PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
