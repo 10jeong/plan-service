@@ -94,4 +94,28 @@ public class PlanEventsAdaptor implements PlanEvents {
       throw new RuntimeException("이벤트 직렬화 실패", e);
     }
   }
+
+  /* 참여 현재 인원 감소 실패 이벤트*/
+  @Override
+  public void deductPlanUnitParticipantFailed(UUID eventId, UUID orderId) {
+    try {
+      PlanUnitDeductParticipantEvent payload = new PlanUnitDeductParticipantEvent(eventId,
+          orderId);
+      String json = objectMapper.writeValueAsString(payload);
+
+      outBoxRepository.save(
+          // todo: common모듈 추가
+          PlanOutbox.create("plan.unit.participant.deduct.failed", json)
+      );
+    } catch (JsonProcessingException e) {
+      log.error(
+          "[plan-service] 참여 인원 감소 실패 이벤트 직렬화 실패: eventId={}, topic={}",
+          eventId,
+          "plan.unit.participant.deduct.failed",
+          e
+      );
+      throw new RuntimeException("이벤트 직렬화 실패", e);
+    }
+
+  }
 }

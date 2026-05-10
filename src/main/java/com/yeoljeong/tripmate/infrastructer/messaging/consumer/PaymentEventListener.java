@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.messaging.consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yeoljeong.tripmate.application.service.command.PlanInternalCommandService;
 import com.yeoljeong.tripmate.event.PaymentCompletedEvent;
 import com.yeoljeong.tripmate.event.enums.PaymentTopic;
@@ -17,7 +18,7 @@ public class PaymentEventListener {
   private final KafkaPayloadDeserializer kafkaPayloadDeserializer;
 
   @KafkaListener(topics = PaymentTopic.PAYMENT_COMPLETED_TOPIC, groupId = "plan-group")
-  public void paymentCompleted(String message) {
+  public void paymentCompleted(String message) throws JsonProcessingException {
     try {
 
       PaymentCompletedEvent event = kafkaPayloadDeserializer.deserialize(message,

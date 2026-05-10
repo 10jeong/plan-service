@@ -1,5 +1,6 @@
 package com.yeoljeong.tripmate.infrastructer.messaging.consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.yeoljeong.tripmate.application.service.command.PlanFailureEventService;
 import com.yeoljeong.tripmate.application.service.command.PlanInternalCommandService;
 import com.yeoljeong.tripmate.event.OrderCreatedEvent;
@@ -21,7 +22,7 @@ public class OrderEventListener {
   private final PlanFailureEventService planFailureEventService;
 
   @KafkaListener (topics = OrderTopic.ORDER_CREATED_TOPIC, groupId = "plan-group")
-  public void orderCreated(String message) {
+  public void orderCreated(String message) throws JsonProcessingException {
 
     OrderCreatedEvent event = null;
 

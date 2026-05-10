@@ -14,4 +14,6 @@ public interface PlanEvents {
   void deductPlanUnitParticipant(UUID eventId, UUID orderId);
 
   void addPlanUnitParticipantFailed(UUID eventId, UUID orderId);
+
+  void deductPlanUnitParticipantFailed(UUID eventId, UUID orderId);
 }
