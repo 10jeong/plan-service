@@ -11,6 +11,9 @@ spring:
       enable-auto-commit: false # Spring Kafka가 리스너 처리 성공 후 커밋
       auto-offset-reset: earliest # offset이 없을때 어디서 부터 읽을지 설정
 
-
     listener:
       ack-mode: record # 메시지 처리할때마다 commit
+
+  retry:
+    interval: 1000
+    max-attempts: 3
