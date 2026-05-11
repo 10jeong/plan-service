@@ -1,0 +1,75 @@
+package com.yeoljeong.tripmate.domain.model;
+
+import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
+import com.yeoljeong.tripmate.domain.enums.Country;
+import com.yeoljeong.tripmate.exception.BusinessException;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
+import java.math.BigDecimal;
+import java.util.UUID;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+public class ConfirmedProductInfo {
+  @Column(name = "product_schedule_id", nullable = false)
+  private UUID productScheduleId; // 상품 스제줄 ID
+
+  @Column(name = "product_name", nullable = false, length = 100)
+  private String productName; // 상품명
+
+  @Embedded
+  private ProductAddress productAddress; // 주소(국가, 도/주, 시, 상세주소)
+
+  @Column(name = "product_price", nullable = false, precision = 10, scale = 2)
+  private BigDecimal productPrice; // 가격
+
+
+  public ConfirmedProductInfo(UUID productScheduleId, String name, Country country, String state, String city
+      , BigDecimal price) {
+    validateProductId(productScheduleId);
+    validateName(name);
+    validatePrice(price);
+
+    ProductAddress address = new ProductAddress(country, state, city);
+
+    this.productScheduleId = productScheduleId;
+    this.productName = name.trim();
+    this.productAddress = address;
+    this.productPrice = price;
+  }
+
+  private void validatePrice(BigDecimal price) {
+    if (price == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_PRICE_REQUIRED);
+    }
+    if (price.compareTo(BigDecimal.ZERO) < 0) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_PRICE_NEGATIVE);
+    }
+
+    if (price.stripTrailingZeros().scale() > 2) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_PRICE_SCALE_INVALID);
+    }
+  }
+
+  private void validateName(String name) {
+    if (name == null || name.isBlank()) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_NAME_REQUIRED);
+    }
+
+    String TrimmedName = name.trim();
+    if (TrimmedName.length() > 100) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_SNAPSHOT_NAME_EXCEED);
+    }
+  }
+
+  private void validateProductId(UUID productId) {
+    if (productId == null) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_ID_REQUIRED);
+    }
+  }
+}
