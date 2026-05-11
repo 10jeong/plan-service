@@ -78,9 +78,6 @@ public class PlanParticipation extends BaseAuditEntity {
   * 일정 참여상태 변경 검증
   * */
   public void validatePlanParticipationStatus(ParticipationStatus next) {
-    if (next == null) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_REQUIRED);
-    }
     if (!this.participationStatus.canChangeTo(next)) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
     }
