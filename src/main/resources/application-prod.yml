@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: plan-service
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}
