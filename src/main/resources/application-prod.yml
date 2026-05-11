@@ -63,6 +63,8 @@ eureka:
     hostname: ${EUREKA_INSTANCE_HOST_NAME}
     non-secure-port: 8080
     prefer-ip-address: false
+    non-secure-port-enabled: true
+    secure-port-enabled: false
 
 jwt:
   secret: ${JWT_INTERNAL_SECRET}
