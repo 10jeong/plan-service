@@ -23,7 +23,7 @@ public class PlanFailureEventService {
   }
 
   @Transactional(propagation = Propagation.REQUIRES_NEW)
-  public void deductPlanUnitParticipantFailed(ProductStockDeductFailedEvent event, BusinessException e) {
-    events.deductPlanUnitParticipantFailed(UUID.randomUUID(), event.orderId());
+  public void deductPlanUnitParticipantFailedByProduct(ProductStockDeductFailedEvent event, BusinessException e) {
+    events.deductPlanUnitParticipantFailedByProduct(UUID.randomUUID(), event.orderId());
   }
 }

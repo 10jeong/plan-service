@@ -3,7 +3,7 @@ package com.yeoljeong.tripmate.application.dto.command.internal;
 import com.yeoljeong.tripmate.event.ProductStockDeductFailedEvent;
 import java.util.UUID;
 
-public record DeductPlanUnitParticipantCommand(
+public record DeductPlanUnitParticipantByProductCommand(
     UUID eventId,
     UUID orderId,
     UUID planUnitId,
@@ -11,8 +11,8 @@ public record DeductPlanUnitParticipantCommand(
     int quantity
 ) {
 
-  public static DeductPlanUnitParticipantCommand from(ProductStockDeductFailedEvent event) {
-    return new DeductPlanUnitParticipantCommand(
+  public static DeductPlanUnitParticipantByProductCommand from(ProductStockDeductFailedEvent event) {
+    return new DeductPlanUnitParticipantByProductCommand(
       event.eventId(),
       event.orderId(),
       event.planUnitId(),
