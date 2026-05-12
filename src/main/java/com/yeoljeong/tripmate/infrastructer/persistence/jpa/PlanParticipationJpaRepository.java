@@ -43,7 +43,7 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   @Query("""
     select count(pa) > 0
       from PlanParticipation pa
-        join pa.planUnit u 
+        join pa.planUnit u
         join u.plan p
           where pa.userId = :userId
             and pa.participationStatus in (

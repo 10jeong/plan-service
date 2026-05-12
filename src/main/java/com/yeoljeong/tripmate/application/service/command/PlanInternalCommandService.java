@@ -110,7 +110,7 @@ public class PlanInternalCommandService {
 
     // 상태 변경 (RESERVED -> CONFIRMED)
     int updated = planParticipationRepository.updateStatus(
-        participation.getPlanUnit().getId(),
+        participation.getId(),
         participation.getParticipationStatus(),
         ParticipationStatus.CONFIRMED);
 
