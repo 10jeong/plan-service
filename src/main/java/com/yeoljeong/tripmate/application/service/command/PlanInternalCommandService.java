@@ -1,6 +1,6 @@
 package com.yeoljeong.tripmate.application.service.command;
 
-import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantCommand;
+import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantByProductCommand;
 import com.yeoljeong.tripmate.application.dto.external.OrderPlanUnitData;
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
 import com.yeoljeong.tripmate.application.port.OrderReader;
@@ -117,7 +117,7 @@ public class PlanInternalCommandService {
   /*
    * 상품 재고 차감 실패시, 참여인원 감소 및 참여 상태 변경(RESERVED -> APPROVED) + 이벤트 발행
    * */
-  public void deductPlanUnitParticipant(DeductPlanUnitParticipantCommand command) {
+  public void deductPlanUnitParticipantByProduct(DeductPlanUnitParticipantByProductCommand command) {
     // todo: 멱등성 처리
     PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
@@ -143,6 +143,6 @@ public class PlanInternalCommandService {
     }
 
     // 이벤트 발행
-    events.deductPlanUnitParticipant(UUID.randomUUID(), command.orderId());
+    events.deductPlanUnitParticipantByProduct(UUID.randomUUID(), command.orderId());
   }
 }
