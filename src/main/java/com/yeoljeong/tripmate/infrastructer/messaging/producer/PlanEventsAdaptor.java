@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.event.PlanUnitAddParticipantFailedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
+import com.yeoljeong.tripmate.event.PlanUnitDeductParticipantByOrderEvent;
 import com.yeoljeong.tripmate.event.PlanUnitDeductParticipantByProductEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantQuitEvent;
@@ -139,5 +140,34 @@ public class PlanEventsAdaptor implements PlanEvents {
       );
       throw new RuntimeException("이벤트 직렬화 실패", e);
     }
+  }
+
+  /* 스케줄러로 인한 주문 취소 이벤트*/
+  @Override
+  public void deductPlanUnitParticipantByOrder(UUID eventId, UUID productId, UUID productScheduleId,
+      int quantity) {
+
+    try {
+      PlanUnitDeductParticipantByOrderEvent payload = new PlanUnitDeductParticipantByOrderEvent(
+          eventId,
+          productId,
+          productScheduleId,
+          quantity
+      );
+      String json = objectMapper.writeValueAsString(payload);
+
+      outBoxRepository.save(
+          PlanOutbox.create(PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_BY_ORDER_TOPIC, json)
+      );
+    } catch (JsonProcessingException e) {
+      log.error(
+          "[plan-service] 스케줄러로 인한 주문 취소 이벤트 직렬화 실패: eventId={}, topic={}",
+          eventId,
+          PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_BY_ORDER_TOPIC,
+          e
+      );
+      throw new RuntimeException("이벤트 직렬화 실패", e);
+    }
+
   }
 }

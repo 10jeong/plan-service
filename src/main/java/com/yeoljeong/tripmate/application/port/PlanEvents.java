@@ -18,4 +18,6 @@ public interface PlanEvents {
   void deductPlanUnitParticipantFailedByProduct(UUID eventId, UUID orderId);
 
   void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId, String reason);
+
+  void deductPlanUnitParticipantByOrder(UUID eventId, UUID productId, UUID productScheduleId, int quantity);
 }
