@@ -1,6 +1,7 @@
 package com.yeoljeong.tripmate.application.service.command;
 
-import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantCommand;
+import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantByOrderCommand;
+import com.yeoljeong.tripmate.application.dto.command.internal.DeductPlanUnitParticipantByProductCommand;
 import com.yeoljeong.tripmate.application.dto.external.OrderPlanUnitData;
 import com.yeoljeong.tripmate.application.dto.result.FindParticipationStatusResult;
 import com.yeoljeong.tripmate.application.port.OrderReader;
@@ -117,7 +118,7 @@ public class PlanInternalCommandService {
   /*
    * 상품 재고 차감 실패시, 참여인원 감소 및 참여 상태 변경(RESERVED -> APPROVED) + 이벤트 발행
    * */
-  public void deductPlanUnitParticipant(DeductPlanUnitParticipantCommand command) {
+  public void deductPlanUnitParticipantByProduct(DeductPlanUnitParticipantByProductCommand command) {
     // todo: 멱등성 처리
     PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
@@ -143,6 +144,42 @@ public class PlanInternalCommandService {
     }
 
     // 이벤트 발행
-    events.deductPlanUnitParticipant(UUID.randomUUID(), command.orderId());
+    events.deductPlanUnitParticipantByProduct(UUID.randomUUID(), command.orderId());
   }
+
+  /*
+   * 스케줄러로 인한 주문 취소시, 참여인원 감소 및 참여 상태 변경(RESERVED -> RESERVED_CANCELLED) + 이벤트 발행
+   * */
+  public void deductPlanUnitParticipantByOrder(DeductPlanUnitParticipantByOrderCommand command) {
+    // todo: 멱등성 처리
+    PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_UNIT_NOT_FOUND));
+
+    PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(
+            command.planUnitId(), command.userId())
+        .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
+
+    // 참여 상태 변경 (RESERVED -> RESERVED_CANCELLED)
+    int updatedStatus = planParticipationRepository.updateStatus(participation.getId(),
+        ParticipationStatus.RESERVED, ParticipationStatus.RESERVED_CANCELLED);
+
+    if (updatedStatus == 0) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
+    }
+
+    // 참여 현재인원 감소
+    planUnit.validatePositive(command.quantity());
+    int updatedCount = planUnitRepository.deductParticipantCount(command.planUnitId(), command.quantity());
+
+    if (updatedCount == 0) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_PARTICIPANT_UPDATE_QUANTITY_INVALID);
+    }
+
+    // 이벤트 발행
+    events.deductPlanUnitParticipantByOrder(UUID.randomUUID(), command.productId(),
+        planUnit.getProductScheduleId(), command.quantity());
+  }
+
+
+
 }

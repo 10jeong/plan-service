@@ -5,7 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yeoljeong.tripmate.application.port.PlanEvents;
 import com.yeoljeong.tripmate.event.PlanUnitAddParticipantFailedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
-import com.yeoljeong.tripmate.event.PlanUnitDeductParticipantEvent;
+import com.yeoljeong.tripmate.event.PlanUnitDeductParticipantByOrderEvent;
+import com.yeoljeong.tripmate.event.PlanUnitDeductParticipantByProductEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import com.yeoljeong.tripmate.event.PlanUnitParticipantQuitEvent;
 import com.yeoljeong.tripmate.event.enums.PlanTopic;
@@ -52,22 +53,22 @@ public class PlanEventsAdaptor implements PlanEvents {
 
   /* 참여 현재 인원 감소 이벤트*/
   @Override
-  public void deductPlanUnitParticipant(UUID eventId, UUID orderId) {
+  public void deductPlanUnitParticipantByProduct(UUID eventId, UUID orderId) {
 
     try {
-      PlanUnitDeductParticipantEvent payload = new PlanUnitDeductParticipantEvent(
+      PlanUnitDeductParticipantByProductEvent payload = new PlanUnitDeductParticipantByProductEvent(
           eventId, orderId);
 
       String json = objectMapper.writeValueAsString(payload);
       outBoxRepository.save(
-          PlanOutbox.create(PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_TOPIC,
+          PlanOutbox.create(PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_BY_PRODUCT_TOPIC,
               json)
       );
     } catch (JsonProcessingException e) {
       log.error(
           "[plan-service] 참여 인원 감소 이벤트 직렬화 실패: eventId={}, topic={}",
           eventId,
-          PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_TOPIC,
+          PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_BY_PRODUCT_TOPIC,
           e
       );
       throw new RuntimeException("이벤트 직렬화 실패", e);
@@ -98,21 +99,20 @@ public class PlanEventsAdaptor implements PlanEvents {
 
   /* 참여 현재 인원 감소 실패 이벤트*/
   @Override
-  public void deductPlanUnitParticipantFailed(UUID eventId, UUID orderId) {
+  public void deductPlanUnitParticipantFailedByProduct(UUID eventId, UUID orderId) {
     try {
-      PlanUnitDeductParticipantEvent payload = new PlanUnitDeductParticipantEvent(eventId,
+      PlanUnitDeductParticipantByProductEvent payload = new PlanUnitDeductParticipantByProductEvent(eventId,
           orderId);
       String json = objectMapper.writeValueAsString(payload);
 
       outBoxRepository.save(
-          // todo: common모듈 추가
-          PlanOutbox.create("plan.unit.participant.deduct.failed", json)
+          PlanOutbox.create(PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCT_FAILED_TOPIC, json)
       );
     } catch (JsonProcessingException e) {
       log.error(
           "[plan-service] 참여 인원 감소 실패 이벤트 직렬화 실패: eventId={}, topic={}",
           eventId,
-          "plan.unit.participant.deduct.failed",
+          PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCT_FAILED_TOPIC,
           e
       );
       throw new RuntimeException("이벤트 직렬화 실패", e);
@@ -140,5 +140,34 @@ public class PlanEventsAdaptor implements PlanEvents {
       );
       throw new RuntimeException("이벤트 직렬화 실패", e);
     }
+  }
+
+  /* 스케줄러로 인한 주문 취소 이벤트*/
+  @Override
+  public void deductPlanUnitParticipantByOrder(UUID eventId, UUID productId, UUID productScheduleId,
+      int quantity) {
+
+    try {
+      PlanUnitDeductParticipantByOrderEvent payload = new PlanUnitDeductParticipantByOrderEvent(
+          eventId,
+          productId,
+          productScheduleId,
+          quantity
+      );
+      String json = objectMapper.writeValueAsString(payload);
+
+      outBoxRepository.save(
+          PlanOutbox.create(PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_BY_ORDER_TOPIC, json)
+      );
+    } catch (JsonProcessingException e) {
+      log.error(
+          "[plan-service] 스케줄러로 인한 주문 취소 이벤트 직렬화 실패: eventId={}, topic={}",
+          eventId,
+          PlanTopic.PLAN_UNIT_PARTICIPANT_DEDUCTED_BY_ORDER_TOPIC,
+          e
+      );
+      throw new RuntimeException("이벤트 직렬화 실패", e);
+    }
+
   }
 }

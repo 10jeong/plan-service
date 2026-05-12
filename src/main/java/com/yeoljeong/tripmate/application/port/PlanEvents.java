@@ -11,11 +11,13 @@ public interface PlanEvents {
 
   void planUnitConfirmed(PlanUnitConfirmedEvent planUnitConfirmedEvent);
 
-  void deductPlanUnitParticipant(UUID eventId, UUID orderId);
+  void deductPlanUnitParticipantByProduct(UUID eventId, UUID orderId);
 
   void addPlanUnitParticipantFailed(UUID eventId, UUID orderId);
 
-  void deductPlanUnitParticipantFailed(UUID eventId, UUID orderId);
+  void deductPlanUnitParticipantFailedByProduct(UUID eventId, UUID orderId);
 
   void planUnitParticipationQuit(UUID eventId, UUID userId, UUID planUnitId, String reason);
+
+  void deductPlanUnitParticipantByOrder(UUID eventId, UUID productId, UUID productScheduleId, int quantity);
 }
