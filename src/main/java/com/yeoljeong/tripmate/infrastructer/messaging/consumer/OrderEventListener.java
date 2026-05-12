@@ -68,10 +68,11 @@ public class OrderEventListener {
     } catch (BusinessException e) {
       log.warn("[plan-service] 스케줄러로 인한 주문 취소 이벤트 비즈니스 처리 실패. 실패 이벤트 발행 후 소비 완료 처리 : "
               + "topic={}, eventId={}, planUnitId={}, scheduleId={} error={}",
-          OrderTopic.ORDER_CREATED_TOPIC, event.eventId(), event.planUnitId(), event.scheduleId(),
+          OrderTopic.ORDER_SCHEDULER_CANCELLED_TOPIC, event.eventId(), event.planUnitId(), event.scheduleId(),
           e.getMessage(), e);
       // todo: dlt 저장
 //      planFailureEventService.addPlanUnitParticipantFailed(event, e);
+      throw e; // DLT/실패이벤트 발행 구현 전까지는 유실 방지를 위해 재시도 경로 유지
 
     }catch (Exception e) {
       log.error("[plan-service] 메시지 업데이트 처리 실패 : topic={}, error={}",
