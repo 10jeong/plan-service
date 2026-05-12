@@ -68,3 +68,14 @@ eureka:
 
 jwt:
   secret: ${JWT_INTERNAL_SECRET}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus
+  endpoint:
+    health:
+      show-details: always
+    prometheus:
+      access: unrestricted
