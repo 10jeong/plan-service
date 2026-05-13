@@ -221,6 +221,7 @@ public class PlanCommandService {
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
     participation.withdraw(command.userId());
+    planUnitRepository.deductParticipantCount(planUnit.getId(), 1);
 
     // 이벤트 발행
     events.planUnitParticipationQuit(UUID.randomUUID(), command.userId(), planUnit.getId(), command.reason());
