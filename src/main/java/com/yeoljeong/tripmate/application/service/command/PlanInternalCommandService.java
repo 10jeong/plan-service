@@ -18,11 +18,9 @@ import com.yeoljeong.tripmate.event.PlanUnitParticipantAddedEvent;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -101,11 +99,9 @@ public class PlanInternalCommandService {
       throw new BusinessException(PlanErrorCode.ORDER_PLAN_UNIT_NOT_FOUND);
     }
 
-    log.info("Order FeignClient의 productId={}", orderPlanUnitData.planUnitId());
     PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(orderPlanUnitData.planUnitId(), event.userId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
-    log.info("참여자의 현재 상태 확인(RESERVED)여야함 : {}", participation.getParticipationStatus());
     participation.validatePlanParticipationStatus(ParticipationStatus.CONFIRMED);
 
     // 상태 변경 (RESERVED -> CONFIRMED)
@@ -115,10 +111,8 @@ public class PlanInternalCommandService {
         ParticipationStatus.CONFIRMED);
 
     if (updated == 0) {
-      log.info("상태 변경이 되지 않았습니다.");
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
     }
-    log.info("상태 변경이 되었습니다.");
   }
 
   /*
