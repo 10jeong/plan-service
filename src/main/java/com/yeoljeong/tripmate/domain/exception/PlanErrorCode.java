@@ -39,6 +39,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_UNIT_NOT_HOST(HttpStatus.FORBIDDEN, "해당 단위 일정의 호스트만 접근가능합니다."),
   PLAN_UNIT_ALREADY_CONFIRMED(HttpStatus.BAD_REQUEST, "이미 확정된 일정입니다."),
   PLAN_UNIT_CONFIRMED_QUIT_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "확정된 일정은 탈퇴할 수 없습니다."),
+  PLAN_UNIT_CONFIRMED_PARTICIPATION_NOT_ALLOWED(HttpStatus.BAD_REQUEST, "확정된 일정에는 새로 참여 신청할 수 없습니다." ),
 
 
   // plan_product_snapshot

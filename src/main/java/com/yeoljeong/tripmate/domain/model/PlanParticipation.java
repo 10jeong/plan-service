@@ -21,6 +21,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.apache.kafka.common.security.oauthbearer.internals.secured.ValidateException;
 
 @Entity
 @Table(
@@ -59,6 +60,7 @@ public class PlanParticipation extends BaseAuditEntity {
   }
 
   public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
+    validateNotConfirmed(planUnit);
     return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.REQUESTED, planUnit);
   }
 
@@ -72,6 +74,15 @@ public class PlanParticipation extends BaseAuditEntity {
     this.participationRole = participationRole;
     this.participationStatus = participationStatus;
     this.planUnit = planUnit;
+  }
+
+  /*
+  * 확정된 일정 참여 불가 검증
+  * */
+  private static void validateNotConfirmed(PlanUnit planUnit) {
+    if (planUnit.isConfirmed()) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_CONFIRMED_PARTICIPATION_NOT_ALLOWED);
+    }
   }
 
   /*
