@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tripmate — 일정 생성</title>
+  <style>
+    /* ── 리셋 & 기본 ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f0; color: #1a1a1a; font-size: 14px; }
+
+    /* ── 화면 전환 ── */
+    .screen { display: none; min-height: 100vh; }
+    .screen.active { display: block; }
+
+    /* ── 네비게이션 ── */
+    .nav {
+      background: #fff;
+      border-bottom: 1px solid #e8e8e4;
+      padding: 0 24px;
+      display: flex;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      height: 52px;
+    }
+    .nav-logo { font-size: 17px; font-weight: 600; color: #1D9E75; display: flex; align-items: center; gap: 7px; margin-right: 32px; text-decoration: none; }
+    .nav-logo svg { width: 20px; height: 20px; }
+    .nav-tab { padding: 0 16px; font-size: 14px; color: #1D9E75; font-weight: 600; border-bottom: 2px solid #1D9E75; height: 52px; display: flex; align-items: center; }
+    .nav-back { height: 52px; display: flex; align-items: center; gap: 6px; font-size: 14px; color: #888; cursor: pointer; margin-right: 16px; background: none; border: none; font-family: inherit; }
+    .nav-back:hover { color: #1a1a1a; }
+
+    /* ── 페이지 레이아웃 ── */
+    .page { padding: 28px 24px; max-width: 680px; margin: 0 auto; }
+    .page-title { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+    .page-sub { font-size: 13px; color: #888; margin-bottom: 24px; }
+
+    /* ── 스텝바 ── */
+    .step-bar { display: flex; margin-bottom: 28px; }
+    .step { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+    .step:not(:last-child)::after { content: ''; position: absolute; top: 14px; left: 50%; width: 100%; height: 1px; background: #e0e0d8; }
+    .step-dot { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #ccc; background: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #999; position: relative; z-index: 1; }
+    .step-dot.done { background: #1D9E75; border-color: #1D9E75; color: #fff; }
+    .step-dot.active { border-color: #1D9E75; color: #1D9E75; }
+    .step-label { font-size: 11px; color: #888; margin-top: 5px; }
+
+    /* ── 카드 ── */
+    .card { background: #fff; border: 1px solid #e8e8e4; border-radius: 12px; padding: 20px 24px; margin-bottom: 16px; }
+    .card-title { font-size: 14px; font-weight: 600; margin-bottom: 16px; color: #1a1a1a; display: flex; align-items: center; gap: 7px; }
+    .card-title svg { width: 16px; height: 16px; color: #1D9E75; }
+
+    /* ── 폼 요소 ── */
+    .fg { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+    .fg:last-child { margin-bottom: 0; }
+    .fg label { font-size: 12px; font-weight: 600; color: #555; }
+    .fg input, .fg select, .fg textarea {
+      width: 100%; padding: 9px 12px;
+      border: 1px solid #ddd; border-radius: 8px;
+      font-size: 14px; font-family: inherit; color: #1a1a1a;
+      background: #fff; transition: border-color .15s;
+      outline: none;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: #1D9E75; box-shadow: 0 0 0 3px rgba(29,158,117,.1); }
+    .fg textarea { resize: vertical; min-height: 80px; }
+    .fg input.ro { background: #f8f8f5; color: #888; cursor: default; }
+    .fr2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .fr3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    .req { color: #e24b4a; }
+    .hint { font-size: 11px; color: #999; margin-top: 4px; margin-bottom: 14px; display: flex; align-items: center; gap: 4px; }
+    .divider { height: 1px; background: #f0f0ec; margin: 16px 0; }
+
+    /* ── 버튼 ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 9px 18px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      border: 1px solid #ddd; background: #fff; color: #1a1a1a;
+      font-family: inherit; transition: background .15s, border-color .15s;
+    }
+    .btn:hover { background: #f5f5f0; }
+    .btn-primary { background: #1D9E75; color: #fff; border-color: #1D9E75; }
+    .btn-primary:hover { background: #0F6E56; border-color: #0F6E56; }
+    .btn-sm { padding: 6px 12px; font-size: 12px; }
+    .btn-danger { background: #fff0f0; color: #a32d2d; border-color: #f7c1c1; }
+    .btn-danger:hover { background: #fde8e8; }
+
+    /* ── 배지 ── */
+    .badge { display: inline-flex; align-items: center; padding: 3px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .badge-green { background: #e1f5ee; color: #0f6e56; }
+    .badge-gray { background: #f1efe8; color: #5f5e5a; }
+
+    /* ── 빈 상태 ── */
+    .empty-box {
+      padding: 32px; text-align: center; color: #aaa; font-size: 13px;
+      border: 1.5px dashed #ddd; border-radius: 8px;
+    }
+    .empty-box svg { width: 28px; height: 28px; color: #ccc; margin: 0 auto 10px; display: block; }
+
+    /* ── 단위 일정 카드 ── */
+    .unit-list-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .unit-card {
+      background: #fff; border: 1px solid #e8e8e4; border-radius: 8px;
+      padding: 13px 14px; display: flex; align-items: flex-start; gap: 10px;
+      transition: border-color .15s;
+    }
+    .day-badge { display: inline-flex; align-items: center; justify-content: center; min-width: 28px; height: 22px; border-radius: 5px; background: #e1f5ee; color: #0f6e56; font-size: 11px; font-weight: 700; padding: 0 6px; flex-shrink: 0; margin-top: 1px; }
+    .unit-body { flex: 1; min-width: 0; }
+    .unit-title-text { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+    .unit-meta { font-size: 11px; color: #888; margin-top: 5px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .unit-meta span { display: flex; align-items: center; gap: 3px; }
+    .unit-meta svg { width: 12px; height: 12px; }
+    .unit-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .day-group-label { font-size: 12px; font-weight: 700; color: #1D9E75; margin: 14px 0 6px; display: flex; align-items: center; gap: 6px; }
+    .day-group-label:first-child { margin-top: 0; }
+    .day-group-label::after { content: ''; flex: 1; height: 1px; background: #e8f5ef; }
+
+    /* ── 상품 검색 ── */
+    .search-row { display: flex; gap: 8px; align-items: flex-end; }
+    .search-row .fg { flex: 1; margin-bottom: 0; }
+    .url-chip {
+      font-size: 11px; color: #999; font-family: 'SF Mono', 'Fira Code', monospace;
+      background: #f8f8f5; padding: 6px 10px; border-radius: 6px;
+      margin-top: 8px; word-break: break-all; border: 1px solid #ececec;
+    }
+    .product-grid { display: flex; flex-direction: column; gap: 7px; margin-top: 10px; }
+    .product-item {
+      background: #fff; border: 1px solid #e8e8e4; border-radius: 8px;
+      padding: 10px 12px; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transition: border-color .12s, background .12s;
+    }
+    .product-item:hover { border-color: #5DCAA5; }
+    .product-item.selected { border-color: #1D9E75; background: #f0fbf7; }
+    .pname { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+    .pmeta { font-size: 11px; color: #888; margin-top: 2px; }
+    .pprice { font-size: 13px; font-weight: 700; color: #1D9E75; white-space: nowrap; }
+
+    /* ── 로딩 스피너 ── */
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid #e0e0d8; border-top-color: #1D9E75;
+      border-radius: 50%; animation: spin .6s linear infinite;
+      display: inline-block; vertical-align: middle; margin-right: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── 선택된 상품 칩 ── */
+    .sel-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: #f0fbf7; border: 1px solid #9FE1CB;
+      border-radius: 8px; padding: 10px 14px; margin-top: 10px;
+    }
+    .sel-chip-info { flex: 1; min-width: 0; }
+    .sel-chip-name { font-size: 13px; font-weight: 600; color: #085041; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .sel-chip-sub { font-size: 11px; color: #0f6e56; margin-top: 2px; }
+
+    /* ── 하단 버튼 행 ── */
+    .btn-row { display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 40px; }
+
+    /* ── BASE_URL 설정 배너 ── */
+    .config-banner {
+      background: #fffbeb; border: 1px solid #fbbf24; border-radius: 8px;
+      padding: 12px 16px; margin-bottom: 20px; font-size: 13px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .config-banner svg { width: 16px; height: 16px; color: #d97706; flex-shrink: 0; }
+    .config-banner code { font-family: monospace; background: #fef3c7; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+
+    @media (max-width: 600px) {
+      .fr2, .fr3 { grid-template-columns: 1fr; }
+      .page { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ━━━━━━━━━━━━━━━ 화면 1: 메인 ━━━━━━━━━━━━━━━ -->
+<div class="screen active" id="screen-main">
+  <nav class="nav">
+    <a class="nav-logo" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 5.93 5.93l1.8-1.8a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Tripmate
+    </a>
+    <div class="nav-tab">일정 생성</div>
+  </nav>
+
+  <div class="page">
+    <p class="page-title">새 여행 일정 만들기</p>
+    <p class="page-sub">기본 정보를 입력하고 세부 일정을 추가하세요</p>
+
+    <!--    <div id="config-banner" class="config-banner">-->
+    <!--      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>-->
+    <!--      <span>현재 API 주소: <code id="banner-url"></code> &nbsp;—&nbsp; 파일 상단의 <code>BASE_URL</code> 변수를 실제 서버 주소로 변경하세요.</span>-->
+    <!--    </div>-->
+
+    <div class="step-bar">
+      <div class="step"><div class="step-dot done">✓</div><div class="step-label">기본 정보</div></div>
+      <div class="step"><div class="step-dot active">2</div><div class="step-label">세부 일정</div></div>
+      <div class="step"><div class="step-dot">3</div><div class="step-label">확인 & 게시</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">기본 정보</div>
+      <div class="fg"><label>여행 제목 <span class="req">*</span></label><input type="text" id="trip-title" placeholder="예: 도쿄 5일 맛집 투어"></div>
+      <div class="fg"><label>여행 설명 <span class="req">*</span></label><textarea id="trip-desc" placeholder="여행에 대해 소개해주세요"></textarea></div>
+      <div class="fr2">
+        <div class="fg" style="margin-bottom:0"><label>시작일 <span class="req">*</span></label><input type="date" id="trip-start"></div>
+        <div class="fg" style="margin-bottom:0"><label>종료일 <span class="req">*</span></label><input type="date" id="trip-end"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <span class="card-title" style="margin-bottom:0">세부 일정 (단위 일정)</span>
+        <button class="btn btn-sm btn-primary" onclick="goToUnitForm(null)">+ 단위 일정 추가</button>
+      </div>
+      <div class="unit-list-wrap" id="unit-list">
+        <div class="empty-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          단위 일정을 추가하면 여기에 표시됩니다
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="submitMain()">✈ 일정 게시하기</button>
+    </div>
+  </div>
+</div>
+
+<!-- ━━━━━━━━━━━━━━━ 화면 2: 단위 일정 추가/수정 ━━━━━━━━━━━━━━━ -->
+<div class="screen" id="screen-unit">
+  <nav class="nav">
+    <a class="nav-logo" href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 8.91a16 16 0 0 0 5.93 5.93l1.8-1.8a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Tripmate
+    </a>
+    <button class="nav-back" onclick="goBack()">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      돌아가기
+    </button>
+    <div class="nav-tab" id="unit-tab-label">단위 일정 추가</div>
+  </nav>
+
+  <div class="page">
+    <p class="page-title" id="unit-page-title">단위 일정 추가</p>
+    <p class="page-sub">날짜로 상품을 검색해 선택하면 제목·가격이 자동으로 채워집니다</p>
+
+    <!-- 상품 검색 -->
+    <div class="card">
+      <div class="card-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        상품 검색
+      </div>
+      <div class="search-row">
+        <div class="fg"><label>날짜 선택 <span class="req">*</span></label><input type="date" id="m-date" onchange="onDateChange()"></div>
+        <button class="btn btn-primary btn-sm" onclick="searchProducts()" style="flex-shrink:0;align-self:flex-end">검색</button>
+      </div>
+      <div id="url-chip" style="display:none" class="url-chip"></div>
+      <div id="product-area"></div>
+    </div>
+
+    <!-- 일정 상세 -->
+    <div class="card">
+      <div class="card-title">일정 상세 정보</div>
+
+      <div class="fg" style="margin-bottom:0"><label>일차 (day) <span class="req">*</span></label><input type="number" id="m-day" min="1" value="1"></div>
+      <p class="hint" style="margin-top:6px;margin-bottom:14px">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        같은 일차 내 순서는 시작시간(start_time) 기준으로 자동 정렬됩니다
+      </p>
+
+      <div class="fg"><label>일정 제목 (title) <span class="req">*</span></label><input type="text" id="m-title" placeholder="상품 선택 시 자동 입력됩니다"></div>
+      <div class="fg"><label>설명 (description) <span class="req">*</span></label><textarea id="m-desc" placeholder="이 단위 일정에 대해 설명해주세요"></textarea></div>
+
+      <div class="fr2">
+        <div class="fg" style="margin-bottom:0"><label>예상 시작시간 (start_time) <span class="req">*</span></label><input type="time" id="m-start" value="10:00"></div>
+        <div class="fg" style="margin-bottom:0"><label>예상 종료시간 (end_time) <span class="req">*</span></label><input type="time" id="m-end" value="12:00"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="fr2">
+        <div class="fg" style="margin-bottom:0"><label>가격 (price) <span class="req">*</span></label><input type="number" id="m-price" min="0" value="0"></div>
+        <div class="fg" style="margin-bottom:0"><label>최대 인원 (max_count) <span class="req">*</span></label><input type="number" id="m-max" min="1" value="5"></div>
+      </div>
+
+      <div class="fg" style="margin-top:14px">
+        <label>상품 스케줄 ID (product_schedule_id)</label>
+        <input type="text" id="m-sched" class="ro" readonly placeholder="상품 선택 시 자동 입력됩니다">
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn" onclick="goBack()">취소</button>
+      <button class="btn btn-primary" onclick="submitUnit()">✓ 저장</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  /* ════════════════════════════════════════
+     ★ 여기만 수정하세요 ★
+     실제 서버 주소로 변경하면 바로 연동됩니다
+     예) const BASE_URL = 'https://api.tripmate.com';
+  ════════════════════════════════════════ */
+  const BASE_URL = 'http://ec2-43-201-242-253.ap-northeast-2.compute.amazonaws.com:8080';
+
+  /* ── 초기화 ── */
+  // document.getElementById('banner-url').textContent = BASE_URL;
+  document.getElementById('trip-start').value = today();
+  document.getElementById('trip-end').value = addDays(today(), 4);
+  document.getElementById('m-date').value = today();
+
+  function today() { return new Date().toISOString().slice(0,10); }
+  function addDays(d, n) { const dt = new Date(d); dt.setDate(dt.getDate()+n); return dt.toISOString().slice(0,10); }
+
+  /* ── 상태 ── */
+  const FLAGS = {JP:'🇯🇵',KR:'🇰🇷',US:'🇺🇸',TH:'🇹🇭',FR:'🇫🇷',GB:'🇬🇧',SG:'🇸🇬',VN:'🇻🇳'};
+  let units = [];
+  let editingId = null;
+  let selProduct = null;
+
+  /* ── 화면 전환 ── */
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function goBack() { showScreen('screen-main'); }
+
+  function goToUnitForm(id) {
+    editingId = id;
+    selProduct = null;
+    const isEdit = id != null;
+    document.getElementById('unit-tab-label').textContent = isEdit ? '단위 일정 수정' : '단위 일정 추가';
+    document.getElementById('unit-page-title').textContent = isEdit ? '단위 일정 수정' : '단위 일정 추가';
+    document.getElementById('url-chip').style.display = 'none';
+    document.getElementById('product-area').innerHTML = '';
+
+    const tripStart = document.getElementById('trip-start').value || today();
+    document.getElementById('m-date').value = tripStart;
+
+    if (isEdit) {
+      const u = units.find(x => x.id === id);
+      if (u) {
+        document.getElementById('m-day').value = u.day;
+        document.getElementById('m-title').value = u.title;
+        document.getElementById('m-desc').value = u.description;
+        document.getElementById('m-start').value = u.start_time;
+        document.getElementById('m-end').value = u.end_time;
+        document.getElementById('m-price').value = u.price;
+        document.getElementById('m-max').value = u.max_count;
+        document.getElementById('m-sched').value = u.product_schedule_id || '';
+        selProduct = u._product || null;
+        if (selProduct) showSelChip(selProduct);
+      }
+    } else {
+      const maxDay = units.length ? Math.max(...units.map(u => u.day)) : 0;
+      document.getElementById('m-day').value = maxDay + 1;
+      document.getElementById('m-title').value = '';
+      document.getElementById('m-desc').value = '';
+      document.getElementById('m-start').value = '10:00';
+      document.getElementById('m-end').value = '12:00';
+      document.getElementById('m-price').value = '0';
+      document.getElementById('m-max').value = '5';
+      document.getElementById('m-sched').value = '';
+    }
+    showScreen('screen-unit');
+  }
+
+  /* ── 상품 검색 ── */
+  function onDateChange() {
+    selProduct = null;
+    document.getElementById('m-price').value = 0;
+    document.getElementById('m-sched').value = '';
+    document.getElementById('product-area').innerHTML = '';
+    const d = document.getElementById('m-date').value;
+    if (d) {
+      const c = document.getElementById('url-chip');
+      c.textContent = `GET ${BASE_URL}/products/available?date=${d}`;
+      c.style.display = 'block';
+    }
+  }
+
+  const ACCESS_TOKEN = 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzZTY3ZWNmOS1iZDdlLTQzNWMtYWQ0MS1lODkwNzAyNTkyNTQiLCJpc3MiOiJ0cmlwTWF0ZSIsInJvbGUiOiJVU0VSIiwiaWF0IjoxNzc4NjExOTI0LCJleHAiOjE3ODEyMzk5MjQsImp0aSI6IjM5ZTJkYmQ2LTZlYjgtNGYwNy05YWYwLWY0Y2Q4ZWRlZDUzZCJ9.Nv52b5Lgm07ki1OqMSvkdBSV1ar1aRCIN3hF3oLkv9E';
+
+  async function searchProducts() {
+    const date = document.getElementById('m-date').value;
+    if (!date) { alert('날짜를 선택해주세요.'); return; }
+    const c = document.getElementById('url-chip');
+    c.textContent = `GET ${BASE_URL}/products/available?date=${date}`;
+    c.style.display = 'block';
+    document.getElementById('product-area').innerHTML =
+        `<div style="padding:14px 0;font-size:13px;color:#888"><span class="spinner"></span>상품 불러오는 중...</div>`;
+    selProduct = null;
+    try {
+      const res = await fetch(`${BASE_URL}/products/available?date=${date}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${ACCESS_TOKEN}`
+        }
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = await res.json();
+      renderProducts(json.data.content);
+    } catch(e) {
+      console.warn('API 호출 실패, mock 데이터 사용:', e.message);
+      renderProducts(getMock(date));
+    }
+  }
+
+  function getMock(date) {
+    return [
+      {productId:'8b25c875-a69e-4b88-8663-058e0457303b',productName:'시부야 VR 테마파크 이용권',country:'JP',state:'Tokyo',city:'Shibuya',price:6100,stock:60,scheduleId:'337cb3f7-5abd-48a0-95f4-ce303bfc24a5',date,scheduleStatus:'ACTIVE'},
+      {productId:'2a1d9c44-b3e2-4f77-9012-ab34cd56ef78',productName:'신주쿠 가이드 투어 (3시간)',country:'JP',state:'Tokyo',city:'Shinjuku',price:4500,stock:20,scheduleId:'aa1bc2d3-ef45-6789-ab01-cd23ef456789',date,scheduleStatus:'ACTIVE'},
+      {productId:'f7e6d5c4-b3a2-1098-7654-321098fedcba',productName:'아사쿠사 전통 체험 패키지',country:'JP',state:'Tokyo',city:'Asakusa',price:8200,stock:15,scheduleId:'bb2cd3e4-fg56-7890-bc12-de34fg567890',date,scheduleStatus:'ACTIVE'},
+    ];
+  }
+
+  function renderProducts(list) {
+    const area = document.getElementById('product-area');
+    if (!list || !list.length) {
+      area.innerHTML = `<div style="padding:16px;text-align:center;font-size:13px;color:#aaa">해당 날짜에 이용 가능한 상품이 없습니다.</div>`;
+      return;
+    }
+    const selId = selProduct?.productId;
+    area.innerHTML = `
+    <div style="font-size:11px;color:#aaa;margin:10px 0 6px">${list.length}개 상품 · 클릭하여 선택</div>
+    <div class="product-grid">
+      ${list.map(p => `
+        <div class="product-item${p.productId===selId?' selected':''}" id="pi-${p.productId}"
+             onclick='pickProduct(${JSON.stringify(p).replace(/'/g,"&#39;")})'>
+          <div style="font-size:22px;flex-shrink:0">${FLAGS[p.country]||'🌏'}</div>
+          <div style="flex:1;min-width:0">
+            <div class="pname">${p.productName}</div>
+            <div class="pmeta">${p.state} · ${p.city} · 잔여 ${p.stock}석</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+            <span class="pprice">¥${Number(p.price).toLocaleString()}</span>
+            <span class="badge ${p.scheduleStatus==='ACTIVE'?'badge-green':'badge-gray'}">${p.scheduleStatus==='ACTIVE'?'예약 가능':'마감'}</span>
+          </div>
+        </div>`).join('')}
+    </div>`;
+  }
+
+  function showSelChip(p) {
+    document.getElementById('product-area').innerHTML = `
+    <div class="sel-chip">
+      <div style="font-size:22px">${FLAGS[p.country]||'🌏'}</div>
+      <div class="sel-chip-info">
+        <div class="sel-chip-name">${p.productName}</div>
+        <div class="sel-chip-sub">${p.city} · ¥${Number(p.price).toLocaleString()}</div>
+      </div>
+      <span class="badge badge-green">선택됨</span>
+      <button class="btn btn-sm" onclick="clearSel()">변경</button>
+    </div>`;
+  }
+
+  function clearSel() {
+    selProduct = null;
+    document.getElementById('m-price').value = 0;
+    document.getElementById('m-sched').value = '';
+    document.getElementById('product-area').innerHTML = '';
+    searchProducts();
+  }
+
+  function pickProduct(p) {
+    if (selProduct?.productId === p.productId) {
+      selProduct = null;
+      document.getElementById('m-price').value = 0;
+      document.getElementById('m-sched').value = '';
+      document.querySelectorAll('.product-item').forEach(el => el.classList.remove('selected'));
+      return;
+    }
+    selProduct = p;
+    document.getElementById('m-price').value = p.price;
+    document.getElementById('m-sched').value = p.scheduleId;
+    if (!document.getElementById('m-title').value.trim())
+      document.getElementById('m-title').value = p.productName;
+    showSelChip(p);
+  }
+
+  /* ── 단위 일정 저장 ── */
+  function submitUnit() {
+    const title = document.getElementById('m-title').value.trim();
+    const desc  = document.getElementById('m-desc').value.trim();
+    const day   = parseInt(document.getElementById('m-day').value);
+    const st    = document.getElementById('m-start').value;
+    const et    = document.getElementById('m-end').value;
+    const price = parseFloat(document.getElementById('m-price').value) || 0;
+    const max   = parseInt(document.getElementById('m-max').value);
+    const sched = document.getElementById('m-sched').value.trim();
+
+    if (!title) { alert('일정 제목을 입력해주세요.'); return; }
+    if (!desc)  { alert('설명을 입력해주세요.'); return; }
+    if (!day || day < 1) { alert('일차를 입력해주세요.'); return; }
+    if (!st || !et) { alert('시작/종료 시간을 입력해주세요.'); return; }
+    if (!max || max < 1) { alert('최대 인원을 1명 이상 입력해주세요.'); return; }
+
+    const sameDay = units.filter(u => u.day === day && u.id !== (editingId ?? -1));
+    const order_index = sameDay.length + 1; /* 저장 후 renderUnitList에서 start_time 기준 재계산 */
+
+    const unit = {
+      id: editingId ?? Date.now(),
+      day, order_index, title, description: desc,
+      start_time: st, end_time: et, price,
+      max_count: max, current_count: 0,
+      isConfirmed: false,
+      product_schedule_id: sched || null,
+      _product: selProduct,
+    };
+
+    if (editingId != null) {
+      const i = units.findIndex(x => x.id === editingId);
+      if (i !== -1) units[i] = unit;
+    } else {
+      units.push(unit);
+    }
+    goBack();
+    renderUnitList();
+  }
+
+  function deleteUnit(id) {
+    if (!confirm('이 단위 일정을 삭제할까요?')) return;
+    units = units.filter(u => u.id !== id);
+    renderUnitList();
+  }
+
+  /* ── 자동 정렬 후 렌더 ── */
+  function sortedUnits() {
+    /* day 오름차순 → 같은 day 내 start_time 오름차순 */
+    const sorted = [...units].sort((a, b) => {
+      if (a.day !== b.day) return a.day - b.day;
+      return a.start_time.localeCompare(b.start_time);
+    });
+    /* order_index 재계산: day별로 1부터 */
+    const dayCounter = {};
+    sorted.forEach(u => {
+      dayCounter[u.day] = (dayCounter[u.day] || 0) + 1;
+      u.order_index = dayCounter[u.day];
+    });
+    return sorted;
+  }
+
+  function renderUnitList() {
+    const wrap = document.getElementById('unit-list');
+
+    if (!units.length) {
+      wrap.innerHTML = `<div class="empty-box">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      단위 일정을 추가하면 여기에 표시됩니다
+    </div>`;
+      return;
+    }
+
+    const sorted = sortedUnits();
+    wrap.innerHTML = '';
+    let lastDay = null;
+
+    sorted.forEach(u => {
+      /* 일차 구분선 */
+      if (u.day !== lastDay) {
+        lastDay = u.day;
+        const label = document.createElement('div');
+        label.className = 'day-group-label';
+        label.textContent = `${u.day}일차`;
+        wrap.appendChild(label);
+      }
+
+      const div = document.createElement('div');
+      div.className = 'unit-card';
+      div.innerHTML = `
+      <div class="day-badge">${u.order_index}</div>
+      <div class="unit-body">
+        <div class="unit-title-text">${u.title}</div>
+        <div class="unit-meta">
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            ${u.start_time} – ${u.end_time}
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            최대 ${u.max_count}명
+          </span>
+          <span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+            ${Number(u.price).toLocaleString()}
+          </span>
+          ${u._product ? `<span style="color:#1D9E75">🎫 ${u._product.productName}</span>` : ''}
+        </div>
+      </div>
+      <div class="unit-actions">
+        <button class="btn btn-sm" onclick="goToUnitForm(${u.id})">✏ 수정</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteUnit(${u.id})">🗑</button>
+      </div>`;
+      wrap.appendChild(div);
+    });
+  }
+
+  /* ── 게시하기 ── */
+  async function submitMain() {
+    const title = document.getElementById('trip-title').value.trim();
+    const desc  = document.getElementById('trip-desc').value.trim();
+    const start = document.getElementById('trip-start').value;
+    const end   = document.getElementById('trip-end').value;
+
+    if (!title) { alert('여행 제목을 입력해주세요.'); return; }
+    if (!desc)  { alert('여행 설명을 입력해주세요.'); return; }
+    if (!start || !end) { alert('시작일과 종료일을 입력해주세요.'); return; }
+    if (!units.length)  { alert('단위 일정을 하나 이상 추가해주세요.'); return; }
+
+    const sorted = sortedUnits();
+    const payload = {
+      title: title,
+      description: desc,
+      startDate: start,
+      endDate: end,
+      planType: 'CUSTOM',
+      planUnits: sorted.map(u => ({
+        day: u.day,
+        orderIndex: u.order_index,
+        title: u.title,
+        description: u.description,
+        startTime: u.start_time,
+        endTime: u.end_time,
+        price: u.price,
+        maxCount: u.max_count,
+        productScheduleId: u.product_schedule_id
+      }))
+    };
+
+    console.log('POST payload:', JSON.stringify(payload, null, 2));
+
+    try {
+      const res = await fetch(`${BASE_URL}/plans`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${ACCESS_TOKEN}`
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const text = await res.text();
+
+      if (!res.ok) {
+        console.error('API 오류 응답:', text);
+        throw new Error(`HTTP ${res.status} - ${text}`);
+      }
+
+      const json = text ? JSON.parse(text) : {};
+      alert('✈️ 일정이 게시되었습니다!\n\n응답: ' + JSON.stringify(json, null, 2));
+    } catch(e) {
+      console.error('일정 게시 실패:', e);
+      alert('일정 게시 실패\n\n콘솔과 Network 탭에서 오류를 확인하세요.\n오류: ' + e.message);
+    }
+  }
+</script>
+</body>
+</html>
