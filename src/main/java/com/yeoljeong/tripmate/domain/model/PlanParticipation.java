@@ -119,10 +119,17 @@ public class PlanParticipation extends BaseAuditEntity {
   public void withdraw(UUID userId) {
     validateOwner(userId);
     validateDeleted();
+    validatePlanUnitNotConfirmed();
     validatePlanParticipationStatus(ParticipationStatus.PAYMENT_CANCELLED);
 
     this.participationStatus = ParticipationStatus.PAYMENT_CANCELLED;
     this.softDelete();
+  }
+
+  private void validatePlanUnitNotConfirmed() {
+    if (this.planUnit.isConfirmed()) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_CONFIRMED_QUIT_NOT_ALLOWED);
+    }
   }
 
   private void validateDeleted() {
