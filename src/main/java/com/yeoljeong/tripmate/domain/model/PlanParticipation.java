@@ -116,23 +116,6 @@ public class PlanParticipation extends BaseAuditEntity {
   }
 
   /*
-   * 주문 생성시, 참여 상태 검증
-   * */
-  public void validateApprovalStatus() {
-    if (this.participationStatus != ParticipationStatus.APPROVED) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_NOT_APPROVAL);
-    }
-  }
-
-  /*
-  * 주문 생성시, 참여 상태(APPROVED -> RESERVED)
-  * */
-  public void confirmParticipation() {
-    validateApprovalStatus();
-    this.participationStatus = ParticipationStatus.RESERVED;
-  }
-
-  /*
   * 일정 참여상태 변경
   * */
   public void changeStatus(ParticipationStatus next) {
