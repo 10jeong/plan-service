@@ -2,7 +2,6 @@ package com.yeoljeong.tripmate.presentation.dto.response;
 
 import com.yeoljeong.tripmate.application.dto.result.PlanUnitDetailResult;
 
-import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -15,11 +14,10 @@ public record PlanUnitDetail(
     String description,
     LocalTime startTime,
     LocalTime endTime,
-    UUID productScheduleId,
-    BigDecimal price,
     int currentCount,
     int maxCount,
     boolean isConfirmed,
+    PlanProductSummary product,
     List<PlanUnitParticipant> participants
 ) {
 
@@ -33,11 +31,10 @@ public record PlanUnitDetail(
             result.description(),
             result.startTime(),
             result.endTime(),
-            result.productScheduleId(),
-            result.price(),
             result.currentCount(),
             result.maxCount(),
             result.isConfirmed(),
+            PlanProductSummary.from(result.productSummary()),
             PlanUnitParticipant.from(result.participants())
         )).toList();
   }
