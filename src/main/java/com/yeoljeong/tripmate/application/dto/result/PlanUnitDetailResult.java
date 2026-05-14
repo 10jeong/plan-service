@@ -1,7 +1,6 @@
 package com.yeoljeong.tripmate.application.dto.result;
 
 import com.yeoljeong.tripmate.application.dto.external.ProductSummaryData;
-import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.time.LocalTime;
 import java.util.List;
@@ -22,7 +21,7 @@ public record PlanUnitDetailResult(
     List<PlanUnitParticipantResult> participants
 ) {
 
-  public static PlanUnitDetailResult from(PlanUnit unit, ProductSummaryData productSummaryData, List<PlanParticipation> unitParticipants) {
+  public static PlanUnitDetailResult from(PlanUnit unit, ProductSummaryData productSummaryData, List<PlanParticipantDetail> unitParticipants) {
     return new PlanUnitDetailResult(
         unit.getId(),
         unit.getDay(),

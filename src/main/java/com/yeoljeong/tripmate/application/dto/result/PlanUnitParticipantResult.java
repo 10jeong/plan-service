@@ -2,26 +2,27 @@ package com.yeoljeong.tripmate.application.dto.result;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
-import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import java.util.List;
 import java.util.UUID;
 
 public record PlanUnitParticipantResult(
     UUID id,
     UUID userId,
+    String name,
     ParticipationRole participationRole,
     ParticipationStatus participationStatus
 ) {
 
-  public static PlanUnitParticipantResult from(PlanParticipation participant) {
+  public static PlanUnitParticipantResult from(PlanParticipantDetail participant) {
     return new PlanUnitParticipantResult(
-        participant.getId(),
-        participant.getUserId(),
-        participant.getParticipationRole(),
-        participant.getParticipationStatus());
+        participant.id(),
+        participant.userId(),
+        participant.userName(),
+        participant.role(),
+        participant.status());
   }
 
-  public static List<PlanUnitParticipantResult> from(List<PlanParticipation> unitParticipants) {
+  public static List<PlanUnitParticipantResult> from(List<PlanParticipantDetail> unitParticipants) {
     return unitParticipants.stream()
         .map(PlanUnitParticipantResult::from)
         .toList();

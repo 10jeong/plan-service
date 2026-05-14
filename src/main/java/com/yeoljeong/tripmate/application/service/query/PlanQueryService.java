@@ -2,8 +2,11 @@ package com.yeoljeong.tripmate.application.service.query;
 
 import com.yeoljeong.tripmate.application.dto.command.GetPlanCommand;
 import com.yeoljeong.tripmate.application.dto.external.ProductSummaryData;
+import com.yeoljeong.tripmate.application.dto.external.UserData;
+import com.yeoljeong.tripmate.application.dto.result.PlanParticipantDetail;
 import com.yeoljeong.tripmate.application.dto.result.PlanUnitDetailResult;
 import com.yeoljeong.tripmate.application.port.ProductReader;
+import com.yeoljeong.tripmate.application.port.UserReader;
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.Plan;
@@ -36,6 +39,7 @@ public class PlanQueryService {
   private final PlanUnitRepository planUnitRepository;
   private final PlanParticipationRepository participationRepository;
   private final ProductReader productReader;
+  private final UserReader userReader;
 
   public GetPlanDetailResult getPlanDetail(UUID planId) {
     Plan plan = planRepository.findById(planId)
@@ -43,6 +47,7 @@ public class PlanQueryService {
 
     List<PlanUnit> planUnit = planUnitRepository.findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(plan);
 
+    // 상품 정보 조회
     List<UUID> productScheduleIds = planUnit.stream().map(PlanUnit::getProductScheduleId).toList();
     List<ProductSummaryData> productSummaryData = productReader.getProductList(productScheduleIds);
     if (productSummaryData == null) {
@@ -60,9 +65,30 @@ public class PlanQueryService {
 
     List<PlanParticipation> planParticipation = participationRepository.findAllByPlanUnitIn(planUnit);
 
+    List<UUID> userIds = planParticipation.stream()
+        .map(PlanParticipation::getUserId)
+        .toList();
+
+    // 회원 정보 조회
+    List<UserData> userData =  userReader.getUser(userIds);
+    if (userData == null) {
+      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+    }
+    Map<UUID, UserData> userMap = userData.stream()
+        .collect(Collectors.toMap(UserData::userId,
+            Function.identity()));
+
     // 참여자 그룹핑
-    Map<PlanUnit, List<PlanParticipation>> participationMap = planParticipation.stream()
-        .collect(Collectors.groupingBy(PlanParticipation::getPlanUnit));
+    Map<PlanUnit, List<PlanParticipantDetail>> participationMap = planParticipation.stream()
+        .collect(Collectors.groupingBy(PlanParticipation::getPlanUnit,
+            Collectors.mapping(
+                participation ->{
+                    UserData user = userMap.get(participation.getUserId());
+                  return PlanParticipantDetail.from(user, participation);
+                },
+                Collectors.toList()
+            )
+        ));
 
     List<PlanUnitDetailResult> planUnitResult =
         planUnit.stream()
