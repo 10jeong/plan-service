@@ -8,6 +8,7 @@ import java.util.UUID;
 
 public record PlanUnitParticipant(
     UUID id,
+    UUID userId,
     ParticipationRole participationRole,
     ParticipationStatus participationStatus
 ) {
@@ -15,6 +16,7 @@ public record PlanUnitParticipant(
   public static PlanUnitParticipant from(PlanUnitParticipantResult participant) {
     return new PlanUnitParticipant(
         participant.id(),
+        participant.userId(),
         participant.participationRole(),
         participant.participationStatus()
     );
