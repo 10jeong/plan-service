@@ -14,7 +14,7 @@ public interface PlanParticipationRepository {
 
   PlanParticipation save(PlanParticipation participation);
 
-  boolean existsByPlanUnitIdAndUserId(UUID planUnitId, UUID guestId);
+  boolean existsByPlanUnitIdAndUserIdAndIsDeletedIsFalse(UUID planUnitId, UUID guestId);
 
   Optional<PlanParticipation> findByPlanUnitAndUserId(PlanUnit planUnit, UUID uuid);
 

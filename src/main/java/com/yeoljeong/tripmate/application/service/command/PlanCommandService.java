@@ -114,6 +114,7 @@ public class PlanCommandService {
 
     // 중복 참여 검증
     validateDuplicateParticipation(command.planUnitId(),command.guestId());
+    // 모집 가능한 인원인지(최대 참여 인원 초과 여부) 검증
     try {
       PlanParticipation participation = PlanParticipation.createGuest(command.guestId(), planUnit);
       PlanParticipation savedParticipation = planParticipationRepository.save(participation);
@@ -240,7 +241,7 @@ public class PlanCommandService {
 
 
   private void validateDuplicateParticipation(UUID planUnitId, UUID guestId) {
-    if (planParticipationRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId)) {
+    if (planParticipationRepository.existsByPlanUnitIdAndUserIdAndIsDeletedIsFalse(planUnitId, guestId)) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_ALREADY_EXISTS);
     }
   }

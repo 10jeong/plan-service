@@ -14,7 +14,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface PlanParticipationJpaRepository extends JpaRepository<PlanParticipation, UUID> {
 
-  boolean existsByPlanUnitIdAndUserId(UUID planUnitId, UUID guestId);
+  boolean existsByPlanUnitIdAndUserIdAndIsDeletedIsFalse(UUID planUnitId, UUID guestId);
 
   Optional<PlanParticipation> findByPlanUnitAndUserId(PlanUnit planUnit, UUID userId);
 

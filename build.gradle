@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.yeoljeong:common-module:1.0.2-SNAPSHOT'
+    implementation 'com.yeoljeong:common-module:1.0.4-SNAPSHOT'
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -47,6 +47,8 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 }
 dependencyManagement {
     imports {
