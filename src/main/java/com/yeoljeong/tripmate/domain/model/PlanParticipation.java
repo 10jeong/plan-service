@@ -1,6 +1,7 @@
 package com.yeoljeong.tripmate.domain.model;
 
 import com.yeoljeong.tripmate.domain.BaseAuditEntity;
+import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
@@ -23,14 +24,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(
-    name = "p_plan_participation",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            name = "uk_plan_particiation_user_plan_unit",
-            columnNames = {"user_id", "plan_unit_id"}
-        )
-    })
+@Table(name = "p_plan_participation")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class PlanParticipation extends BaseAuditEntity {
@@ -59,6 +53,9 @@ public class PlanParticipation extends BaseAuditEntity {
   }
 
   public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
+    validateStatusOpen(planUnit); // 모집 상태 OPEN 여부 검증
+    validateNotConfirmed(planUnit); // 모집 상태 확정여부 검증
+    validateParticipantLimit(planUnit); // 최대 참여 인원 초과 여부 검증
     return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.REQUESTED, planUnit);
   }
 
@@ -75,29 +72,40 @@ public class PlanParticipation extends BaseAuditEntity {
   }
 
   /*
+   * 최대 참여 인원 초과 여부 검증
+   * */
+  private static void validateParticipantLimit(PlanUnit planUnit) {
+    if (planUnit.getParticipantCount().getMaxCount()
+        < planUnit.getParticipantCount().getCurrentCount() + 1) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_LIMIT_EXCEEDED);
+    }
+  }
+
+  /*
+   * 모집 상태 OPEN 여부 검증
+   * */
+  private static void validateStatusOpen(PlanUnit planUnit) {
+    if (!planUnit.getPlan().getRecruitStatus().equals(RecruitStatus.OPEN)) {
+      throw new BusinessException(PlanErrorCode.PLAN_RECRUIT_CLOSED);
+    }
+  }
+
+  /*
+  * 확정된 일정 참여 불가 검증
+  * */
+  private static void validateNotConfirmed(PlanUnit planUnit) {
+    if (planUnit.isConfirmed()) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_CONFIRMED_PARTICIPATION_NOT_ALLOWED);
+    }
+  }
+
+  /*
   * 일정 참여상태 변경 검증
   * */
   public void validatePlanParticipationStatus(ParticipationStatus next) {
     if (!this.participationStatus.canChangeTo(next)) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
     }
-  }
-
-  /*
-   * 주문 생성시, 참여 상태 검증
-   * */
-  public void validateApprovalStatus() {
-    if (this.participationStatus != ParticipationStatus.APPROVED) {
-      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_NOT_APPROVAL);
-    }
-  }
-
-  /*
-  * 주문 생성시, 참여 상태(APPROVED -> RESERVED)
-  * */
-  public void confirmParticipation() {
-    validateApprovalStatus();
-    this.participationStatus = ParticipationStatus.RESERVED;
   }
 
   /*
@@ -119,10 +127,17 @@ public class PlanParticipation extends BaseAuditEntity {
   public void withdraw(UUID userId) {
     validateOwner(userId);
     validateDeleted();
+    validatePlanUnitNotConfirmed();
     validatePlanParticipationStatus(ParticipationStatus.PAYMENT_CANCELLED);
 
     this.participationStatus = ParticipationStatus.PAYMENT_CANCELLED;
     this.softDelete();
+  }
+
+  private void validatePlanUnitNotConfirmed() {
+    if (this.planUnit.isConfirmed()) {
+      throw new BusinessException(PlanErrorCode.PLAN_UNIT_CONFIRMED_QUIT_NOT_ALLOWED);
+    }
   }
 
   private void validateDeleted() {
