@@ -28,7 +28,10 @@ spring:
   sql:
     init:
       mode: never
-
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAPS}
     consumer:
@@ -47,9 +50,13 @@ spring:
     listener:
       ack-mode: manual
       missing-topics-fatal: false
+      observation-enabled: true
+    template:
+      observation-enabled: true
   retry:
     interval: 1000
     max-attempts: 3
+
 
 server:
   port: ${SERVER_PORT:8080}
