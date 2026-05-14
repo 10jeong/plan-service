@@ -70,13 +70,20 @@ public class PlanQueryService {
         .toList();
 
     // 회원 정보 조회
-    List<UserData> userData =  userReader.getUser(userIds);
+    List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(userIds);
     if (userData == null) {
       throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
     }
     Map<UUID, UserData> userMap = userData.stream()
         .collect(Collectors.toMap(UserData::userId,
-            Function.identity()));
+            Function.identity(),
+            (left, right) -> right));
+
+    boolean hasMissingUser = userIds.stream()
+        .anyMatch(userId -> !userMap.containsKey(userId));
+    if (hasMissingUser) {
+      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+    }
 
     // 참여자 그룹핑
     Map<PlanUnit, List<PlanParticipantDetail>> participationMap = planParticipation.stream()

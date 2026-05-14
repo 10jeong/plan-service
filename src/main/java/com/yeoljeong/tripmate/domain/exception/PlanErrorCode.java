@@ -75,7 +75,7 @@ public enum PlanErrorCode implements ErrorCode {
 
 
   PLAN_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 상품이 존재하지 않습니다."),
-  ORDER_PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문에 대한 일정 정보을 찾을 수 없습니다."),
+  ORDER_PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문에 대한 일정 정보를 찾을 수 없습니다."),
   USER_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 참여자에 대한 사용자 정보를 찾을 수 없습니다.");
 
   private final HttpStatus status;
