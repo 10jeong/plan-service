@@ -44,11 +44,8 @@ public class PlanQueryService {
     List<PlanUnit> planUnit = planUnitRepository.findAllByPlanOrderByDayAscUnitTimeRange_StartTimeAsc(plan);
 
     List<UUID> productScheduleIds = planUnit.stream().map(PlanUnit::getProductScheduleId).toList();
-      log.info("productScheduleIds : {}", productScheduleIds);
     List<ProductSummaryData> productSummaryData = productReader.getProductList(productScheduleIds);
     if (productSummaryData == null) {
-      log.info("문제 예상지점 1");
-      log.info("productSummaryData : {}", productSummaryData);
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
     }
     Map<UUID, ProductSummaryData> productMap = productSummaryData.stream()
@@ -58,7 +55,6 @@ public class PlanQueryService {
     boolean hasMissingProduct = productScheduleIds.stream()
         .anyMatch(scheduleId -> !productMap.containsKey(scheduleId));
     if (hasMissingProduct) {
-      log.info("문제 예상지점 2");
       throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
     }
 
