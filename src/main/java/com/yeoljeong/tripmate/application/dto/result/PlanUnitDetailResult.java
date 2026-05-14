@@ -1,8 +1,8 @@
 package com.yeoljeong.tripmate.application.dto.result;
 
+import com.yeoljeong.tripmate.application.dto.external.ProductSummaryData;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
-import java.math.BigDecimal;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -15,15 +15,14 @@ public record PlanUnitDetailResult(
     String description,
     LocalTime startTime,
     LocalTime endTime,
-    UUID productScheduleId,
-    BigDecimal price,
     int currentCount,
     int maxCount,
     boolean isConfirmed,
+    ProductSummaryData productSummary,
     List<PlanUnitParticipantResult> participants
 ) {
 
-  public static PlanUnitDetailResult from(PlanUnit unit, List<PlanParticipation> unitParticipants) {
+  public static PlanUnitDetailResult from(PlanUnit unit, ProductSummaryData productSummaryData, List<PlanParticipation> unitParticipants) {
     return new PlanUnitDetailResult(
         unit.getId(),
         unit.getDay(),
@@ -32,11 +31,10 @@ public record PlanUnitDetailResult(
         unit.getDescription(),
         unit.getUnitTimeRange().getStartTime(),
         unit.getUnitTimeRange().getEndTime(),
-        unit.getProductScheduleId(),
-        unit.getPrice(),
         unit.getParticipantCount().getCurrentCount(),
         unit.getParticipantCount().getMaxCount(),
         unit.isConfirmed(),
+        productSummaryData,
         PlanUnitParticipantResult.from(unitParticipants));
   }
 }
