@@ -1,6 +1,7 @@
 package com.yeoljeong.tripmate.domain.model;
 
 import com.yeoljeong.tripmate.domain.BaseAuditEntity;
+import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
@@ -60,7 +61,8 @@ public class PlanParticipation extends BaseAuditEntity {
   }
 
   public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
-    validateNotConfirmed(planUnit);
+    validateStatusOpen(planUnit); // 모집 상태 OPEN 여부 검증
+    validateNotConfirmed(planUnit); // 모집 상태 확정여부 검증
     return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.REQUESTED, planUnit);
   }
 
@@ -74,6 +76,15 @@ public class PlanParticipation extends BaseAuditEntity {
     this.participationRole = participationRole;
     this.participationStatus = participationStatus;
     this.planUnit = planUnit;
+  }
+
+  /*
+   * 모집 상태 OPEN 여부 검증
+   * */
+  private static void validateStatusOpen(PlanUnit planUnit) {
+    if (!planUnit.getPlan().getRecruitStatus().equals(RecruitStatus.OPEN)) {
+      throw new BusinessException(PlanErrorCode.PLAN_RECRUIT_CLOSED);
+    }
   }
 
   /*

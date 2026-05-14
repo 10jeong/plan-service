@@ -70,6 +70,7 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PARTICIPATION_STATUS_NOT_APPROVAL(HttpStatus.FORBIDDEN, "호스트 승인 후 참여를 확정할 수 있습니다." ),
   PLAN_PARTICIPATION_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 탈퇴한 참여자입니다." ),
   PLAN_PARTICIPATION_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 참여의 사용자만 접근할 수 있습니다."),
+  PLAN_RECRUIT_CLOSED(HttpStatus.BAD_REQUEST, "현재 모집 중인 일정만 참여할 수 있습니다." ),
 
   PLAN_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 상품이 존재하지 않습니다."),
   ORDER_PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문에 대한 일정 정보을 찾을 수 없습니다.");
