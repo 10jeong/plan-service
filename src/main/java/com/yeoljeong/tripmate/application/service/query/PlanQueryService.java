@@ -50,8 +50,13 @@ public class PlanQueryService {
         .collect(Collectors.toMap(ProductSummaryData::productScheduleId,
             Function.identity()));
 
-    List<PlanParticipation> planParticipation = participationRepository.findAllByPlanUnitIn(planUnit);
+    boolean hasMissingProduct = productScheduleIds.stream()
+        .anyMatch(scheduleId -> !productMap.containsKey(scheduleId));
+    if (hasMissingProduct) {
+      throw new BusinessException(PlanErrorCode.PLAN_PRODUCT_NOT_FOUND);
+    }
 
+    List<PlanParticipation> planParticipation = participationRepository.findAllByPlanUnitIn(planUnit);
 
     // 참여자 그룹핑
     Map<PlanUnit, List<PlanParticipation>> participationMap = planParticipation.stream()
