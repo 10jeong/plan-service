@@ -240,7 +240,7 @@ public class PlanCommandService {
 
 
   private void validateDuplicateParticipation(UUID planUnitId, UUID guestId) {
-    if (planParticipationRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId)) {
+    if (planParticipationRepository.existsByPlanUnitIdAndUserIdAndIsDeletedIsFalse(planUnitId, guestId)) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_ALREADY_EXISTS);
     }
   }

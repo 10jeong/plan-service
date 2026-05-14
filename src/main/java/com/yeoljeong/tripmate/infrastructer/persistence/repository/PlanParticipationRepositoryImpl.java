@@ -29,8 +29,8 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   }
 
   @Override
-  public boolean existsByPlanUnitIdAndUserId(UUID planUnitId, UUID guestId) {
-    return jpaRepository.existsByPlanUnitIdAndUserId(planUnitId, guestId);
+  public boolean existsByPlanUnitIdAndUserIdAndIsDeletedIsFalse(UUID planUnitId, UUID guestId) {
+    return jpaRepository.existsByPlanUnitIdAndUserIdAndIsDeletedIsFalse(planUnitId, guestId);
   }
 
   @Override
