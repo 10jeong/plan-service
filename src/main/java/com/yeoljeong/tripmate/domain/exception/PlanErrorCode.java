@@ -67,14 +67,15 @@ public enum PlanErrorCode implements ErrorCode {
   PLAN_PARTICIPATION_PLAN_UNIT_MISMATCH(HttpStatus.BAD_REQUEST, "해당 단위 일정 정보는 요청한 단위 일정과 일치하지 않습니다."),
   PLAN_PARTICIPATION_STATUS_CHANGE_INVALID(HttpStatus.BAD_REQUEST, "유효하지 않은 참여 상태 변경입니다."),
   PLAN_UNIT_PARTICIPANT_UPDATE_QUANTITY_INVALID(HttpStatus.BAD_REQUEST, "변경할 참여 인원 수가 올바르지 않습니다."),
-  PLAN_PARTICIPATION_STATUS_NOT_APPROVAL(HttpStatus.FORBIDDEN, "호스트 승인 후 참여를 확정할 수 있습니다." ),
+  PLAN_PARTICIPATION_STATUS_NOT_APPROVED(HttpStatus.FORBIDDEN, "호스트 승인 후 참여를 확정할 수 있습니다." ),
   PLAN_PARTICIPATION_ALREADY_DELETED(HttpStatus.BAD_REQUEST, "이미 탈퇴한 참여자입니다." ),
   PLAN_PARTICIPATION_FORBIDDEN(HttpStatus.FORBIDDEN, "해당 참여의 사용자만 접근할 수 있습니다."),
   PLAN_RECRUIT_CLOSED(HttpStatus.BAD_REQUEST, "현재 모집 중인 일정만 참여할 수 있습니다." ),
+  PLAN_PARTICIPATION_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "최대 참여 인원을 초과하여 신청이 불가합니다."),
+
 
   PLAN_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 상품이 존재하지 않습니다."),
   ORDER_PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문에 대한 일정 정보을 찾을 수 없습니다.");
-
 
   private final HttpStatus status;
   private final String message;

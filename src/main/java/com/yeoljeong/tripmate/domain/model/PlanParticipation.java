@@ -22,7 +22,6 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.apache.kafka.common.security.oauthbearer.internals.secured.ValidateException;
 
 @Entity
 @Table(
@@ -63,6 +62,7 @@ public class PlanParticipation extends BaseAuditEntity {
   public static PlanParticipation createGuest(UUID userId, PlanUnit planUnit) {
     validateStatusOpen(planUnit); // 모집 상태 OPEN 여부 검증
     validateNotConfirmed(planUnit); // 모집 상태 확정여부 검증
+    validateParticipantLimit(planUnit); // 최대 참여 인원 초과 여부 검증
     return new PlanParticipation(userId, ParticipationRole.GUEST, ParticipationStatus.REQUESTED, planUnit);
   }
 
@@ -76,6 +76,16 @@ public class PlanParticipation extends BaseAuditEntity {
     this.participationRole = participationRole;
     this.participationStatus = participationStatus;
     this.planUnit = planUnit;
+  }
+
+  /*
+   * 최대 참여 인원 초과 여부 검증
+   * */
+  private static void validateParticipantLimit(PlanUnit planUnit) {
+    if (planUnit.getParticipantCount().getMaxCount()
+        < planUnit.getParticipantCount().getCurrentCount() + 1) {
+      throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_LIMIT_EXCEEDED);
+    }
   }
 
   /*
