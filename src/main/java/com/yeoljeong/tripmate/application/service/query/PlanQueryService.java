@@ -17,6 +17,7 @@ import com.yeoljeong.tripmate.domain.repository.PlanRepository;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
+import com.yeoljeong.tripmate.infrastructer.external.user.GetUserRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanResponse;
 import java.util.List;
 import java.util.Map;
@@ -70,7 +71,8 @@ public class PlanQueryService {
         .toList();
 
     // 회원 정보 조회
-    List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(userIds);
+    List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(
+        GetUserRequest.from(userIds));
     if (userData == null) {
       throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
     }

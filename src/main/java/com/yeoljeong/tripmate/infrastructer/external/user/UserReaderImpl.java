@@ -14,7 +14,8 @@ public class UserReaderImpl implements UserReader {
   private final UserFeignClient userFeignClient;
 
   @Override
-  public List<UserData> getUser(List<UUID> userIds) {
+  public List<UserData> getUser(GetUserRequest userIds) {
     return userFeignClient.getUser(userIds);
   }
+
 }
