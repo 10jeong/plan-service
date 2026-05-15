@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -75,5 +78,16 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   @Override
   public boolean existsOpenPlan(UUID userId) {
     return jpaRepository.existsOpenPlan(userId);
+  }
+
+  @Override
+  public Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable) {
+    return jpaRepository.findMyParticipatedPlans(userId, pageable);
+  }
+
+  @Override
+  public List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId,
+      List<Plan> plans) {
+    return jpaRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, plans);
   }
 }

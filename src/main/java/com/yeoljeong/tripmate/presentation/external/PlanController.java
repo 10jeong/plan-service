@@ -19,6 +19,7 @@ import com.yeoljeong.tripmate.presentation.dto.request.withdrawPlanUnitParticipa
 import com.yeoljeong.tripmate.presentation.dto.response.ConfirmPlanUnitResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.CreatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanDetailResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.MyParticipationRequestsResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.ParticipatePlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.UpdateParticipationStatusResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanResponse;
@@ -144,5 +145,14 @@ public class PlanController {
     return ApiResponse.success(CommonSuccessCode.OK, "일정 목록 조회가 완료되었습니다.", response);
   }
 
-
+  // 내가 신청한 참여 조회
+  @GetMapping("/participations/my-requests")
+  public ApiResponse<Slice<MyParticipationRequestsResponse>> getMyParticipationRequests(
+      @PageableDefault(sort = "createdAt", direction = Direction.ASC) Pageable pageable,
+      @LoginUser UserContext user
+  ) {
+    Slice<MyParticipationRequestsResponse> response = planQueryService.getMyParticipationRequests(
+        pageable, user.userId());
+    return ApiResponse.success(CommonSuccessCode.OK, "내가 신청한 참여 조회가 완료되었습니다.", response);
+  }
 }
