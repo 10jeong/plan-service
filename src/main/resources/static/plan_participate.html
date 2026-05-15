@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tripmate — 마이페이지</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;font-size:14px}
+.nav{background:#fff;border-bottom:1px solid #e8e8e4;padding:0 24px;display:flex;align-items:center;height:52px;position:sticky;top:0;z-index:10}
+.nav-logo{font-size:17px;font-weight:600;color:#1D9E75;display:flex;align-items:center;gap:6px;margin-right:32px}
+.nav-tab{padding:0 16px;font-size:14px;color:#1D9E75;font-weight:600;border-bottom:2px solid #1D9E75;height:52px;display:flex;align-items:center}
+.page{padding:24px;max-width:760px;margin:0 auto}
+.page-title{font-size:20px;font-weight:600;margin-bottom:4px}
+.page-sub{font-size:13px;color:#888;margin-bottom:24px}
+.tab-bar{display:flex;border-bottom:1px solid #e8e8e4;margin-bottom:20px}
+.tab-btn{padding:10px 20px;font-size:13px;font-weight:600;color:#aaa;cursor:pointer;border:none;border-bottom:2px solid transparent;background:none;font-family:inherit;display:flex;align-items:center;gap:6px}
+.tab-btn.active{color:#1D9E75;border-bottom-color:#1D9E75}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;font-size:10px;font-weight:700;padding:0 5px}
+.tab-btn.active .tab-count{background:#1D9E75;color:#fff}
+.tab-btn:not(.active) .tab-count{background:#eee;color:#888}
+.tab-panel{display:none}.tab-panel.active{display:block}
+.card{background:#fff;border:1px solid #e8e8e4;border-radius:12px;padding:18px 20px;margin-bottom:12px}
+.plan-title{font-size:15px;font-weight:600;color:#1a1a1a}
+.plan-meta{font-size:12px;color:#888;margin-top:4px;display:flex;gap:10px;flex-wrap:wrap}
+.plan-type-chip{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;background:#f0f0ec;color:#666}
+.unit-section{margin-top:14px;padding-top:14px;border-top:1px solid #f0f0ec}
+.unit-section-label{font-size:11px;font-weight:700;color:#888;letter-spacing:.4px;margin-bottom:8px}
+.unit-row{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;background:#f8f8f5;margin-bottom:6px}
+.unit-row:last-child{margin-bottom:0}
+.unit-row-info{flex:1;min-width:0}
+.unit-row-title{font-size:13px;font-weight:500;color:#1a1a1a}
+.unit-row-meta{font-size:11px;color:#888;margin-top:2px}
+.withdraw-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #f7c1c1;background:#fff0f0;color:#a32d2d;white-space:nowrap;font-family:inherit}
+.withdraw-btn:hover{background:#fde8e8}
+.pay-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #1D9E75;background:#1D9E75;color:#fff;white-space:nowrap;font-family:inherit}
+.pay-btn:hover{background:#0F6E56}
+.cancel-reserve-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #ddd;background:#f5f5f0;color:#555;white-space:nowrap;font-family:inherit}
+.cancel-reserve-btn:hover{background:#e8e8e4}
+.cancel-payment-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #f7c1c1;background:#fff0f0;color:#a32d2d;white-space:nowrap;font-family:inherit}
+.cancel-payment-btn:hover{background:#fde8e8}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-green{background:#e1f5ee;color:#0f6e56}
+.badge-amber{background:#faeeda;color:#854f0b}
+.badge-blue{background:#e6f1fb;color:#185fa5}
+.badge-teal{background:#cdf5ec;color:#085041}
+.badge-red{background:#fcebeb;color:#a32d2d}
+.badge-gray{background:#f1efe8;color:#5f5e5a}
+.unit-block{border:1px solid #e8e8e4;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.unit-block:last-child{margin-bottom:0}
+.unit-block-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.unit-block-title{font-size:14px;font-weight:600;color:#1a1a1a}
+.unit-block-meta{font-size:12px;color:#888;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.progress-bar-wrap{margin-bottom:12px}
+.progress-bar-label{display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:4px}
+.progress-bar{height:6px;background:#eee;border-radius:3px;overflow:hidden}
+.progress-bar-fill{height:100%;border-radius:3px}
+.status-group-label{font-size:11px;font-weight:700;letter-spacing:.3px;margin:10px 0 6px;display:flex;align-items:center;gap:6px}
+.status-group-label::after{content:'';flex:1;height:1px}
+.lbl-pending{color:#854f0b}.lbl-pending::after{background:#faeeda}
+.lbl-approved{color:#185fa5}.lbl-approved::after{background:#e6f1fb}
+.lbl-confirmed{color:#0f6e56}.lbl-confirmed::after{background:#e1f5ee}
+.applicant-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:6px}
+.applicant-chip{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;border:1px solid #e8e8e4;background:#fff}
+.avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.av-teal{background:#9FE1CB;color:#085041}.av-coral{background:#F5C4B3;color:#712B13}
+.av-blue{background:#B5D4F4;color:#0C447C}.av-amber{background:#FAC775;color:#633806}.av-purple{background:#CECBF6;color:#3C3489}
+.chip-name{font-size:12px;font-weight:500;color:#1a1a1a;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chip-actions{display:flex;gap:4px;flex-shrink:0}
+.approve-btn{padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #9FE1CB;background:#e1f5ee;color:#0f6e56;font-family:inherit}
+.approve-btn:hover{background:#c8eedd}
+.reject-btn{padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;border:1px solid #f7c1c1;background:#fff0f0;color:#a32d2d;font-family:inherit}
+.reject-btn:hover{background:#fde8e8}
+.confirm-btn{padding:5px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;border:1px solid #1D9E75;background:#1D9E75;color:#fff;font-family:inherit}
+.confirm-btn:hover{background:#0F6E56}
+.empty{padding:40px;text-align:center;color:#bbb;font-size:13px}
+.empty-icon{font-size:28px;margin-bottom:8px}
+.loading{padding:40px;text-align:center;color:#888;font-size:13px}
+.spinner{width:20px;height:20px;border:2px solid #e0e0d8;border-top-color:#1D9E75;border-radius:50%;animation:spin .6s linear infinite;margin:0 auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.url-chip{font-size:11px;color:#999;font-family:monospace;background:#f8f8f5;padding:5px 10px;border-radius:6px;border:1px solid #ececec;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.url-chip span{word-break:break-all;flex:1}
+.retry-btn{padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid #ddd;background:#fff;color:#555;white-space:nowrap;font-family:inherit}
+.err-box{font-size:12px;color:#a32d2d;background:#fff0f0;border:1px solid #f7c1c1;border-radius:6px;padding:8px 12px;margin-bottom:12px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a1a;color:#fff;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:500;opacity:0;transition:opacity .2s,transform .2s;z-index:999;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+@media(max-width:600px){.applicant-grid{grid-template-columns:1fr}.page{padding:16px}}
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="nav-logo">✈ Tripmate</div>
+  <div class="nav-tab">마이페이지</div>
+</div>
+
+<div class="page">
+  <p class="page-title">마이페이지</p>
+  <p class="page-sub">내 여행 활동을 한눈에 확인하세요</p>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="switchTab('applied',this)">
+      내가 신청한 일정 <span class="tab-count" id="cnt-applied">-</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('host',this)">
+      호스트 관리 <span class="tab-count" id="cnt-host">-</span>
+    </button>
+  </div>
+
+  <div class="tab-panel active" id="panel-applied">
+    <div id="applied-list"><div class="loading"><div class="spinner"></div>불러오는 중...</div></div>
+  </div>
+  <div class="tab-panel" id="panel-host">
+    <div id="host-list"><div class="loading"><div class="spinner"></div>불러오는 중...</div></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ★ 서버 주소 */
+const BASE_URL = 'http://ec2-43-201-242-253.ap-northeast-2.compute.amazonaws.com:8080';
+
+const PLAN_TYPE_LABEL = {CUSTOM:'커스텀',DOMESTIC:'국내 여행',INTERNATIONAL:'해외 여행',DAYTRIP:'당일치기'};
+const RECRUIT_BADGE = {OPEN:'<span class="badge badge-green">모집 중</span>',CLOSED:'<span class="badge badge-gray">마감</span>'};
+
+/* ParticipationStatus enum 전체 반영 */
+const STATUS_BADGE = {
+  REQUESTED:          '<span class="badge badge-amber">신청됨</span>',
+  APPROVED:           '<span class="badge badge-blue">승인됨</span>',
+  REJECTED:           '<span class="badge badge-red">거절됨</span>',
+  RESERVED:           '<span class="badge badge-purple">예약됨</span>',
+  PAID:               '<span class="badge badge-teal">결제 완료</span>',
+  CONFIRMED:          '<span class="badge badge-green">확정됨</span>',
+  RESERVED_CANCELLED: '<span class="badge badge-gray">예약 취소</span>',
+  PAYMENT_CANCELLED:  '<span class="badge badge-gray">결제 취소</span>',
+};
+
+/*
+  ParticipationStatus 플로우 (enum 기준)
+  REQUESTED          → 버튼 없음   (호스트 승인/거절 대기)
+  APPROVED           → 결제하기    → RESERVED        (미연결)
+  RESERVED           → 예약취소    → RESERVED_CANCELLED (미연결)
+  PAID               → 버튼 없음   (호스트가 CONFIRMED/PAYMENT_CANCELLED 처리)
+  CONFIRMED          → 버튼 없음   (최종 확정, 변경 불가)
+  REJECTED           → 버튼 없음
+  RESERVED_CANCELLED → 버튼 없음
+  PAYMENT_CANCELLED  → 버튼 없음
+*/
+function participationActionBtn(p, planId) {
+  const id = p.participationId, pid = planId, uid = p.planUnitId;
+  switch (p.status) {
+    case 'APPROVED':
+      return `<button class="pay-btn" onclick="reserve('${id}','${pid}','${uid}')">결제하기</button>`;
+    case 'RESERVED':
+      return `<button class="cancel-reserve-btn" onclick="cancelReserve('${id}','${pid}','${uid}')">예약취소</button>`;
+    default:
+      return '';
+  }
+}
+const AV = ['av-teal','av-coral','av-blue','av-amber','av-purple'];
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+}
+
+/* ── 탭1: 내가 신청한 일정 ── */
+async function fetchApplied() {
+  const url = `${BASE_URL}/plans/participations/my-requests`;
+  document.getElementById('applied-list').innerHTML = `<div class="loading"><div class="spinner"></div>불러오는 중...</div>`;
+  try {
+    const res = await fetch(url, {credentials:'include'});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    renderApplied(json.data.content, url, null);
+  } catch(e) {
+    renderApplied([], url, e.message);
+  }
+}
+
+function renderApplied(content, url, err) {
+  document.getElementById('cnt-applied').textContent = content.length;
+  let html = urlChip(url, 'fetchApplied()');
+  if (err) html += errBox(err);
+  if (!content.length) { html += emptyBox('신청한 일정이 없습니다','📭'); document.getElementById('applied-list').innerHTML=html; return; }
+  html += content.map(plan=>`
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+        <div style="flex:1;min-width:0">
+          <div class="plan-title">${plan.planTitle}</div>
+          <div class="plan-meta">
+            <span>📅 ${plan.startDate} – ${plan.endDate}</span>
+            <span class="plan-type-chip">${PLAN_TYPE_LABEL[plan.planType]||plan.planType}</span>
+          </div>
+        </div>
+        ${RECRUIT_BADGE[plan.recruitStatus]||''}
+      </div>
+      <div class="unit-section">
+        <div class="unit-section-label">신청한 단위 일정 (${plan.participations.length}건)</div>
+        ${plan.participations.map(p=>`
+          <div class="unit-row" id="prow-${p.participationId}">
+            <div class="unit-row-info">
+              <div class="unit-row-title">${p.unitTitle}</div>
+              <div class="unit-row-meta">${p.day}일차 &nbsp;·&nbsp; ${p.startTime.slice(0,5)} – ${p.endTime.slice(0,5)}</div>
+            </div>
+            ${STATUS_BADGE[p.status]||''}
+            ${participationActionBtn(p, plan.planId)}
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+  document.getElementById('applied-list').innerHTML = html;
+}
+
+/* ── 탭2: 호스트 관리 ── */
+async function fetchHost() {
+  const url = `${BASE_URL}/plans/participations/received-requests`;
+  document.getElementById('host-list').innerHTML = `<div class="loading"><div class="spinner"></div>불러오는 중...</div>`;
+  try {
+    const res = await fetch(url, {credentials:'include'});
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const json = await res.json();
+    renderHost(json.data.content, url, null);
+  } catch(e) {
+    renderHost([], url, e.message);
+  }
+}
+
+function renderHost(content, url, err) {
+  document.getElementById('cnt-host').textContent = content.length;
+  let html = urlChip(url, 'fetchHost()');
+  if (err) html += errBox(err);
+  if (!content.length) { html += emptyBox('호스트로 등록한 일정이 없습니다','🗂'); document.getElementById('host-list').innerHTML=html; return; }
+  html += content.map(plan=>{
+    const title = plan.PlanTitle || plan.planTitle || '(제목 없음)';
+    return `
+    <div class="card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:14px">
+        <div style="flex:1;min-width:0">
+          <div class="plan-title">${title}</div>
+          <div class="plan-meta"><span>📅 ${plan.startDate} – ${plan.endDate}</span></div>
+        </div>
+        ${RECRUIT_BADGE[plan.recruitStatus]||''}
+      </div>
+      ${plan.planUnits.map(unit=>{
+        const requested          = unit.applicants.filter(a=>a.status==='REQUESTED');
+        const approved           = unit.applicants.filter(a=>a.status==='APPROVED');
+        const reserved           = unit.applicants.filter(a=>a.status==='RESERVED');
+        const paid               = unit.applicants.filter(a=>a.status==='PAID');
+        const confirmed          = unit.applicants.filter(a=>a.status==='CONFIRMED');
+        const reservedCancelled  = unit.applicants.filter(a=>a.status==='RESERVED_CANCELLED');
+        const paymentCancelled   = unit.applicants.filter(a=>a.status==='PAYMENT_CANCELLED');
+        const rejected           = unit.applicants.filter(a=>a.status==='REJECTED');
+        const pct = unit.maxCount>0?Math.min(100,Math.round(unit.currentCount/unit.maxCount*100)):0;
+        const fillColor = pct>=100?'#e24b4a':'#1D9E75';
+
+        /* 칩 생성 헬퍼 */
+        const chip = (a, i, offset, badgeHtml, actionsHtml='') => `
+          <div class="applicant-chip" id="arow-${a.participationId}">
+            <div class="avatar ${AV[(i+offset)%5]}">${a.name.slice(0,2)}</div>
+            <span class="chip-name">${a.name}</span>
+            ${actionsHtml || badgeHtml}
+          </div>`;
+
+        return `
+        <div class="unit-block">
+          <div class="unit-block-header">
+            <div style="flex:1;min-width:0">
+              <div class="unit-block-title">${unit.title}</div>
+              <div class="unit-block-meta">
+                <span>${unit.day}일차</span>
+                <span>${unit.startTime.slice(0,5)} – ${unit.endTime.slice(0,5)}</span>
+                ${unit.isConfirmed?'<span class="badge badge-teal">확정됨</span>':''}
+              </div>
+            </div>
+            ${!unit.isConfirmed?`<button class="confirm-btn" onclick="confirmUnit('${plan.planId}','${unit.planUnitId}')">일정 확정</button>`:''}
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-label">
+              <span>참여 현황</span>
+              <span style="font-weight:600;color:${pct>=100?'#a32d2d':'#1a1a1a'}">${unit.currentCount} / ${unit.maxCount}명</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%;background:${fillColor}"></div></div>
+          </div>
+
+          ${requested.length?`
+            <div class="status-group-label lbl-pending">⏳ 신청됨 (대기 중) ${requested.length}명</div>
+            <div class="applicant-grid">
+              ${requested.map((a,i)=>`
+                <div class="applicant-chip" id="arow-${a.participationId}">
+                  <div class="avatar ${AV[i%5]}">${a.name.slice(0,2)}</div>
+                  <span class="chip-name">${a.name}</span>
+                  <div class="chip-actions">
+                    <button class="approve-btn" onclick="updateStatus('${plan.planId}','${unit.planUnitId}','${a.participationId}','APPROVED')">승인</button>
+                    <button class="reject-btn"  onclick="updateStatus('${plan.planId}','${unit.planUnitId}','${a.participationId}','REJECTED')">거절</button>
+                  </div>
+                </div>`).join('')}
+            </div>`:''}
+
+          ${approved.length?`
+            <div class="status-group-label lbl-approved">✅ 승인됨 ${approved.length}명</div>
+            <div class="applicant-grid">
+              ${approved.map((a,i)=>chip(a,i,requested.length,'<span class="badge badge-blue">승인됨</span>')).join('')}
+            </div>`:''}
+
+          ${reserved.length?`
+            <div class="status-group-label" style="color:#5b21b6;margin:10px 0 6px;display:flex;align-items:center;gap:6px">💜 예약됨 ${reserved.length}명<span style="flex:1;height:1px;background:#ede9fe"></span></div>
+            <div class="applicant-grid">
+              ${reserved.map((a,i)=>chip(a,i,requested.length+approved.length,'<span class="badge badge-purple">예약됨</span>')).join('')}
+            </div>`:''}
+
+          ${paid.length?`
+            <div class="status-group-label" style="color:#0f6e56;margin:10px 0 6px;display:flex;align-items:center;gap:6px">💳 결제 완료 ${paid.length}명 — 확정 또는 취소 처리<span style="flex:1;height:1px;background:#e1f5ee"></span></div>
+            <div class="applicant-grid">
+              ${paid.map((a,i)=>`
+                <div class="applicant-chip" id="arow-${a.participationId}">
+                  <div class="avatar ${AV[(i+requested.length+approved.length+reserved.length)%5]}">${a.name.slice(0,2)}</div>
+                  <span class="chip-name">${a.name}</span>
+                  <div class="chip-actions">
+                    <button class="approve-btn" onclick="updateStatus('${plan.planId}','${unit.planUnitId}','${a.participationId}','CONFIRMED')">확정</button>
+                    <button class="reject-btn"  onclick="updateStatus('${plan.planId}','${unit.planUnitId}','${a.participationId}','PAYMENT_CANCELLED')">취소</button>
+                  </div>
+                </div>`).join('')}
+            </div>`:''}
+
+          ${confirmed.length?`
+            <div class="status-group-label lbl-confirmed">🎉 확정됨 ${confirmed.length}명</div>
+            <div class="applicant-grid">
+              ${confirmed.map((a,i)=>chip(a,i,requested.length+approved.length+reserved.length+paid.length,'<span class="badge badge-green">확정됨</span>')).join('')}
+            </div>`:''}
+
+          ${rejected.length?`
+            <div class="status-group-label" style="color:#a32d2d;margin:10px 0 6px;display:flex;align-items:center;gap:6px">❌ 거절됨 ${rejected.length}명<span style="flex:1;height:1px;background:#fcebeb"></span></div>
+            <div class="applicant-grid">
+              ${rejected.map((a,i)=>chip(a,i,0,'<span class="badge badge-red">거절됨</span>')).join('')}
+            </div>`:''}
+
+          ${reservedCancelled.length?`
+            <div class="status-group-label" style="color:#888;margin:10px 0 6px;display:flex;align-items:center;gap:6px">🚫 예약 취소 ${reservedCancelled.length}명<span style="flex:1;height:1px;background:#f0f0ec"></span></div>
+            <div class="applicant-grid">
+              ${reservedCancelled.map((a,i)=>chip(a,i,0,'<span class="badge badge-gray">예약 취소</span>')).join('')}
+            </div>`:''}
+
+          ${paymentCancelled.length?`
+            <div class="status-group-label" style="color:#888;margin:10px 0 6px;display:flex;align-items:center;gap:6px">💸 결제 취소 ${paymentCancelled.length}명<span style="flex:1;height:1px;background:#f0f0ec"></span></div>
+            <div class="applicant-grid">
+              ${paymentCancelled.map((a,i)=>chip(a,i,0,'<span class="badge badge-gray">결제 취소</span>')).join('')}
+            </div>`:''}
+
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+  document.getElementById('host-list').innerHTML = html;
+}
+
+/* ── 결제하기 (UI만, API 미연결) ── */
+function reserve(participationId, planId, unitPlanId) {
+  showToast('💳 결제하기 (미연결)');
+}
+
+/* ── 예약취소 (UI만, API 미연결) ── */
+function cancelReserve(participationId, planId, unitPlanId) {
+  showToast('예약취소 (미연결)');
+}
+
+/* 상태 변경 후 row UI 즉시 반영 */
+function updateRowUI(participationId, newStatus) {
+  const row = document.getElementById('prow-' + participationId);
+  if (!row) return;
+  const badge = row.querySelector('.badge');
+  if (badge) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = STATUS_BADGE[newStatus] || '';
+    if (tmp.firstChild) badge.replaceWith(tmp.firstChild);
+  }
+  ['pay-btn','cancel-reserve-btn','cancel-payment-btn','withdraw-btn'].forEach(cls => {
+    row.querySelector('.'+cls)?.remove();
+  });
+}
+
+/* ── 호스트: 승인/거절
+   PATCH /plans/{planId}/unit-plans/{unitPlanId}/participations/{participationId}/status
+   body: { "status": "APPROVED" | "REJECTED" }
+── */
+async function updateStatus(planId, unitPlanId, participationId, status) {
+  const row = document.getElementById('arow-' + participationId);
+  if (row) row.querySelectorAll('button').forEach(b => b.disabled = true);
+
+  try {
+    const res = await fetch(
+      `${BASE_URL}/plans/${planId}/unit-plans/${unitPlanId}/participations/${participationId}/status`,
+      {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({status})
+      }
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  } catch(e) {
+    console.warn('상태변경 API 실패(UI만 반영):', e.message);
+  }
+
+  if (row) {
+    const actions = row.querySelector('.chip-actions');
+    switch(status) {
+      case 'APPROVED':
+        actions.innerHTML = '<span class="badge badge-blue">승인됨</span>';
+        showToast('✅ 승인되었습니다');
+        break;
+      case 'REJECTED':
+        row.style.opacity = '.4';
+        actions.innerHTML = '<span class="badge badge-red">거절됨</span>';
+        showToast('거절되었습니다');
+        break;
+      case 'CONFIRMED':
+        actions.innerHTML = '<span class="badge badge-green">확정됨</span>';
+        showToast('🎉 확정되었습니다');
+        break;
+      case 'PAYMENT_CANCELLED':
+        row.style.opacity = '.4';
+        actions.innerHTML = '<span class="badge badge-gray">결제 취소</span>';
+        showToast('결제가 취소되었습니다');
+        break;
+    }
+  }
+}
+
+async function confirmUnit(planId, unitPlanId) {
+  if (!confirm('이 단위 일정을 확정하시겠어요?\n확정 후에는 참여자 상태 변경이 불가능합니다.')) return;
+  try {
+    const res = await fetch(`${BASE_URL}/plans/${planId}/unit-plans/${unitPlanId}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' }
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    showToast('🎉 일정이 확정되었습니다!');
+  } catch(e) {
+    console.warn('확정 API 실패(UI만 반영):', e.message);
+    showToast('🎉 일정이 확정되었습니다! (오프라인)');
+  }
+  fetchHost();
+}
+
+function urlChip(url,fn){return `<div class="url-chip"><span>GET ${url}</span><button class="retry-btn" onclick="${fn}">재시도</button></div>`;}
+function errBox(msg){return `<div class="err-box">⚠ API 연결 실패: ${msg}</div>`;}
+function emptyBox(txt,icon){return `<div class="empty"><div class="empty-icon">${icon}</div>${txt}</div>`;}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
+
+fetchApplied();
+fetchHost();
+</script>
+</body>
+</html>
