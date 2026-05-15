@@ -259,21 +259,6 @@ function renderHost(content, url, err) {
         const totalCount = allApplicants.length;
         const requestedCount = requested.length;
 
-        /* 상태별 배지 */
-        const statusBadge = (status) => {
-          const m = {
-            REQUESTED:'<span class="badge badge-amber" style="font-size:10px;padding:2px 7px">신청</span>',
-            APPROVED:'<span class="badge badge-blue" style="font-size:10px;padding:2px 7px">승인</span>',
-            RESERVED:'<span class="badge badge-purple" style="font-size:10px;padding:2px 7px">예약</span>',
-            PAID:'<span class="badge badge-teal" style="font-size:10px;padding:2px 7px">결제완료</span>',
-            CONFIRMED:'<span class="badge badge-green" style="font-size:10px;padding:2px 7px">확정</span>',
-            REJECTED:'<span class="badge badge-red" style="font-size:10px;padding:2px 7px">거절</span>',
-            RESERVED_CANCELLED:'<span class="badge badge-gray" style="font-size:10px;padding:2px 7px">예약취소</span>',
-            PAYMENT_CANCELLED:'<span class="badge badge-gray" style="font-size:10px;padding:2px 7px">결제취소</span>',
-          };
-          return m[status] || `<span class="badge badge-gray" style="font-size:10px">${status}</span>`;
-        };
-
         return `
         <div class="unit-block">
           <div class="unit-block-header" onclick="toggleUnit('${uid}')">
@@ -304,6 +289,21 @@ function renderHost(content, url, err) {
     </div>`;
   }).join('');
   document.getElementById('host-list').innerHTML = html;
+}
+
+/* ── 상태 배지 (전역) ── */
+function statusBadge(status) {
+  const m = {
+    REQUESTED:          '<span class="badge badge-amber"  style="font-size:10px;padding:2px 7px">신청</span>',
+    APPROVED:           '<span class="badge badge-blue"   style="font-size:10px;padding:2px 7px">승인</span>',
+    RESERVED:           '<span class="badge badge-purple" style="font-size:10px;padding:2px 7px">예약</span>',
+    PAID:               '<span class="badge badge-teal"   style="font-size:10px;padding:2px 7px">결제완료</span>',
+    CONFIRMED:          '<span class="badge badge-green"  style="font-size:10px;padding:2px 7px">확정</span>',
+    REJECTED:           '<span class="badge badge-red"    style="font-size:10px;padding:2px 7px">거절</span>',
+    RESERVED_CANCELLED: '<span class="badge badge-gray"   style="font-size:10px;padding:2px 7px">예약취소</span>',
+    PAYMENT_CANCELLED:  '<span class="badge badge-gray"   style="font-size:10px;padding:2px 7px">결제취소</span>',
+  };
+  return m[status] || '<span class="badge badge-gray" style="font-size:10px">' + status + '</span>';
 }
 
 /* ── 호스트 드롭다운 내부 — 상태별 그룹 렌더링 ── */
