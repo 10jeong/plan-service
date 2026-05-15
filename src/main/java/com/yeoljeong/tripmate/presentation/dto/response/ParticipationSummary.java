@@ -13,7 +13,7 @@ public record ParticipationSummary(
     int day,
     LocalTime startTime,
     LocalTime endTime,
-    ParticipationStatus staus
+    ParticipationStatus status
 ) {
 
   public static ParticipationSummary from(PlanUnit planUnit, PlanParticipation participation) {
