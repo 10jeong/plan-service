@@ -26,4 +26,14 @@ public interface PlanJpaRepository extends JpaRepository<Plan, UUID> {
       @Param("endDate") LocalDate endDate,
       @Param("recruitStatus") RecruitStatus recruitStatus,
       Pageable pageable);
+
+  @Query("""
+    select distinct p
+      from PlanParticipation pp
+        join pp.planUnit pu
+        join pu.plan p
+          where pp.userId = :userId
+            and pp.isDeleted = false
+  """)
+  Slice<Plan> findMyParticipatedPlans(@Param("userId") UUID userId, Pageable pageable);
 }
