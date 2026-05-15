@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record ReceivedParticipationRequestsResponse(
     UUID planId,
-    String PlanTitle,
+    String planTitle,
     LocalDate startDate,
     LocalDate endDate,
     RecruitStatus recruitStatus,
