@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.infrastructer.persistence.jpa;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.util.List;
@@ -56,5 +57,15 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   """)
   boolean existsOpenPlan(@Param("userId") UUID userId);
 
-  Slice<PlanParticipation> findAllByUserId(UUID userId, Pageable pageable);
+  @Query("""
+    select distinct p
+      from PlanParticipation pp
+        join pp.planUnit pu
+        join pu.plan p
+          where pp.userId = :userId
+            and pp.isDeleted = false
+  """)
+  Slice<Plan> findMyParticipatedPlans(@Param("userId") UUID userId, Pageable pageable);
+
+  List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId, List<Plan> plans);
 }

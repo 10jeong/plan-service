@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.domain.repository;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.util.List;
@@ -34,5 +35,7 @@ public interface PlanParticipationRepository {
 
   boolean existsOpenPlan(UUID userId);
 
-  Slice<PlanParticipation> findAllByUserId(UUID userId, Pageable pageable);
+  Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable);
+
+  List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId, List<Plan> plans);
 }

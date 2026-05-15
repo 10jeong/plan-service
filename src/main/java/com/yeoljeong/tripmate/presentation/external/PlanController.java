@@ -155,6 +155,4 @@ public class PlanController {
         pageable, user.userId());
     return ApiResponse.success(CommonSuccessCode.OK, "내가 신청한 참여 조회가 완료되었습니다.", response);
   }
-
-
 }

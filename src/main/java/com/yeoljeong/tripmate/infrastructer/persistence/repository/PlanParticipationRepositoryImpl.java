@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.infrastructer.persistence.repository;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import com.yeoljeong.tripmate.domain.model.Plan;
 import com.yeoljeong.tripmate.domain.model.PlanParticipation;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanParticipationRepository;
@@ -80,7 +81,13 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   }
 
   @Override
-  public Slice<PlanParticipation> findAllByUserId(UUID userId, Pageable pageable) {
-    return jpaRepository.findAllByUserId(userId, pageable);
+  public Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable) {
+    return jpaRepository.findMyParticipatedPlans(userId, pageable);
+  }
+
+  @Override
+  public List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId,
+      List<Plan> plans) {
+    return jpaRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, plans);
   }
 }

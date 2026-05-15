@@ -121,29 +121,31 @@ public class PlanQueryService {
 
   public Slice<MyParticipationRequestsResponse> getMyParticipationRequests(Pageable pageable, UUID userId) {
 
-    Slice<PlanParticipation> participationSlice = participationRepository.findAllByUserId(userId, pageable);
+    Slice<Plan> planSlice = participationRepository.findMyParticipatedPlans(userId, pageable);
 
-    Map<Plan, List<PlanParticipation>> groupedByPlan = participationSlice.getContent().stream()
+    List<PlanParticipation> participations = participationRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, planSlice.getContent());
+
+    Map<Plan, List<PlanParticipation>> groupedByPlan = participations.stream()
         .collect(Collectors.groupingBy(
-            participation -> participation.getPlanUnit().getPlan()
+            p -> p.getPlanUnit().getPlan()
         ));
 
     List<MyParticipationRequestsResponse> response = groupedByPlan.entrySet().stream()
         .map(
             entry -> {
               Plan plan = entry.getKey();
-              List<ParticipationSummary> participations = entry.getValue().stream()
+              List<ParticipationSummary> participationSummaries = entry.getValue().stream()
                   .map(participation -> {
                     PlanUnit planUnit = participation.getPlanUnit();
                     return ParticipationSummary.from(planUnit, participation);
                   }).toList();
-              return MyParticipationRequestsResponse.from(plan, participations);
+              return MyParticipationRequestsResponse.from(plan, participationSummaries);
             }).toList();
 
     return new SliceImpl<>(
         response,
         pageable,
-        participationSlice.hasNext()
+        planSlice.hasNext()
     );
   }
 
