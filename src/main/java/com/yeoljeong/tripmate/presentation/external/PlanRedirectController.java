@@ -11,4 +11,9 @@ public class PlanRedirectController {
     return "forward:/plan_create.html";
   }
 
+  @GetMapping("/plans/participate-page")
+  public String planParticipatePage() {
+    return "forward:/plan_participate.html";
+  }
+
 }
