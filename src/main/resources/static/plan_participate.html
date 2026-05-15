@@ -137,15 +137,15 @@ const STATUS_BADGE = {
 };
 
 /*
-  상태 플로우:
-  REQUESTED          → 없음        (호스트가 승인/거절 대기 중)
-  APPROVED           → 결제 버튼   (→ RESERVED)
-  RESERVED           → 예약취소 버튼(→ RESERVED_CANCELLED)
-  PAID               → 없음        (결제 완료, 호스트 확정 대기)
-  CONFIRMED          → 취소 버튼   (→ PAYMENT_CANCELLED)
-  REJECTED           → 없음
-  RESERVED_CANCELLED → 없음
-  PAYMENT_CANCELLED  → 없음
+  ParticipationStatus 플로우 (enum 기준)
+  REQUESTED          → 버튼 없음   (호스트 승인/거절 대기)
+  APPROVED           → 결제하기    → RESERVED        (미연결)
+  RESERVED           → 예약취소    → RESERVED_CANCELLED (미연결)
+  PAID               → 버튼 없음   (호스트가 CONFIRMED/PAYMENT_CANCELLED 처리)
+  CONFIRMED          → 버튼 없음   (최종 확정, 변경 불가)
+  REJECTED           → 버튼 없음
+  RESERVED_CANCELLED → 버튼 없음
+  PAYMENT_CANCELLED  → 버튼 없음
 */
 function participationActionBtn(p, planId) {
   const id = p.participationId, pid = planId, uid = p.planUnitId;
@@ -154,8 +154,6 @@ function participationActionBtn(p, planId) {
       return `<button class="pay-btn" onclick="reserve('${id}','${pid}','${uid}')">결제하기</button>`;
     case 'RESERVED':
       return `<button class="cancel-reserve-btn" onclick="cancelReserve('${id}','${pid}','${uid}')">예약취소</button>`;
-    case 'CONFIRMED':
-      return `<button class="cancel-payment-btn" onclick="cancelPayment('${id}','${pid}','${uid}')">취소 요청</button>`;
     default:
       return '';
   }
@@ -247,11 +245,25 @@ function renderHost(content, url, err) {
         ${RECRUIT_BADGE[plan.recruitStatus]||''}
       </div>
       ${plan.planUnits.map(unit=>{
-        const pending   = unit.applicants.filter(a=>a.status==='PENDING');
-        const approved  = unit.applicants.filter(a=>a.status==='APPROVED');
-        const confirmed = unit.applicants.filter(a=>a.status==='CONFIRMED');
+        const requested          = unit.applicants.filter(a=>a.status==='REQUESTED');
+        const approved           = unit.applicants.filter(a=>a.status==='APPROVED');
+        const reserved           = unit.applicants.filter(a=>a.status==='RESERVED');
+        const paid               = unit.applicants.filter(a=>a.status==='PAID');
+        const confirmed          = unit.applicants.filter(a=>a.status==='CONFIRMED');
+        const reservedCancelled  = unit.applicants.filter(a=>a.status==='RESERVED_CANCELLED');
+        const paymentCancelled   = unit.applicants.filter(a=>a.status==='PAYMENT_CANCELLED');
+        const rejected           = unit.applicants.filter(a=>a.status==='REJECTED');
         const pct = unit.maxCount>0?Math.min(100,Math.round(unit.currentCount/unit.maxCount*100)):0;
         const fillColor = pct>=100?'#e24b4a':'#1D9E75';
+
+        /* 칩 생성 헬퍼 */
+        const chip = (a, i, offset, badgeHtml, actionsHtml='') => `
+          <div class="applicant-chip" id="arow-${a.participationId}">
+            <div class="avatar ${AV[(i+offset)%5]}">${a.name.slice(0,2)}</div>
+            <span class="chip-name">${a.name}</span>
+            ${actionsHtml || badgeHtml}
+          </div>`;
+
         return `
         <div class="unit-block">
           <div class="unit-block-header">
@@ -272,10 +284,11 @@ function renderHost(content, url, err) {
             </div>
             <div class="progress-bar"><div class="progress-bar-fill" style="width:${pct}%;background:${fillColor}"></div></div>
           </div>
-          ${pending.length?`
-            <div class="status-group-label lbl-pending">⏳ 대기 중 ${pending.length}명</div>
+
+          ${requested.length?`
+            <div class="status-group-label lbl-pending">⏳ 신청됨 (대기 중) ${requested.length}명</div>
             <div class="applicant-grid">
-              ${pending.map((a,i)=>`
+              ${requested.map((a,i)=>`
                 <div class="applicant-chip" id="arow-${a.participationId}">
                   <div class="avatar ${AV[i%5]}">${a.name.slice(0,2)}</div>
                   <span class="chip-name">${a.name}</span>
@@ -285,26 +298,57 @@ function renderHost(content, url, err) {
                   </div>
                 </div>`).join('')}
             </div>`:''}
+
           ${approved.length?`
             <div class="status-group-label lbl-approved">✅ 승인됨 ${approved.length}명</div>
             <div class="applicant-grid">
-              ${approved.map((a,i)=>`
-                <div class="applicant-chip">
-                  <div class="avatar ${AV[(i+pending.length)%5]}">${a.name.slice(0,2)}</div>
+              ${approved.map((a,i)=>chip(a,i,requested.length,'<span class="badge badge-blue">승인됨</span>')).join('')}
+            </div>`:''}
+
+          ${reserved.length?`
+            <div class="status-group-label" style="color:#5b21b6;margin:10px 0 6px;display:flex;align-items:center;gap:6px">💜 예약됨 ${reserved.length}명<span style="flex:1;height:1px;background:#ede9fe"></span></div>
+            <div class="applicant-grid">
+              ${reserved.map((a,i)=>chip(a,i,requested.length+approved.length,'<span class="badge badge-purple">예약됨</span>')).join('')}
+            </div>`:''}
+
+          ${paid.length?`
+            <div class="status-group-label" style="color:#0f6e56;margin:10px 0 6px;display:flex;align-items:center;gap:6px">💳 결제 완료 ${paid.length}명 — 확정 또는 취소 처리<span style="flex:1;height:1px;background:#e1f5ee"></span></div>
+            <div class="applicant-grid">
+              ${paid.map((a,i)=>`
+                <div class="applicant-chip" id="arow-${a.participationId}">
+                  <div class="avatar ${AV[(i+requested.length+approved.length+reserved.length)%5]}">${a.name.slice(0,2)}</div>
                   <span class="chip-name">${a.name}</span>
-                  <span class="badge badge-blue">승인됨</span>
+                  <div class="chip-actions">
+                    <button class="approve-btn" onclick="updateStatus('${plan.planId}','${unit.planUnitId}','${a.participationId}','CONFIRMED')">확정</button>
+                    <button class="reject-btn"  onclick="updateStatus('${plan.planId}','${unit.planUnitId}','${a.participationId}','PAYMENT_CANCELLED')">취소</button>
+                  </div>
                 </div>`).join('')}
             </div>`:''}
+
           ${confirmed.length?`
             <div class="status-group-label lbl-confirmed">🎉 확정됨 ${confirmed.length}명</div>
             <div class="applicant-grid">
-              ${confirmed.map((a,i)=>`
-                <div class="applicant-chip">
-                  <div class="avatar ${AV[(i+pending.length+approved.length)%5]}">${a.name.slice(0,2)}</div>
-                  <span class="chip-name">${a.name}</span>
-                  <span class="badge badge-green">확정됨</span>
-                </div>`).join('')}
+              ${confirmed.map((a,i)=>chip(a,i,requested.length+approved.length+reserved.length+paid.length,'<span class="badge badge-green">확정됨</span>')).join('')}
             </div>`:''}
+
+          ${rejected.length?`
+            <div class="status-group-label" style="color:#a32d2d;margin:10px 0 6px;display:flex;align-items:center;gap:6px">❌ 거절됨 ${rejected.length}명<span style="flex:1;height:1px;background:#fcebeb"></span></div>
+            <div class="applicant-grid">
+              ${rejected.map((a,i)=>chip(a,i,0,'<span class="badge badge-red">거절됨</span>')).join('')}
+            </div>`:''}
+
+          ${reservedCancelled.length?`
+            <div class="status-group-label" style="color:#888;margin:10px 0 6px;display:flex;align-items:center;gap:6px">🚫 예약 취소 ${reservedCancelled.length}명<span style="flex:1;height:1px;background:#f0f0ec"></span></div>
+            <div class="applicant-grid">
+              ${reservedCancelled.map((a,i)=>chip(a,i,0,'<span class="badge badge-gray">예약 취소</span>')).join('')}
+            </div>`:''}
+
+          ${paymentCancelled.length?`
+            <div class="status-group-label" style="color:#888;margin:10px 0 6px;display:flex;align-items:center;gap:6px">💸 결제 취소 ${paymentCancelled.length}명<span style="flex:1;height:1px;background:#f0f0ec"></span></div>
+            <div class="applicant-grid">
+              ${paymentCancelled.map((a,i)=>chip(a,i,0,'<span class="badge badge-gray">결제 취소</span>')).join('')}
+            </div>`:''}
+
         </div>`;
       }).join('')}
     </div>`;
@@ -320,11 +364,6 @@ function reserve(participationId, planId, unitPlanId) {
 /* ── 예약취소 (UI만, API 미연결) ── */
 function cancelReserve(participationId, planId, unitPlanId) {
   showToast('예약취소 (미연결)');
-}
-
-/* ── 취소 요청 (UI만, API 미연결) ── */
-function cancelPayment(participationId, planId, unitPlanId) {
-  showToast('취소 요청 (미연결)');
 }
 
 /* 상태 변경 후 row UI 즉시 반영 */
@@ -348,7 +387,6 @@ function updateRowUI(participationId, newStatus) {
 ── */
 async function updateStatus(planId, unitPlanId, participationId, status) {
   const row = document.getElementById('arow-' + participationId);
-  /* 버튼 비활성화 — 중복 클릭 방지 */
   if (row) row.querySelectorAll('button').forEach(b => b.disabled = true);
 
   try {
@@ -367,13 +405,26 @@ async function updateStatus(planId, unitPlanId, participationId, status) {
   }
 
   if (row) {
-    if (status === 'APPROVED') {
-      row.querySelector('.chip-actions').innerHTML = '<span class="badge badge-blue">승인됨</span>';
-      showToast('✅ 승인되었습니다');
-    } else {
-      row.style.opacity = '.4';
-      row.querySelector('.chip-actions').innerHTML = '<span class="badge badge-red">거절됨</span>';
-      showToast('거절되었습니다');
+    const actions = row.querySelector('.chip-actions');
+    switch(status) {
+      case 'APPROVED':
+        actions.innerHTML = '<span class="badge badge-blue">승인됨</span>';
+        showToast('✅ 승인되었습니다');
+        break;
+      case 'REJECTED':
+        row.style.opacity = '.4';
+        actions.innerHTML = '<span class="badge badge-red">거절됨</span>';
+        showToast('거절되었습니다');
+        break;
+      case 'CONFIRMED':
+        actions.innerHTML = '<span class="badge badge-green">확정됨</span>';
+        showToast('🎉 확정되었습니다');
+        break;
+      case 'PAYMENT_CANCELLED':
+        row.style.opacity = '.4';
+        actions.innerHTML = '<span class="badge badge-gray">결제 취소</span>';
+        showToast('결제가 취소되었습니다');
+        break;
     }
   }
 }
