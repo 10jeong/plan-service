@@ -6,9 +6,10 @@ public enum ParticipationStatus {
 
   REQUESTED,
   APPROVED,
-  RESERVED,
-  CONFIRMED,
   REJECTED,
+  RESERVED,
+  PAID,
+  CONFIRMED,
   RESERVED_CANCELLED,
   PAYMENT_CANCELLED;
 
@@ -22,10 +23,12 @@ public enum ParticipationStatus {
         Set.of(RESERVED);
 
     RESERVED.changeableStatuses =
-        Set.of(CONFIRMED, RESERVED_CANCELLED);
+        Set.of(PAID, RESERVED_CANCELLED);
+    PAID.changeableStatuses =
+        Set.of(CONFIRMED, PAYMENT_CANCELLED);
 
     CONFIRMED.changeableStatuses =
-        Set.of(PAYMENT_CANCELLED);
+        Set.of();
 
     REJECTED.changeableStatuses =
         Set.of();

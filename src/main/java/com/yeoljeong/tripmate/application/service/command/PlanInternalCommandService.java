@@ -90,7 +90,7 @@ public class PlanInternalCommandService {
   }
 
   /*
-  * 결제 완료시, 참여 상태 변경 (RESERVED -> CONFIRMED)
+  * 결제 완료시, 참여 상태 변경 (RESERVED -> PAID)
   * */
   public void updateParticipantStatus(PaymentCompletedEvent event) {
 
@@ -102,13 +102,13 @@ public class PlanInternalCommandService {
     PlanParticipation participation = planParticipationRepository.findByPlanUnit_IdAndUserId(orderPlanUnitData.planUnitId(), event.userId())
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_NOT_FOUND));
 
-    participation.validatePlanParticipationStatus(ParticipationStatus.CONFIRMED);
+    participation.validatePlanParticipationStatus(ParticipationStatus.PAID);
 
-    // 상태 변경 (RESERVED -> CONFIRMED)
+    // 상태 변경 (RESERVED -> PAID)
     int updated = planParticipationRepository.updateStatus(
         participation.getId(),
         participation.getParticipationStatus(),
-        ParticipationStatus.CONFIRMED);
+        ParticipationStatus.PAID);
 
     if (updated == 0) {
       throw new BusinessException(PlanErrorCode.PLAN_PARTICIPATION_STATUS_CHANGE_INVALID);
