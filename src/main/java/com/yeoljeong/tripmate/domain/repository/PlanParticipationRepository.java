@@ -34,5 +34,9 @@ public interface PlanParticipationRepository {
 
   boolean existsOpenPlan(UUID userId);
 
-  List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId, List<Plan> plans);
+  List<PlanParticipation> findGuestRequestsByPlans(List<Plan> planSlice);
+
+  List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanInAndParticipationRoleAndIsDeletedFalse(
+      UUID userId, List<Plan> content,
+      ParticipationRole participationRole);
 }

@@ -33,8 +33,34 @@ public interface PlanJpaRepository extends JpaRepository<Plan, UUID> {
         join pp.planUnit pu
         join pu.plan p
           where pp.userId = :userId
+            and pp.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.GUEST
             and pp.isDeleted = false
           order by p.createdAt desc
   """)
   Slice<Plan> findMyParticipatedPlans(@Param("userId") UUID userId, Pageable pageable);
+
+
+  @Query("""
+    select distinct p
+      from PlanParticipation host
+        join host.planUnit pu
+        join pu.plan p
+          where host.userId = :userId
+            and host.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.HOST
+            and host.isDeleted = false
+          order by p.createdAt desc
+  """)
+  Slice<Plan> findHostPlans(@Param("userId") UUID userId, Pageable pageable);
+//  @Query("""
+//    select guest
+//      from PlanParticipation guest
+//        join guest.planUnit pu
+//        join pu.plan p
+//        join PlanParticipation host
+//          on host.planUnit = pu
+//          where host.userId = :userId
+//            and host.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.HOST
+//            and guest.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.GUEST
+//          order by p.createdAt desc
+//  """)
 }
