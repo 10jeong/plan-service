@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -75,5 +77,10 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
   @Override
   public boolean existsOpenPlan(UUID userId) {
     return jpaRepository.existsOpenPlan(userId);
+  }
+
+  @Override
+  public Slice<PlanParticipation> findAllByUserId(UUID userId, Pageable pageable) {
+    return jpaRepository.findAllByUserId(userId, pageable);
   }
 }

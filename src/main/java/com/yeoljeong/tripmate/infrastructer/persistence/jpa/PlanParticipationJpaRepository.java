@@ -7,6 +7,8 @@ import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -53,4 +55,6 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
             and p.recruitStatus = com.yeoljeong.tripmate.domain.enums.RecruitStatus.OPEN
   """)
   boolean existsOpenPlan(@Param("userId") UUID userId);
+
+  Slice<PlanParticipation> findAllByUserId(UUID userId, Pageable pageable);
 }

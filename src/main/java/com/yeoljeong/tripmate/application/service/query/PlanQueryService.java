@@ -19,6 +19,8 @@ import com.yeoljeong.tripmate.exception.BusinessException;
 import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
 import com.yeoljeong.tripmate.infrastructer.external.user.GetUserRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.MyParticipationRequestsResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.ParticipationSummary;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -26,7 +28,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -71,21 +75,7 @@ public class PlanQueryService {
         .toList();
 
     // 회원 정보 조회
-    List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(
-        GetUserRequest.from(userIds));
-    if (userData == null) {
-      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
-    }
-    Map<UUID, UserData> userMap = userData.stream()
-        .collect(Collectors.toMap(UserData::userId,
-            Function.identity(),
-            (left, right) -> right));
-
-    boolean hasMissingUser = userIds.stream()
-        .anyMatch(userId -> !userMap.containsKey(userId));
-    if (hasMissingUser) {
-      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
-    }
+    Map<UUID, UserData> userMap = getUserMap(userIds);
 
     // 참여자 그룹핑
     Map<PlanUnit, List<PlanParticipantDetail>> participationMap = planParticipation.stream()
@@ -108,6 +98,7 @@ public class PlanQueryService {
 
   }
 
+
   public Slice<GetPlanResponse> getPlan(GetPlanCommand command) {
     String title = command.title() == null || command.title().isBlank()
         ? null
@@ -126,5 +117,53 @@ public class PlanQueryService {
     );
 
     return plans.map(GetPlanResponse::from);
+  }
+
+  public Slice<MyParticipationRequestsResponse> getMyParticipationRequests(Pageable pageable, UUID userId) {
+
+    Slice<PlanParticipation> participationSlice = participationRepository.findAllByUserId(userId, pageable);
+
+    Map<Plan, List<PlanParticipation>> groupedByPlan = participationSlice.getContent().stream()
+        .collect(Collectors.groupingBy(
+            participation -> participation.getPlanUnit().getPlan()
+        ));
+
+    List<MyParticipationRequestsResponse> response = groupedByPlan.entrySet().stream()
+        .map(
+            entry -> {
+              Plan plan = entry.getKey();
+              List<ParticipationSummary> participations = entry.getValue().stream()
+                  .map(participation -> {
+                    PlanUnit planUnit = participation.getPlanUnit();
+                    return ParticipationSummary.from(planUnit, participation);
+                  }).toList();
+              return MyParticipationRequestsResponse.from(plan, participations);
+            }).toList();
+
+    return new SliceImpl<>(
+        response,
+        pageable,
+        participationSlice.hasNext()
+    );
+  }
+
+  /* 유저 정보 조회 및 검증*/
+  private Map<UUID, UserData> getUserMap(List<UUID> userIds) {
+    List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(
+        GetUserRequest.from(userIds));
+    if (userData == null) {
+      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+    }
+    Map<UUID, UserData> userMap = userData.stream()
+        .collect(Collectors.toMap(UserData::userId,
+            Function.identity(),
+            (left, right) -> right));
+
+    boolean hasMissingUser = userIds.stream()
+        .anyMatch(userId -> !userMap.containsKey(userId));
+    if (hasMissingUser) {
+      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+    }
+    return userMap;
   }
 }
