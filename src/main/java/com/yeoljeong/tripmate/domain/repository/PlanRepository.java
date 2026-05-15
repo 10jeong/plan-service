@@ -20,4 +20,6 @@ public interface PlanRepository {
       Pageable pageable);
 
   Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable);
+
+  Slice<Plan> findHostPlans(UUID userId, Pageable pageable);
 }

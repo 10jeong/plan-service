@@ -43,4 +43,9 @@ public class PlanRepositoryImpl implements PlanRepository {
   public Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable) {
     return jpaRepository.findMyParticipatedPlans(userId, pageable);
   }
+
+  @Override
+  public Slice<Plan> findHostPlans(UUID userId, Pageable pageable) {
+    return jpaRepository.findHostPlans(userId, pageable);
+  }
 }

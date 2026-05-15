@@ -12,6 +12,7 @@ import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.service.query.PlanQueryService;
 import com.yeoljeong.tripmate.auth.annotation.LoginUser;
 import com.yeoljeong.tripmate.auth.context.UserContext;
+import com.yeoljeong.tripmate.presentation.dto.response.ReceivedParticipationRequestsResponse;
 import com.yeoljeong.tripmate.presentation.dto.request.CreatePlanRequest;
 import com.yeoljeong.tripmate.presentation.dto.request.PlanSearchCondition;
 import com.yeoljeong.tripmate.presentation.dto.request.UpdateParticipationStatusRequest;
@@ -154,5 +155,17 @@ public class PlanController {
     Slice<MyParticipationRequestsResponse> response = planQueryService.getMyParticipationRequests(
         pageable, user.userId());
     return ApiResponse.success(CommonSuccessCode.OK, "내가 신청한 참여 조회가 완료되었습니다.", response);
+  }
+
+  // 호스트 관리(받은 참여 요청) 조회
+  @GetMapping("/participations/received-requests")
+  public ApiResponse<Slice<ReceivedParticipationRequestsResponse>> getReceivedParticipationRequests(
+      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable,
+      @LoginUser UserContext user
+  ) {
+    Slice<ReceivedParticipationRequestsResponse> response = planQueryService.getReceivedParticipationRequests(
+        pageable, user.userId());
+    return ApiResponse.success(CommonSuccessCode.OK, "신청받은 참여 요청 조회가 완료되었습니다.", response);
+
   }
 }
