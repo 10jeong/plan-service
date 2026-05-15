@@ -56,5 +56,19 @@ public interface PlanParticipationJpaRepository extends JpaRepository<PlanPartic
   """)
   boolean existsOpenPlan(@Param("userId") UUID userId);
 
-  List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId, List<Plan> plans);
+
+  @Query("""
+    select pp
+    from PlanParticipation pp
+        join fetch pp.planUnit pu
+        join fetch pu.plan p
+    where p in :plans
+      and pp.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.GUEST
+    order by pu.day asc, pu.unitTimeRange.startTime asc
+""")
+  List<PlanParticipation> findGuestRequestsByPlans(@Param("plans") List<Plan> planSlice);
+
+  List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanInAndParticipationRoleAndIsDeletedFalse(
+      UUID userId, List<Plan> content,
+      ParticipationRole participationRole);
 }

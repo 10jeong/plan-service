@@ -78,9 +78,16 @@ public class PlanParticipationRepositoryImpl implements PlanParticipationReposit
     return jpaRepository.existsOpenPlan(userId);
   }
 
+
   @Override
-  public List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId,
-      List<Plan> plans) {
-    return jpaRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, plans);
+  public List<PlanParticipation> findGuestRequestsByPlans(List<Plan> planSlice) {
+    return jpaRepository.findGuestRequestsByPlans(planSlice);
+  }
+
+  @Override
+  public List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanInAndParticipationRoleAndIsDeletedFalse(
+      UUID userId, List<Plan> content, ParticipationRole participationRole) {
+    return jpaRepository.findAllByUserIdAndPlanUnit_PlanInAndParticipationRoleAndIsDeletedFalse(
+        userId, content, participationRole);
   }
 }

@@ -6,7 +6,7 @@ import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.time.LocalTime;
 import java.util.UUID;
 
-public record ParticipationSummary(
+public record MyParticipationSummary(
     UUID participationId,
     UUID planUnitId,
     String unitTitle,
@@ -16,8 +16,8 @@ public record ParticipationSummary(
     ParticipationStatus status
 ) {
 
-  public static ParticipationSummary from(PlanUnit planUnit, PlanParticipation participation) {
-    return new ParticipationSummary(
+  public static MyParticipationSummary from(PlanUnit planUnit, PlanParticipation participation) {
+    return new MyParticipationSummary(
         participation.getId(),
         planUnit.getId(),
         planUnit.getTitle(),

@@ -1,31 +1,28 @@
 package com.yeoljeong.tripmate.presentation.dto.response;
 
-import com.yeoljeong.tripmate.domain.enums.PlanCreationType;
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
 import com.yeoljeong.tripmate.domain.model.Plan;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-public record MyParticipationRequestsResponse(
+public record ReceivedParticipationRequestsResponse(
     UUID planId,
-    String planTitle,
+    String PlanTitle,
     LocalDate startDate,
     LocalDate endDate,
-    PlanCreationType planType,
     RecruitStatus recruitStatus,
-    List<MyParticipationSummary> participations
+    List<PlanUnitParticipationSummary> planUnits
 ) {
 
-  public static MyParticipationRequestsResponse from(Plan plan, List<MyParticipationSummary> participations) {
-    return new MyParticipationRequestsResponse(
+  public static ReceivedParticipationRequestsResponse from(Plan plan, List<PlanUnitParticipationSummary> planUnits) {
+    return new ReceivedParticipationRequestsResponse(
         plan.getId(),
         plan.getTitle(),
         plan.getTravelPeriod().getStartDate(),
         plan.getTravelPeriod().getEndDate(),
-        plan.getPlanType(),
         plan.getRecruitStatus(),
-        participations
+        planUnits
     );
   }
 }

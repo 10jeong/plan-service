@@ -7,6 +7,7 @@ import com.yeoljeong.tripmate.application.dto.result.PlanParticipantDetail;
 import com.yeoljeong.tripmate.application.dto.result.PlanUnitDetailResult;
 import com.yeoljeong.tripmate.application.port.ProductReader;
 import com.yeoljeong.tripmate.application.port.UserReader;
+import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.RecruitStatus;
 import com.yeoljeong.tripmate.domain.exception.PlanErrorCode;
 import com.yeoljeong.tripmate.domain.model.Plan;
@@ -20,7 +21,10 @@ import com.yeoljeong.tripmate.application.dto.result.GetPlanDetailResult;
 import com.yeoljeong.tripmate.infrastructer.external.user.GetUserRequest;
 import com.yeoljeong.tripmate.presentation.dto.response.GetPlanResponse;
 import com.yeoljeong.tripmate.presentation.dto.response.MyParticipationRequestsResponse;
-import com.yeoljeong.tripmate.presentation.dto.response.ParticipationSummary;
+import com.yeoljeong.tripmate.presentation.dto.response.MyParticipationSummary;
+import com.yeoljeong.tripmate.presentation.dto.response.PlanUnitParticipationSummary;
+import com.yeoljeong.tripmate.presentation.dto.response.ReceivedParticipationRequestsResponse;
+import com.yeoljeong.tripmate.presentation.dto.response.ReceivedParticipationSummary;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -124,7 +128,8 @@ public class PlanQueryService {
     Pageable planPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
     Slice<Plan> planSlice = planRepository.findMyParticipatedPlans(userId, planPageable);
 
-    List<PlanParticipation> participations = participationRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, planSlice.getContent());
+    List<PlanParticipation> participations = participationRepository.findAllByUserIdAndPlanUnit_PlanInAndParticipationRoleAndIsDeletedFalse(
+        userId, planSlice.getContent(), ParticipationRole.GUEST);
 
     Map<Plan, List<PlanParticipation>> groupedByPlan = participations.stream()
         .collect(Collectors.groupingBy(
@@ -135,10 +140,10 @@ public class PlanQueryService {
         .map(
             entry -> {
               Plan plan = entry.getKey();
-              List<ParticipationSummary> participationSummaries = entry.getValue().stream()
+              List<MyParticipationSummary> participationSummaries = entry.getValue().stream()
                   .map(participation -> {
                     PlanUnit planUnit = participation.getPlanUnit();
-                    return ParticipationSummary.from(planUnit, participation);
+                    return MyParticipationSummary.from(planUnit, participation);
                   }).toList();
               return MyParticipationRequestsResponse.from(plan, participationSummaries);
             }).toList();
@@ -148,6 +153,60 @@ public class PlanQueryService {
         pageable,
         planSlice.hasNext()
     );
+  }
+
+  public Slice<ReceivedParticipationRequestsResponse> getReceivedParticipationRequests(
+      Pageable pageable, UUID userId) {
+    Pageable planPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    Slice<Plan> planSlice = planRepository.findHostPlans(userId, planPageable);
+
+    List<PlanParticipation> participations = participationRepository.findGuestRequestsByPlans(planSlice.getContent());
+
+    Map<Plan, List<PlanParticipation>> groupedByPlan = participations.stream()
+        .collect(Collectors.groupingBy(
+            p -> p.getPlanUnit().getPlan()
+        ));
+
+    // 사용자 정보 조회
+    List<UUID> userIds = participations.stream()
+        .map(PlanParticipation::getUserId).toList();
+    Map<UUID, UserData> userDataMap = getUserMap(userIds);
+
+    List<ReceivedParticipationRequestsResponse> response = groupedByPlan.entrySet().stream()
+        .map(
+            planEntry -> {
+              Plan plan = planEntry.getKey();
+
+              // Plan 내부에서 다시 PlanUnit 기준 그룹핑
+              Map<PlanUnit, List<PlanParticipation>> groupedByPlanUnit =
+                  planEntry.getValue().stream()
+                      .collect(Collectors.groupingBy(
+                          PlanParticipation::getPlanUnit
+                      ));
+
+              List<PlanUnitParticipationSummary> planUnits = groupedByPlanUnit.entrySet().stream()
+                  .map(
+                      unitEntry -> {
+                        PlanUnit planUnit = unitEntry.getKey();
+                        List<ReceivedParticipationSummary> applicants = unitEntry.getValue().stream()
+                            .map(
+                                participation -> {
+                                  UserData userData = userDataMap.get(participation.getUserId());
+                                  return ReceivedParticipationSummary.from(participation, userData);
+                                }
+                            ).toList();
+                        return PlanUnitParticipationSummary.from(applicants, planUnit);
+                      }
+                  ).toList();
+              return ReceivedParticipationRequestsResponse.from(plan, planUnits);
+            }).toList();
+
+    return new SliceImpl<>(
+        response,
+        pageable,
+        planSlice.hasNext()
+    );
+
   }
 
   /* 유저 정보 조회 및 검증*/
