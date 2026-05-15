@@ -18,4 +18,6 @@ public interface PlanRepository {
 
   Slice<Plan> findByCondition(String title, LocalDate startDate, LocalDate endDate, RecruitStatus recruitStatus,
       Pageable pageable);
+
+  Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable);
 }

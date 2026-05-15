@@ -8,8 +8,7 @@ import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
+
 
 public interface PlanParticipationRepository {
 
@@ -34,8 +33,6 @@ public interface PlanParticipationRepository {
   int updateStatus(UUID participationId, ParticipationStatus currentStatus, ParticipationStatus nextStatus);
 
   boolean existsOpenPlan(UUID userId);
-
-  Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable);
 
   List<PlanParticipation> findAllByUserIdAndPlanUnit_PlanIn(UUID userId, List<Plan> plans);
 }

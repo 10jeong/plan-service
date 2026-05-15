@@ -38,4 +38,9 @@ public class PlanRepositoryImpl implements PlanRepository {
       RecruitStatus recruitStatus, Pageable pageable) {
     return jpaRepository.findByCondition(title, startDate, endDate, recruitStatus, pageable);
   }
+
+  @Override
+  public Slice<Plan> findMyParticipatedPlans(UUID userId, Pageable pageable) {
+    return jpaRepository.findMyParticipatedPlans(userId, pageable);
+  }
 }

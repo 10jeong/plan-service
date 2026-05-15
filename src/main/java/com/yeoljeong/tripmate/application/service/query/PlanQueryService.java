@@ -121,7 +121,7 @@ public class PlanQueryService {
 
   public Slice<MyParticipationRequestsResponse> getMyParticipationRequests(Pageable pageable, UUID userId) {
 
-    Slice<Plan> planSlice = participationRepository.findMyParticipatedPlans(userId, pageable);
+    Slice<Plan> planSlice = planRepository.findMyParticipatedPlans(userId, pageable);
 
     List<PlanParticipation> participations = participationRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, planSlice.getContent());
 
