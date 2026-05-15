@@ -34,6 +34,7 @@ public interface PlanJpaRepository extends JpaRepository<Plan, UUID> {
         join pu.plan p
           where pp.userId = :userId
             and pp.isDeleted = false
+          order by p.createdAt desc
   """)
   Slice<Plan> findMyParticipatedPlans(@Param("userId") UUID userId, Pageable pageable);
 }

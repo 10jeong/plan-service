@@ -148,7 +148,7 @@ public class PlanController {
   // 내가 신청한 참여 조회
   @GetMapping("/participations/my-requests")
   public ApiResponse<Slice<MyParticipationRequestsResponse>> getMyParticipationRequests(
-      @PageableDefault(sort = "createdAt", direction = Direction.ASC) Pageable pageable,
+      @PageableDefault(sort = "createdAt", direction = Direction.DESC) Pageable pageable,
       @LoginUser UserContext user
   ) {
     Slice<MyParticipationRequestsResponse> response = planQueryService.getMyParticipationRequests(
