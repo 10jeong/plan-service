@@ -28,6 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -120,8 +121,8 @@ public class PlanQueryService {
   }
 
   public Slice<MyParticipationRequestsResponse> getMyParticipationRequests(Pageable pageable, UUID userId) {
-
-    Slice<Plan> planSlice = planRepository.findMyParticipatedPlans(userId, pageable);
+    Pageable planPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+    Slice<Plan> planSlice = planRepository.findMyParticipatedPlans(userId, planPageable);
 
     List<PlanParticipation> participations = participationRepository.findAllByUserIdAndPlanUnit_PlanIn(userId, planSlice.getContent());
 
