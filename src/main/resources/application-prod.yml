@@ -25,6 +25,8 @@ spring:
           batch_size: 30
           order_inserts: true
           order_updates: true
+        generate_statistics: true # todo: 테스트 후 제거
+
   sql:
     init:
       mode: never
@@ -57,7 +59,9 @@ spring:
     interval: 1000
     max-attempts: 3
 
-
+  task:
+    scheduling:
+      enabled: false # todo: 테스트동안 잠시 비활성
 server:
   port: ${SERVER_PORT:8080}
 
@@ -75,6 +79,10 @@ eureka:
 
 jwt:
   secret: ${JWT_INTERNAL_SECRET}
+
+logging:
+  level:
+    org.hibernate.stat: debug # todo: 테스트 후 제거
 
 management:
   endpoints:
