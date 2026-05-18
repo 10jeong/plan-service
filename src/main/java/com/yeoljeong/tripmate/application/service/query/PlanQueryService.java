@@ -57,6 +57,8 @@ public class PlanQueryService {
       key = "#planId"
   )
   public GetPlanDetailResult getPlanDetail(UUID planId) {
+    log.info("상세조회 DB/Feign 로직 실행 planId={}", planId);
+
     Plan plan = planRepository.findById(planId)
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_NOT_FOUND));
 
