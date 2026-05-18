@@ -32,6 +32,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -51,6 +52,10 @@ public class PlanQueryService {
   private final ProductReader productReader;
   private final UserReader userReader;
 
+  @Cacheable(
+      cacheNames = "planDetail",
+      key = "#planId"
+  )
   public GetPlanDetailResult getPlanDetail(UUID planId) {
     Plan plan = planRepository.findById(planId)
         .orElseThrow(() -> new BusinessException(PlanErrorCode.PLAN_NOT_FOUND));
