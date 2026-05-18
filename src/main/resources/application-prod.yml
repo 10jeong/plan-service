@@ -38,7 +38,7 @@ spring:
   cloud:
     openfeign:
       micrometer:
-        enabled: true
+        enabled: false
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAPS}
     consumer:
