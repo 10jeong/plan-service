@@ -111,7 +111,7 @@ public class PlanCommandService {
   * */
   @CacheEvict(
       cacheNames = "planDetail",
-      key = "#planId"
+      key = "#command.planId()"
   )
   public ParticipatePlanResult participatePlanUnit(ParticipatePlanCommand command) {
 

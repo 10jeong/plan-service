@@ -10,12 +10,12 @@ spring:
     redis:
       host: ${REDIS_HOST}
       port: ${REDIS_PORT}
+  cache:
+    type: redis
+    redis:
+      time-to-live: 300000 # 5분
+      cache-null-values: false
 
-    cache:
-      type: redis
-      redis:
-        time-to-live: 300000 # 5분
-        cache-null-values: false
   jpa:
     hibernate:
       ddl-auto: update
