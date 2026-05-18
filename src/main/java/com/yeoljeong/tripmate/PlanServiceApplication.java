@@ -13,7 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @EnableJpaAuditing(auditorAwareRef = "userAuditorAware")
 @EnableScheduling
-@EnableCaching
+//@EnableCaching
 public class PlanServiceApplication {
 
   public static void main(String[] args) {
