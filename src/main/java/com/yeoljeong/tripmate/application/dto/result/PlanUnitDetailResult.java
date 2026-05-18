@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.application.dto.result;
 
 import com.yeoljeong.tripmate.application.dto.external.ProductSummaryData;
 import com.yeoljeong.tripmate.domain.model.PlanUnit;
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -19,7 +20,7 @@ public record PlanUnitDetailResult(
     boolean isConfirmed,
     ProductSummaryData productSummary,
     List<PlanUnitParticipantResult> participants
-) {
+) implements Serializable {
 
   public static PlanUnitDetailResult from(PlanUnit unit, ProductSummaryData productSummaryData, List<PlanParticipantDetail> unitParticipants) {
     return new PlanUnitDetailResult(

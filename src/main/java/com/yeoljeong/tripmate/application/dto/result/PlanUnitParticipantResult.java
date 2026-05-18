@@ -2,6 +2,7 @@ package com.yeoljeong.tripmate.application.dto.result;
 
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public record PlanUnitParticipantResult(
     String name,
     ParticipationRole participationRole,
     ParticipationStatus participationStatus
-) {
+) implements Serializable {
 
   public static PlanUnitParticipantResult from(PlanParticipantDetail participant) {
     return new PlanUnitParticipantResult(
