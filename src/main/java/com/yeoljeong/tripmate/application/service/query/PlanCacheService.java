@@ -12,7 +12,7 @@ public class PlanCacheService {
 
   private final PlanQueryService planQueryService;
 
-  @Cacheable(cacheNames = "planDetail", key = "#planId")
+  @Cacheable(cacheNames = "planDetail", key = "#planId", sync = true)
   public GetPlanDetailResult getPlanDetail(UUID planId) {
     return planQueryService.getPlanDetailFromDb(planId);
   }
