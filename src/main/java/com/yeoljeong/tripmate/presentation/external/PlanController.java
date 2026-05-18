@@ -9,6 +9,7 @@ import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
 import com.yeoljeong.tripmate.application.service.command.PlanCommandService;
 import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
+import com.yeoljeong.tripmate.application.service.query.PlanCacheService;
 import com.yeoljeong.tripmate.application.service.query.PlanQueryService;
 import com.yeoljeong.tripmate.auth.annotation.LoginUser;
 import com.yeoljeong.tripmate.auth.context.UserContext;
@@ -52,6 +53,7 @@ public class PlanController {
 
   private final PlanCommandService planCommandService;
   private final PlanQueryService planQueryService;
+  private final PlanCacheService planCacheService;
 
   @PostMapping
   public ApiResponse<CreatePlanResponse> createPlans(
@@ -129,7 +131,7 @@ public class PlanController {
   public ApiResponse<GetPlanDetailResponse> getPlanDetail(@PathVariable UUID planId) {
 
 
-    GetPlanDetailResult result = planQueryService.getPlanDetail(planId);
+    GetPlanDetailResult result = planCacheService.getPlanDetail(planId);
     GetPlanDetailResponse response = GetPlanDetailResponse.from(result);
 
     return ApiResponse.success(CommonSuccessCode.OK, "일정 상세 조회가 완료되었습니다.", response);
