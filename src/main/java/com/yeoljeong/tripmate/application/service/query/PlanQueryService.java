@@ -32,7 +32,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -52,11 +51,7 @@ public class PlanQueryService {
   private final ProductReader productReader;
   private final UserReader userReader;
 
-  @Cacheable(
-      cacheNames = "planDetail",
-      key = "#planId"
-  )
-  public GetPlanDetailResult getPlanDetail(UUID planId) {
+  public GetPlanDetailResult getPlanDetailFromDb(UUID planId) {
     log.info("상세조회 DB/Feign 로직 실행 planId={}", planId);
 
     Plan plan = planRepository.findById(planId)
@@ -228,11 +223,13 @@ public class PlanQueryService {
             Function.identity(),
             (left, right) -> right));
 
-//    boolean hasMissingUser = userIds.stream()
-//        .anyMatch(userId -> !userMap.containsKey(userId));
-//    if (hasMissingUser) {
-//      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
-//    }
+    boolean hasMissingUser = userIds.stream()
+        .anyMatch(userId -> !userMap.containsKey(userId));
+    if (hasMissingUser) {
+      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+    }
     return userMap;
   }
+
+
 }
