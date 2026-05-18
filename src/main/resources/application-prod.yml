@@ -31,7 +31,6 @@ spring:
           batch_size: 30
           order_inserts: true
           order_updates: true
-        generate_statistics: true # todo: 테스트 후 제거
 
   sql:
     init:
@@ -81,10 +80,6 @@ eureka:
 
 jwt:
   secret: ${JWT_INTERNAL_SECRET}
-
-logging:
-  level:
-    org.hibernate.stat: debug # todo: 테스트 후 제거 / 실행시간, statement 수 등 hibernate 통계 수집
 
 management:
   endpoints:
