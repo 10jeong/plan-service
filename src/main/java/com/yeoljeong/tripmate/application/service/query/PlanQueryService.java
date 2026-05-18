@@ -221,11 +221,11 @@ public class PlanQueryService {
             Function.identity(),
             (left, right) -> right));
 
-    boolean hasMissingUser = userIds.stream()
-        .anyMatch(userId -> !userMap.containsKey(userId));
-    if (hasMissingUser) {
-      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
-    }
+//    boolean hasMissingUser = userIds.stream()
+//        .anyMatch(userId -> !userMap.containsKey(userId));
+//    if (hasMissingUser) {
+//      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+//    }
     return userMap;
   }
 }
