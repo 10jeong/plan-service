@@ -31,7 +31,6 @@ spring:
           batch_size: 30
           order_inserts: true
           order_updates: true
-
   sql:
     init:
       mode: never
@@ -39,6 +38,11 @@ spring:
     openfeign:
       micrometer:
         enabled: false
+    aws:
+      region:
+        static: ${AWS_S3_REGION}
+      s3:
+        bucket: ${AWS_S3_BUCKET}
   kafka:
     bootstrap-servers: ${KAFKA_BOOTSTRAPS}
     consumer:
