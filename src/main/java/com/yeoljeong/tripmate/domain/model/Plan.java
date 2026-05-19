@@ -36,7 +36,6 @@ public class Plan extends BaseAuditEntity {
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description; // 설명
 
-  @Column(nullable = false)
   private String imageUrl; // 이미지 url
 
   @Embedded
