@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class S3Client implements StorageReader {
+public class AwsS3StorageClient implements StorageReader {
 
   private final S3Template s3Template;
 
