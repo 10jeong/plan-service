@@ -29,6 +29,10 @@ public class S3Client implements StorageReader {
     if (file == null || file.isEmpty()) {
       throw new BusinessException(PlanErrorCode.IMAGE_EMPTY_ERROR);
     }
+    if (fileName == null || fileName.isBlank()) {
+      throw new BusinessException(PlanErrorCode.IMAGE_UPLOAD_ERROR);
+    }
+
     try
         (InputStream is = file.getInputStream()) {
       S3Resource resource = s3Template.upload(bucketName, fileName, is);
