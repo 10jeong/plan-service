@@ -51,16 +51,4 @@ public interface PlanJpaRepository extends JpaRepository<Plan, UUID> {
           order by p.createdAt desc
   """)
   Slice<Plan> findHostPlans(@Param("userId") UUID userId, Pageable pageable);
-//  @Query("""
-//    select guest
-//      from PlanParticipation guest
-//        join guest.planUnit pu
-//        join pu.plan p
-//        join PlanParticipation host
-//          on host.planUnit = pu
-//          where host.userId = :userId
-//            and host.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.HOST
-//            and guest.participationRole = com.yeoljeong.tripmate.domain.enums.ParticipationRole.GUEST
-//          order by p.createdAt desc
-//  """)
 }
