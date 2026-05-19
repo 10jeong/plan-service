@@ -76,7 +76,9 @@ public enum PlanErrorCode implements ErrorCode {
 
   PLAN_PRODUCT_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 상품이 존재하지 않습니다."),
   ORDER_PLAN_UNIT_NOT_FOUND(HttpStatus.NOT_FOUND, "주문에 대한 일정 정보를 찾을 수 없습니다."),
-  USER_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 참여자에 대한 사용자 정보를 찾을 수 없습니다.");
+  USER_NOT_FOUND(HttpStatus.NOT_FOUND, "일정 참여자에 대한 사용자 정보를 찾을 수 없습니다."),
+  IMAGE_EMPTY_ERROR(HttpStatus.BAD_REQUEST, "이미지 파일이 비어 있습니다."),
+  IMAGE_UPLOAD_ERROR(HttpStatus.CONFLICT, "이미지 업로드 중 에러가 발생하였습니다.");
 
   private final HttpStatus status;
   private final String message;
