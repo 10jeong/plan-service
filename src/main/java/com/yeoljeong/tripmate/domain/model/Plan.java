@@ -59,13 +59,20 @@ public class Plan extends BaseAuditEntity {
   public Plan(String title, String description, LocalDate startDate, LocalDate endDate, String planType, String imageUrl) {
     validateTitle(title);
     validateDescription(description);
-// todo: imageUrl validate
+    validateImageUrl(imageUrl);
+    
     this.title = title.trim();
     this.description = description.trim();
     this.travelPeriod = new TravelPeriod(startDate, endDate);
     this.planType = validatePlanType(planType);
     this.recruitStatus = RecruitStatus.OPEN;
     this.imageUrl = imageUrl;
+  }
+
+  private void validateImageUrl(String imageUrl) {
+    if (imageUrl == null || imageUrl.isBlank()) {
+      throw new BusinessException(PlanErrorCode.IMAGE_EMPTY_ERROR);
+    }
   }
 
   private PlanCreationType validatePlanType(String planType) {
