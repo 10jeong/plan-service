@@ -15,6 +15,7 @@ public record GetPlanDetailResponse(
     LocalDate endDate,
     PlanCreationType planCreationType,
     RecruitStatus recruitStatus,
+    String imageUrl,
     List<PlanUnitDetail> planUnits
 
 
@@ -29,6 +30,7 @@ public record GetPlanDetailResponse(
         result.endDate(),
         result.planCreationType(),
         result.recruitStatus(),
+        result.imageUrl(),
         PlanUnitDetail.from(result.planUnits())
     );
   }
