@@ -16,6 +16,7 @@ public record GetPlanDetailResult(
     LocalDate endDate,
     PlanCreationType planCreationType,
     RecruitStatus recruitStatus,
+    String imageUrl,
     List<PlanUnitDetailResult> planUnits
 ) implements Serializable {
 
@@ -28,6 +29,7 @@ public record GetPlanDetailResult(
         plan.getTravelPeriod().getEndDate(),
         plan.getPlanType(),
         plan.getRecruitStatus(),
+        plan.getImageUrl(),
         planUnitResult
     );
   }

@@ -11,7 +11,8 @@ public record GetPlanResponse(
     String description,
     LocalDate startDate,
     LocalDate endDate,
-    RecruitStatus recruitStatus
+    RecruitStatus recruitStatus,
+    String imageUrl
 ) {
 
   public static GetPlanResponse from(Plan plan) {
@@ -21,7 +22,8 @@ public record GetPlanResponse(
         plan.getDescription(),
         plan.getTravelPeriod().getStartDate(),
         plan.getTravelPeriod().getEndDate(),
-        plan.getRecruitStatus()
+        plan.getRecruitStatus(),
+        plan.getImageUrl()
     );
   }
 }
