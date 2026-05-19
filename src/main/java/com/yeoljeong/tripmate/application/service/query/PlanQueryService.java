@@ -216,6 +216,7 @@ public class PlanQueryService {
     List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(
         GetUserRequest.from(userIds));
     if (userData == null) {
+      log.info("userData가 null 입니다.");
       throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
     }
     Map<UUID, UserData> userMap = userData.stream()
@@ -223,11 +224,11 @@ public class PlanQueryService {
             Function.identity(),
             (left, right) -> right));
 
-    boolean hasMissingUser = userIds.stream()
-        .anyMatch(userId -> !userMap.containsKey(userId));
-    if (hasMissingUser) {
-      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
-    }
+//    boolean hasMissingUser = userIds.stream()
+//        .anyMatch(userId -> !userMap.containsKey(userId));
+//    if (hasMissingUser) {
+//      throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);
+//    }
     return userMap;
   }
 
