@@ -58,7 +58,7 @@ public class PlanController {
   @PostMapping
   public ApiResponse<CreatePlanResponse> createPlans(
       @LoginUser UserContext user,
-      @RequestBody @Valid CreatePlanRequest createPlanRequest) {
+      @ModelAttribute @Valid CreatePlanRequest createPlanRequest) {
 
     CreatePlanResult result = planCommandService.createPlans(createPlanRequest.toCommand(user.userId()));
     CreatePlanResponse response = CreatePlanResponse.from(result);

@@ -36,6 +36,8 @@ public class Plan extends BaseAuditEntity {
   @Column(nullable = false, columnDefinition = "TEXT")
   private String description; // 설명
 
+  private String imageUrl; // 이미지 url
+
   @Embedded
   private TravelPeriod travelPeriod; // 여행기간
 
@@ -53,15 +55,23 @@ public class Plan extends BaseAuditEntity {
   *  - 255자를 초과할 수 없다.
   * */
   @Builder
-  public Plan(String title, String description, LocalDate startDate, LocalDate endDate, String planType) {
+  public Plan(String title, String description, LocalDate startDate, LocalDate endDate, String planType, String imageUrl) {
     validateTitle(title);
     validateDescription(description);
-
+    validateImageUrl(imageUrl);
+    
     this.title = title.trim();
     this.description = description.trim();
     this.travelPeriod = new TravelPeriod(startDate, endDate);
     this.planType = validatePlanType(planType);
     this.recruitStatus = RecruitStatus.OPEN;
+    this.imageUrl = imageUrl;
+  }
+
+  private void validateImageUrl(String imageUrl) {
+    if (imageUrl == null || imageUrl.isBlank()) {
+      throw new BusinessException(PlanErrorCode.IMAGE_EMPTY_ERROR);
+    }
   }
 
   private PlanCreationType validatePlanType(String planType) {

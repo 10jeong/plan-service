@@ -10,6 +10,7 @@ import com.yeoljeong.tripmate.application.dto.result.CreatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.ParticipatePlanResult;
 import com.yeoljeong.tripmate.application.dto.result.UpdateParticipationStatusResult;
 import com.yeoljeong.tripmate.application.port.PlanEvents;
+import com.yeoljeong.tripmate.application.port.StorageReader;
 import com.yeoljeong.tripmate.domain.enums.Country;
 import com.yeoljeong.tripmate.domain.enums.ParticipationRole;
 import com.yeoljeong.tripmate.domain.enums.ParticipationStatus;
@@ -26,7 +27,6 @@ import com.yeoljeong.tripmate.domain.model.PlanUnit;
 import com.yeoljeong.tripmate.domain.repository.PlanUnitRepository;
 import com.yeoljeong.tripmate.event.EventUtils;
 import com.yeoljeong.tripmate.event.PlanUnitConfirmedEvent;
-import com.yeoljeong.tripmate.event.PlanUnitParticipantQuitEvent;
 import com.yeoljeong.tripmate.exception.BusinessException;
 import com.yeoljeong.tripmate.presentation.dto.response.WithdrawPlanUnitParticipationResponse;
 import java.security.NoSuchAlgorithmException;
@@ -40,6 +40,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +53,7 @@ public class PlanCommandService {
   private final PlanProductSnapshotRepository planProductSnapshotRepository;
   private final ProductReader productReader;
   private final PlanEvents events;
+  private final StorageReader storageReader;
 
   /*
   * 일정 생성(일정, 단위일정, 참여)
@@ -67,6 +69,9 @@ public class PlanCommandService {
     // 동일한 일정 내 단위 일정 시간 범위가 겹치지 않는지 검증
     validateUnitTimeRangeNotOverlap(command.getPlanUnit());
 
+    // 이미지 url
+    String uploadUrl = uploadImage(command.getImage());
+
     /* 일정 생성 */
     Plan plan = Plan.builder()
         .title(command.getTitle())
@@ -74,6 +79,7 @@ public class PlanCommandService {
         .startDate(command.getStartDate())
         .endDate(command.getEndDate())
         .planType(command.getPlanType())
+        .imageUrl(uploadUrl)
         .build();
     Plan savedPlan = planRepository.save(plan);
 
@@ -233,6 +239,11 @@ public class PlanCommandService {
     events.planUnitParticipationQuit(UUID.randomUUID(), command.userId(), planUnit.getId(), command.reason());
 
     return WithdrawPlanUnitParticipationResponse.from(participation);
+  }
+
+  private String uploadImage(MultipartFile image) {
+    String fileName = UUID.randomUUID() + ".jpg";
+    return storageReader.upload(image, fileName);
   }
 
   private void validatePlanUnitHost(PlanUnit planUnit, UUID userId) {

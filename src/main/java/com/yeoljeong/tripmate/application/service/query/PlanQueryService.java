@@ -163,6 +163,9 @@ public class PlanQueryService {
     Slice<Plan> planSlice = planRepository.findHostPlans(userId, planPageable);
 
     List<PlanParticipation> participations = participationRepository.findGuestRequestsByPlans(planSlice.getContent());
+    if (participations == null) {
+      log.info("participation is null , participations.id = {}", participations.get(0).getUserId());
+    }
 
     Map<Plan, List<PlanParticipation>> groupedByPlan = participations.stream()
         .collect(Collectors.groupingBy(
@@ -172,6 +175,9 @@ public class PlanQueryService {
     // 사용자 정보 조회
     List<UUID> userIds = participations.stream()
         .map(PlanParticipation::getUserId).toList();
+
+    log.info("userIds = {}", userIds);
+
     Map<UUID, UserData> userDataMap = getUserMap(userIds);
 
     List<ReceivedParticipationRequestsResponse> response = groupedByPlan.entrySet().stream()
@@ -213,8 +219,7 @@ public class PlanQueryService {
 
   /* 유저 정보 조회 및 검증*/
   private Map<UUID, UserData> getUserMap(List<UUID> userIds) {
-    List<UserData> userData = userIds.isEmpty() ?List.of() : userReader.getUser(
-        GetUserRequest.from(userIds));
+    List<UserData> userData = userReader.getUser(GetUserRequest.from(userIds));
     if (userData == null) {
       log.info("userData가 null 입니다.");
       throw new BusinessException(PlanErrorCode.USER_NOT_FOUND);

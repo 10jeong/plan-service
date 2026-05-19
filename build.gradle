@@ -5,6 +5,7 @@ plugins {
 }
 ext {
     springCloudVersion = "2025.0.2"
+    set('springCloudAwsVersion', "3.1.1")
 }
 
 group = 'com.yeoljeong'
@@ -53,6 +54,9 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
+
+    implementation platform("io.awspring.cloud:spring-cloud-aws-dependencies:${springCloudAwsVersion}")
+    implementation 'io.awspring.cloud:spring-cloud-aws-starter-s3'
 }
 dependencyManagement {
     imports {
