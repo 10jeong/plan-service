@@ -143,6 +143,10 @@ public class PlanCommandService {
   /*
   * 참여 신청 상태 호스트 변경(REQUESTED -> APPROVED/REJECTED)
   * */
+  @CacheEvict(
+      cacheNames = "planDetail",
+      key = "#command.planId()"
+  )
   public UpdateParticipationStatusResult updateParticipationStatus(
       UpdateParticipationStatusCommand command) {
     
@@ -172,6 +176,10 @@ public class PlanCommandService {
   /*
   * 일정 확정
   * */
+  @CacheEvict(
+      cacheNames = "planDetail",
+      key = "#command.planId()"
+  )
   public ConfirmPlanUnitResult confirmPlanUnit(UUID planId, UUID planUnitId, UUID userId)
       throws NoSuchAlgorithmException {
 
@@ -223,6 +231,10 @@ public class PlanCommandService {
   * 참여 일정 탈퇴
   * : 참여 상태가 CONFIRMED인 사용자만 가능
   * */
+  @CacheEvict(
+      cacheNames = "planDetail",
+      key = "#command.planId()"
+  )
   public WithdrawPlanUnitParticipationResponse withdrawPlanUnitParticipant(
       WithdrawPlanUnitParticipationCommand command) {
     PlanUnit planUnit = planUnitRepository.findById(command.planUnitId())
